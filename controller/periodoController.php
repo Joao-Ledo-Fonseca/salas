@@ -10,11 +10,15 @@ class periodoController
 	{
 		if(isset($_POST['salvar']))
 		{
-			$nome = Util::clearparam($_POST['nome']);
 			$id = Util::clearparam($_POST['id']);
+			$seq = Util::clearparam($_POST['seq']);
+			$nome = Util::clearparam($_POST['nome']);
+			
 
-			$periodo = new Periodo();
-			$periodo->salvar($id,$nome);
+			if (strlen($nome) > 0) {
+				$periodo = new Periodo();
+				$periodo->salvar($id,$nome, $seq);
+			}
 			header("Location: periodo_list.php");
 			exit();
 		}
@@ -52,18 +56,18 @@ class periodoController
 	function listarcontroller()
 	{
 		
-		$periodo = new Periodo();
-		
+		$periodo = new Periodo();	
 		$linhas = $periodo->listar();
 		
 		$tabela = '';
 		foreach($linhas as $linha)
 		{
+			// 
 			$tabela .= '<tr>
 							<td>'.$linha['id'].'</td>
+							<td>'.$linha['seq'].'</td>
 							<td><a href="periodo_form.php?id='.$linha['id'].'">'.$linha['nome'].'</a></td>
-						</tr>		
-							';
+						</tr>';
 		}
 		
 		return $tabela;

@@ -1,0 +1,77 @@
+﻿<?php
+
+require_once "seguranca.php";
+require_once "../controller/dashboardController.php";
+$dsc = new dashboardController();
+
+
+// Disciplina que mais reserva
+$tabela_reservas = $dsc->listaReservasController();
+$tabela_resumo = $dsc->disciplinaMaisReservasController();
+
+
+// calculo da taxa de ocupação
+$total_horarios = $dsc->totalHorariosController();
+
+$total_reservas = $dsc->totalReservasController();
+
+?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <script src="js/jquery.js"></script>
+  <script src="js/jquery.datetimepicker.full.js"></script>
+  <script src="js/dateformat.js"></script>
+
+  <!-- <link href="css/select2.min.css" rel="stylesheet" /> -->
+  <link rel="stylesheet" type="text/css" href="css/estilo.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
+
+  <!-- <script src="js/select2.min.js"></script> -->
+  <script src="js/lib.js"></script>
+
+</head>
+<title>Relatorios</title>
+
+<body>
+
+  <!-- menu esquerdo -->
+  <?php include "menu_esquerdo.php"; ?>
+
+  <!-- conteudo -->
+  <div class="corpo">
+
+
+    <div class="container">
+
+      <div class="apar">
+
+        <h3> Reservas </h3>
+
+
+        <table class="lista_comum" cellpadding="4" cellspacing="4">
+
+          <tr>
+            <th></th>
+            <th width="50"> Sala</th>
+            <th width="300"> Nome </th>
+            <th> Data</th>
+            <th> Status </th>
+          </tr>
+
+          <?= $tabela_reservas ?>
+
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

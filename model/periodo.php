@@ -8,7 +8,7 @@ class Periodo
 	{
 		$db = new Database();
 		
-		$sql = ' select * from periodo order by nome;' ;
+		$sql = ' select * from periodo order by seq;' ;
 		return $db->query($sql);
 	}
 	
@@ -21,21 +21,22 @@ class Periodo
 		return $db->query($sql);
 	}
 	
-	function salvar($id,$nome)
+	function salvar($id, $nome, $seq)
 	{
 	
+		$seq= (int) $seq;
 		$db = new Database();
 		
 		// inserir
 		if($id == 0)
 		{
-			$sql = 'insert into periodo ( nome ) values ("'.$nome.'")';
+			$sql = 'insert into periodo ( nome, seq ) values ("'. $nome.'",'. $seq.')';
 			return $db->query_insert($sql);
 		}
 		else
 		{ 
 			// atualizar
-			$sql = ' update periodo set nome = "'.$nome.'" where id = ' .$id;
+			$sql = ' update periodo set nome = "'.$nome.'", seq = ' . $seq. ' where id = ' .$id;
 			return $db->query_update($sql);
 
 		}

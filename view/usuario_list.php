@@ -7,59 +7,62 @@ $usuarioController = new UsuarioController();
 $lista = $usuarioController->listarcontroller();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-	  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	
-     <script src="js/jquery.js"></script>
-	 <script src="js/jquery.datetimepicker.full.js"></script>
-     <script src="js/dateformat.js"></script>
-        
-     <link rel="stylesheet" type="text/css" href="css/estilo.css">
-     <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-  	 <script src="js/lib.js"></script>
-     
-     </head>
-     <title>Cadastro de usuários</title>
-     <body>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.datetimepicker.full.js"></script>
+    <script src="js/dateformat.js"></script>
 
-<!-- form -->
-<div class="form">
+    <link rel="stylesheet" type="text/css" href="css/estilo.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
 
-</div>
+    <script src="js/lib.js"></script>
+    <title>Lista de Utilizadores</title>
+</head>
 
 
-<!-- menu esquerdo -->
-<?php include "menu_esquerdo.php"; ?>
+<body>
 
-<!-- conteudo -->
+    <!-- form -->
+    <div class="form">
 
-<div class="corpo">
+    </div>
 
-<h3> Cadastro de Usuários </h3>
+    <!-- menu esquerdo -->
+    <?php include "menu_esquerdo.php"; ?>
 
-<input type="button" name="novo" value="novo" class="btn1" onclick="abre('usuario_form.php')" />
+    <!-- conteudo -->
+    <div class="corpo">
 
-<table class="lista_comum" cellpadding="4" cellspacing="4">
-<thead>
-    <tr>
-        <th> id </th>
-        <th> Nome </th>
-        <th> E-mail </th>
-    </tr>
-</thead>
+        <h3>Lista de Utilizadores</h3>
 
-<tbody>
+        <input type="button" name="novo" value="novo" class="btn1" onclick="abre('usuario_form.php')" />
 
-<?= $lista ?>
+        <table class="lista_comum" cellpadding="4" cellspacing="4">
+            <thead>
+                <tr>
+                    <th> id </th>
+                    <th> Nome </th>
+                    <th> E-mail </th>
+                    <th> Nível</th>
+                </tr>
+            </thead>
 
-</tbody>
+            <tbody>
 
-</table>
+                <?= $lista ?>
 
-</div>
+            </tbody>
+
+        </table>
+
+    </div>
 
 </body>
+
 </html>

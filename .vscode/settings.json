@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "127.0.0.1",
+            "port": 3306,
+            "driver": "MariaDB",
+            "username": "root",
+            "name": "Localhost-Salas",
+            "database": "sgreserva",
+            "password": ""
+        }
+    ],
+    "php.validate.executablePath": "C:\\wamp64\\bin\\php\\php8.4.0\\php.exe"
+}

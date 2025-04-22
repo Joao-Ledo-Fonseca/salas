@@ -48,6 +48,7 @@ $lista = $periodoController->listarcontroller();
 <thead>
     <tr>
         <th> id </th>
+        <th> Sequência </th>
         <th> Nome </th>
 	</tr>
 </thead>

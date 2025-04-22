@@ -7,61 +7,65 @@ $salaController = new salaController();
 $lista = $salaController->listarcontroller();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	        
-		<script src="js/jquery.js"></script>
-   		<script src="js/jquery.datetimepicker.full.js"></script>
-        <script src="js/dateformat.js"></script>
-        
-        <link rel="stylesheet" type="text/css" href="css/estilo.css">
-        <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-  		<script src="js/lib.js"></script>
-     
-     </head>
+   <script src="js/jquery.js"></script>
+   <script src="js/jquery.datetimepicker.full.js"></script>
+   <script src="js/dateformat.js"></script>
 
-<title>Cadastro de Períodos</title>
+   <link rel="stylesheet" type="text/css" href="css/estilo.css">
+   <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
+
+   <script src="js/lib.js"></script>
+
+</head>
+
+<title>Cadastro de Salas</title>
+
 <body>
 
-<!-- form -->
-<div class="form">
+   <!-- form -->
+   <div class="form">
 
-</div>
+   </div>
 
 
-<!-- menu esquerdo -->
-<?php include "menu_esquerdo.php"; ?>
+   <!-- menu esquerdo -->
+   <?php include "menu_esquerdo.php"; ?>
 
-<!-- conteudo -->
+   <!-- conteudo -->
 
-<div class="corpo">
+   <div class="corpo">
 
-<h3> Cadastro de Períodos </h3>
+      <h3> Cadastro de Salas </h3>
 
-<input type="button" name="novo" value="novo" class="btn1" onclick="abre('sala_form.php')" />
+      <input type="button" name="novo" value="novo" class="btn1" onclick="abre('sala_form.php')" />
 
-<table class="lista_comum" cellpadding="4" cellspacing="4">
+      <table class="lista_comum" cellpadding="4" cellspacing="4">
 
-<thead>
+         <thead>
 
-<tr>
-<th> id </th>
-<th> Nome </th>
-</tr>
+            <tr>
+               <th> id </th>
+               <th> Nome </th>
+            </tr>
 
-</thead>
+         </thead>
 
-<tbody>
+         <tbody>
 
-<?= $lista ?>
+            <?= $lista ?>
 
-</tbody>
+         </tbody>
 
-</table>
+      </table>
 
-</div>
+   </div>
 </body>
+
 </html>

@@ -14,7 +14,7 @@ class Database {
 
 		
 		mysqli_query($this->link, "SET NAMES utf8");
-		$result = mysqli_query($this->link, $sql)or die(mysqli_error($this->link));
+		$result = mysqli_query($this->link, $sql) or die(mysqli_error($this->link));
 
 		$array_result = array();
 
@@ -31,7 +31,7 @@ class Database {
 	function query_insert($sql){
 
 		mysqli_query($this->link, "SET NAMES utf8");
-		mysqli_query($this->link,  $sql)or die(mysqli_error($this->link));
+		mysqli_query($this->link,  $sql) or die(mysqli_error($this->link));
 
 		return mysqli_insert_id($this->link);
 	}
@@ -39,7 +39,7 @@ class Database {
 	function query_update($sql){
 
 		mysqli_query($this->link, "SET NAMES utf8");
-		mysqli_query($this->link,  $sql)or die(mysqli_error($this->link));
+		mysqli_query($this->link,  $sql) or die(mysqli_error($this->link));
 
 	}
 	

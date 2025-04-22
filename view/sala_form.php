@@ -46,7 +46,7 @@ if(!isset($id))
 
 <div class="corpo">
 
-<h3> Cadastro de Períodos </h3>
+<h3> Cadastro de Salas </h3>
 
 
 <form name="form1" method="post" target="_self">

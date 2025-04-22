@@ -3,15 +3,12 @@
 require "../model/reserva.php";
 require "util.php";
 
-
 class ReservaController{
 	
-
 	function abrirController($id)
 	{
 		
-		$reserva = new Reserva();
-		
+		$reserva = new Reserva();		
 		return $reserva->abrir($id);
 		
 		
@@ -79,7 +76,6 @@ class ReservaController{
 				
 				// lloping +7 dias . Se data limite ultrapassada, sair.
 				$data->modify('+7 day');
-				
 				$diff = Util::ndate_diff($data->format("Y-m-d"),$data_final->format("Y-m-d"));
 	
 				while($diff > 0 || $data->format("Y-m-d") == $data_final->format("Y-m-d") )
@@ -103,6 +99,7 @@ class ReservaController{
 		}
 		
 	}
+	
 
 }
 ?>

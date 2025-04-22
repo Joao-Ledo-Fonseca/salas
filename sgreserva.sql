@@ -53,6 +53,7 @@ COLLATE utf8_general_ci;
 CREATE TABLE periodo (
   id INT(11) NOT NULL AUTO_INCREMENT,
   nome VARCHAR(255) DEFAULT NULL,
+  seq INT, 
   PRIMARY KEY (id),
   UNIQUE INDEX UK_periodo_id(id)
 )
