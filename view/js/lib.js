@@ -10,44 +10,59 @@ function getVisible() {
 
 
 function abreReserva(o) {
-	// limpa o CSS das outras tabelas
+	
+	// limpa o CSS das outras células
 	$(".corpo td").css("background-color", "");
+	$(".corpo td").css("color", "#CCC");
+	
 	// o item selecionado fica verde.
-	$(o).css("background-color", "#CAF4D5");
-	//$(o).css("background-color", "#CCC"); 		
+	//$(o).css("background-color", "#CAF4D5");
+	$(o).css("background-color", "#BFF9B9"); 
+	$(o).css("color", "black");
+
+	
+	
 	//abre o formulario por AJAX preenchido
-	$.ajax({
-		type: "GET",
-		url: "reserva_form.php",
-		method: "GET",
-		data: "id=" + $(o).attr("id") + "&data=" + data + "&sala_id=" + $(o).attr("sala") + "&periodo_id=" + $(o).attr("periodo"),
-		dataType: 'html',
-		success: function (response) {
+	let abre = true;
 
-			$(".corpo").css("max-width", "calc(100% - 510px)");
+	if (abre) {
 
-			$('.form').show("fast", "", function () {
+		$.ajax({
+			type: "GET",
+			url: "reserva_form.php",
+			method: "GET",
+			data: "id=" + $(o).attr("id") + "&data=" + data + "&sala_id=" + $(o).attr("sala") + "&periodo_id=" + $(o).attr("periodo") + "&usuario_id=" + $(o).attr("usuario_id"),
+			dataType: 'html',
+			success: function (response) {
 
-				$('.form').html(response);
+				$(".corpo").css("max-width", "calc(100% - 510px)");
 
-				$('#dia').datetimepicker({
-					timepicker: false,
-					format: 'd/m/Y'
+				$('.form').show("fast", "", function () {
+
+					$('.form').html(response);
+
+					$('#dia').datetimepicker({
+						timepicker: false,
+						format: 'd/m/Y'
+					});
+
+					$('#data_final').datetimepicker({
+						timepicker: false,
+						format: 'd/m/Y'
+					});
+
 				});
+			}
 
-				$('#data_final').datetimepicker({
-					timepicker: false,
-					format: 'd/m/Y'
-				});
-
-			});
-		}
-	});
+		});
+	};
 }
 
 function fecharForm() {
 	$('.form').hide("fast", "", function () {
 		$(".corpo").css("max-width", "calc(100% - 180px)");
+		$(".corpo td").css("background-color", "");	
+		$(".corpo td").css("color", "black");	
 	});
 }
 
@@ -109,17 +124,31 @@ function abre(url) {
 	window.location.href = url;
 }
 
+
+
 function show_salvar() {
 	document.getElementById("salvar").style.display = "inline-block";
 }
-  
-// controlo de permissões para usuario_form.php
-function self_user(uSessao, nSessao, uEditar, nEditar) {
 
-	if (uEditar == uSessao || nEditar > nSessao || nSessao == 0) {		
-		document.getElementById("permis1").style.display = "none"; 		
-		document.getElementById("permis2").style.display = "none"; 
-		
-	} 
-	console.log(uEditar ,uSessao ,nEditar ,nSessao );
+function cancelaInputsRequired() {        
+	$('input').prop('required', false);
 }
+
+function printDiv() {
+	var divToPrint = document.getElementsByClassName('print')[0];
+	var anotherWindow = window.open('', 'Print-Window');
+	anotherWindow.document.open();
+	anotherWindow.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+	anotherWindow.document.close();
+	setTimeout(function() {
+	   anotherWindow.close();
+	}, 10);
+ }
+ 
+ function plainPrint() {
+	$(".menu").hide(); 
+	window.print();
+	$(".menu").show();
+  }
+
+

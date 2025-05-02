@@ -9,29 +9,32 @@ class Permissoes
 
 		$db = new Database();
 
-		$sql = ' select seq, nome, user, admin from permissoes order by seq;';
+		$sql = ' select seq, nome, uexterno, uinterno, admin from permissoes order by seq;';
 		return $db->query($sql);
 	}
 
 
 
-	function salvar($seq, $nome, bool $user, bool $admin, $tipo)
+	function salvar($seq, $nome, $uexterno, $uinterno, $admin, $tipo)
 	{
 
 		$db = new Database();
 
 		// inserir nova permissao
-		if ($tipo == "I") {		            
-			$sql = 'insert into permissoes ( seq, nome, user, admin) values ('. $seq . ',"' . $nome . '",' . (int) $user . ',' . (int) $admin .')';
+		if ( $tipo == 'Insert' ) {		            
+			$sql = ' insert into permissoes ( seq, nome, uexterno, uinterno, admin) 
+					 values ('. $seq . ',"' . $nome . '",' . (int) $uexterno . ',' . (int) $uinterno . ',' . (int) $admin .')';			
 			return $db->query_insert($sql);            
 		}        
 		// atualizar permissao existente
-		else if ($tipo == "U") {			
-			$sql = ' update permissoes set user = ' . (int) $user . ' , admin = ' . (int) $admin . ' where nome = "' . $nome . '"';
+		else if ($tipo == "Update") {			
+			$sql = ' update permissoes 
+						set uexterno = ' . (int) $uexterno . ' , uinterno = ' . (int) $uinterno . ' , admin = ' . (int) $admin    . ' 
+						where nome = "' . $nome . '"';
 			return $db->query_update($sql);
 		}
 		// actualizar apenas sequência
-        else if ($tipo == "R") {
+        else if ($tipo == "Renumera") {
             $sql = 'update permissoes set seq = ' . $seq . ' where nome = "' . $nome . '"';
             return $db->query_update($sql);
         }         

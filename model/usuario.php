@@ -1,7 +1,7 @@
 <?php
 require_once "db_mysqli.php";
 
-class Usuario
+class Usuario 
 {
 
 	function autenticar($email, $senha)
@@ -34,17 +34,19 @@ class Usuario
 		return $db->query($sql);
 	}
 
-	function salvar($id, $nome, $email, $senha, $nivel)
+	function salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel)
 	{
 
 		$db = new Database();
 
 		// inserir
 		if ($id == 0) {
+			
 			$senha = md5($senha);
 
-			$sql = 'insert into usuario ( nome, email, senha, nivel) values ("' . $nome . '","' . $email . '","' . $senha . '","' . $nivel . '")';
-			return $db->query_insert($sql);
+			$sql = ' insert into usuario ( nome, email, senha, telefone, NIF, nivel) 
+					values ("' . $nome . '","' . $email . '","' . $senha . '","' . $telefone . '","' . $NIF . '","' . $nivel . '")';					
+			return $db->query_insert($sql);			
 		}
 		// atualizar
 		else {
@@ -53,7 +55,9 @@ class Usuario
 			else
 				$and = '';
 
-			$sql = ' update usuario set nome = "' . $nome . '", email = "' . $email . '" ' . $and . ', nivel = ' . $nivel . '  where id = ' . $id;
+			$sql = ' update usuario set nome = "' . $nome . '", email = "' . $email . '" ' . $and . ', telefone = "'. $telefone . '", NIF = "' . $NIF .'", nivel = ' . $nivel . '  where id = ' . $id;
+				//var_dump($sql);
+				// exit();
 			return $db->query_update($sql);
 
 		}
@@ -64,6 +68,7 @@ class Usuario
 	function excluir($id)
 	{
 		$db = new Database();
+		
 		$sql = 'delete from usuario where id = ' . $id;
 		return $db->query_update($sql);
 	}

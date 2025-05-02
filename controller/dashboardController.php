@@ -51,6 +51,7 @@ class dashboardController
 
 				$disciplina_reserva = '';
 				$professores_reserva = '';
+				$id_usuario = '';
 
 				// checar se esse periodo, nessa sala, nesse dia,  está ocupada.
 
@@ -67,16 +68,24 @@ class dashboardController
 					$disciplina_reserva = $status[0]['disciplina_desc'];
 					$professores_reserva = $status[0]['professor_desc'];
 					$id_reserva = $status[0]['id'];
-					// procurar por disciplinas e professores dessa resrva
+					$id_usuario = $status[0]['usuario_id'];
+					// procurar por disciplinas e professores dessa reserva
 
 				} else {
 					$id_reserva = 0;
 					$css_ocupado = 'disponivel';
 				}
 
-				// if($disciplina_reserva =! '') $disciplina_reserva = '<p>' . $disciplina_reserva . '</p>';
+				// Se for um usuario com nivel usuario, só pode alterar as reservas próprias
+				// Os restantes podem ver todas as reservas				
+				if ($_SESSION['user_nivel'] == 0) {
+					$accao = ((($_SESSION["user_id"] == $id_usuario) || ($id_usuario == "")) ? 'onClick="abreReserva(this)"' : '""');
+				} else {
+					$accao = 'onClick="abreReserva(this)"';
+				}
 
-				$tabela_corpo .= '<td onClick="abreReserva(this)" class="' . $css_ocupado . '" id="' . $id_reserva . '" sala="' . $sala['id'] . '" periodo="' . $periodo['id'] . '" > ' . $disciplina_reserva . '&nbsp;<hr>&nbsp;' . $professores_reserva . ' </td>';
+				$tabela_corpo .= '<td ' . $accao . ' class="' . $css_ocupado . '" id="' . $id_reserva . '" sala="' . $sala['id']
+					. '" periodo="' . $periodo['id'] . '" usuario_id="' . $id_usuario . '" > ' . $disciplina_reserva . '&nbsp;<hr>&nbsp;' . $professores_reserva . ' </td>';
 
 			}
 
@@ -95,15 +104,17 @@ class dashboardController
 		$tabela = '';
 		foreach ($row1 as $row) {
 			$dia = date_create_from_format('Y-m-d', $row['dia'])->format('d/m/Y');
-			$tabela .= '<tr><td></td>
+			$tabela .= '<tr>
+			<td> </td>
 			<td>' . $row['sala'] . '</td>
 			<td width="300">' . $row['disciplina_desc'] . ' </td>
-			<td><a href=index.php?data=' . $dia . '>'. $dia .'</a> </td>
-			<td>'. $row['status'] . '</td>
+			<td><a href=index.php?data=' . date_create_from_format('Y-m-d', $row['dia'])->format('d/m/Y') . '>' . date_create_from_format('Y-m-d', $row['dia'])->format('d-m-Y') . '</a> </td>
+			<td>' . $row['periodo'] . '</td>
+			<td>' . $row['status'] . '</td>
 			</tr>';
 		}
 		return $tabela;
-	}	
+	}
 
 
 
@@ -174,7 +185,7 @@ class dashboardController
 
 	function nextController($dia)
 	{
-		
+
 		$reserva = new Reserva();
 		return $reserva->next($dia);
 

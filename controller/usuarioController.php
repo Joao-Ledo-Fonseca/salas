@@ -2,17 +2,21 @@
 
 require "util.php";
 require "../model/usuario.php";
+require "../Controller/permissoesController.php";
 
 class UsuarioController
 {
 
 	function salvar()
 	{
-		if (isset($_POST['salvar'])) {
+		if (isset($_POST['salvar']) || isset($_POST['validar'])) {
 			$nome = Util::clearparam($_POST['nome']);
 			$email = Util::clearparam($_POST['email']);
 			$senha = Util::clearparam($_POST['senha']);
-			$nivel = Util::clearparam($_POST['nivel']);
+
+			$telefone = Util::clearparam(isset($_POST['telefone']) ? $_POST['telefone'] : '');
+			$NIF = Util::clearparam(isset($_POST['NIF'])? $_POST['NIF'] : null);
+			$nivel = Util::clearparam((isset($_POST['nivel']) ? $_POST['nivel'] : ''));
 			$id = Util::clearparam($_POST['id']);
 
 			// se nao alterou a senha, nao salvar novamente pois está criptografada
@@ -20,18 +24,25 @@ class UsuarioController
 				$senha = null;
 			}
 
+			// O nome é obrigatório
 			if (strlen($nome) > 0) {
 				$usuario = new Usuario();
-				$usuario->salvar($id, $nome, $email, $senha, $nivel);
+				$resultado = $usuario->salvar($id, $nome, $email, $senha, $telefone, $NIF,  $nivel);				
 			}
+
+			// Se a gravação foi feita do ecrã de login
+			if (isset($_POST['validar'])) {				
+				return $resultado;
+			} 
 			
 			if ($id == $_SESSION['user_id']) {
-				// se alterou o usuario logado, atualiza a sessao
+				// se alterou o nome do usuario logado, atualiza a sessao
 				$this->startSession(array('id' => $id, 'nome' => $nome, 'nivel' => $nivel));
-			} 											
+			}
 
 			header("Location: usuario_list.php");
 			exit();
+
 		}
 	}
 
@@ -50,6 +61,14 @@ class UsuarioController
 		}
 	}
 
+	function cancelar() {
+		if (isset($_POST['cancelar'])) {
+						
+			header("Location: usuario_list.php");
+			exit();
+		}
+	}
+
 	function abrir()
 	{
 
@@ -63,26 +82,23 @@ class UsuarioController
 	// listagem
 	function listarcontroller()
 	{
-
+		$permissoes=new PermissoesController();
 		$usuario = new Usuario();
+		
 
 		$linhas = $usuario->listar();
 
-		$niv = array(0 => 'Usuário', 1 => 'Administrador', 2 => 'Super Administrador');
-
-		$tabela = '';
+				$tabela = '';
 		foreach ($linhas as $linha) {
 			$tabela .= '<tr>
-							<td>' . $linha['id'] . '</td>
+							<td>' . " " . '</td>
 							<td><a href="usuario_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
 							<td>' . $linha['email'] . '</td>
-							<td>' . $niv[$linha['nivel']] . '</td>
-						</tr>';
+							<td>' . $permissoes->nomeNivel($linha['nivel'], 2) . '</td>
+						</tr>'; // <td>' . $linha['id'] . '</td>
 
 		}
-
 		return $tabela;
-
 	}
 
 	// função de autenticação de usuário
@@ -90,23 +106,31 @@ class UsuarioController
 	{
 		if (isset($_POST['email']) && isset($_POST['senha'])) {
 
-			$senha = md5($_POST['senha']);
-			$email = Util::clearparam($_POST['email']);
+			if (!empty(trim($_POST['email']))) {
 
-			$usuario = new Usuario();
-			$row = $usuario->autenticar($email, $senha);
+				$senha = md5($_POST['senha']);
+				$email = Util::clearparam($_POST['email']);
 
-			// encontrou usuario
-			if (isset($row[0]['id'])) {
-				$this->startSession($row[0]);
-				header("Location: index.php"); // pagina inicial
-				exit();
+				$usuario = new Usuario();
+				$row = $usuario->autenticar($email, $senha);
+
+
+				// encontrou usuario
+				if (isset($row[0]['id'])) {
+					$this->startSession($row[0]);
+					
+
+					header("Location: index.php"); // pagina inicial
+					exit();
+				} else {
+					return 0; // usuario não encontrado
+				}
 			} else {
-				return "E-mail ou senha inválidos";
+				return 0; // usuario não encontrado
 			}
 
 		} else {
-			return ''; // nada a fazer
+			return 1; // nada a fazer
 		}
 	}
 
