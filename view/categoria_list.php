@@ -1,24 +1,12 @@
 ﻿<?php
 
 require_once "seguranca.php";
-require_once "../controller/salaController.php";
 require_once "../controller/categoriaController.php";
 
-if (isset($_POST['selecao'])) {
-   $selecao = Util::clearparam($_POST['selecao']);
-} else {
-   $selecao = 'todas';
-}
-
 $categoriaController = new categoriaController();
-$categorias = $categoriaController->listarController('nomes');
-
-$salaController = new salaController();
-$lista = $salaController->listarcontroller($selecao);
+$lista = $categoriaController->listarcontroller();
 
 ?>
-
-
 <!DOCTYPE html
    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -37,7 +25,7 @@ $lista = $salaController->listarcontroller($selecao);
 
 </head>
 
-<title>Cadastro de Salas</title>
+<title>Cadastro de Categorias</title>
 
 <body>
 
@@ -46,31 +34,17 @@ $lista = $salaController->listarcontroller($selecao);
 
    </div>
 
+
    <!-- menu esquerdo -->
    <?php include "menu_esquerdo.php"; ?>
 
    <!-- conteudo -->
+
    <div class="corpo">
 
-      <h3> Cadastro de Salas </h3>
+      <h3> Cadastro de Categorias </h3>
 
-      <div>
-
-         <form name="form1" method="post" target="_self">
-            <select name="selecao" id="selecao" onchange="this.form.submit()">
-               <option value="todas" <?= (($selecao == 'todas') ? 'selected' : '') ?>>Todas</option>
-               <?php
-               foreach ($categorias as $nome) {
-                  echo '<option value="' . $nome . '"  ' . (($nome == $selecao) ? 'selected' : ' ') . ' > ' . $nome . '</option>';
-               }
-               ?>
-            </select>
-         </form>
-
-      </div>
-
-
-      <input type="button" name="novo" value="novo" class="btn1" onclick="abre('sala_form.php')" />
+      <input type="button" name="novo" value="novo" class="btn1" onclick="abre('categoria_form.php')" />
 
       <table class="lista_comum" cellpadding="4" cellspacing="4">
 
@@ -80,6 +54,7 @@ $lista = $salaController->listarcontroller($selecao);
                <th> id </th>
                <th> Nome </th>
                <th> Descrição </th>
+               
             </tr>
 
          </thead>

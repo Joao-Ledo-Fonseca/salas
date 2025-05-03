@@ -10,19 +10,22 @@ class permissoesController
 
     //valores defaul para as permissions da aplicação    
     public $permissoes_defaults = [
-        "M_Salas" => [true, false],
-        "M_Periodos" => [true, false],
-        "M_Utilizadores" => [true, false],
-        "M_Permissoes" => [true, false],
-        "M_Estatisticas" => [true, false],
-        "M_Relatorios" => [true, false],
+        // "nome" => [User, Gestor, Descrição] 
+        "M_Categorias" => [true, false, "Activa o Menu de Categorias"],
+        "M_Salas" => [true, false. "Activa o Menu de Salas"],
+        "M_Periodos" => [true, false, "Activa o Menu de Períodos"],
+        "M_Utilizadores" => [true, false, "Activa o Menu de Utilizadores"],
+        "M_Permissoes" => [true, false, "Activa o Menu de Permissões"], 
+        "M_Estatisticas" => [true, false, "Activa o Menu de Estatísticas"],
+        "M_Relatorios" => [true, false, "Activa o Menu de Relatórios"],
+        "A_RegNovoUtilizador" => [true, null, "Activa o registo de novos utilizadores no ecrã de login."], 
     ];
 
     public $niveis = [
         0 => array("uexterno","u","User"),  
         1 => array('uinterno',"g","Gestor"),
         2 => array("admin","a","Admin"),
-        3 => array("superadmin","sa","SuperAdmin")   //este nivel não tem entrada na BD, é apenas para validação.
+        3 => array("superadmin","sa","SuperAdmin")   //este nivel não tem entradas na BD, e tem TODAS as AUTORIZAÇõES activas.
     ];
     
 
@@ -36,7 +39,8 @@ class permissoesController
         $linhas = $permissoes->listar();
 
         foreach ($linhas as $linha) {
-            $permis_array[$linha["nome"]] =  array($linha[$this->niveis[0][0]], $linha[$this->niveis[1][0]], $linha[$this->niveis[2][0]] ) ;
+            $permis_array[$linha["nome"]] =  
+               array($linha[$this->niveis[0][0]], $linha[$this->niveis[1][0]], $linha[$this->niveis[2][0]] ) ;
         }
     }
 
@@ -116,8 +120,8 @@ class permissoesController
     function validarTabelaPermissoes()
     {
 
-        $permis_temp_nome = array();
-        $permis_temp_seq = array();
+        // $permis_temp_nome = array();
+        // $permis_temp_seq = array();
 
 
         $permissoes = new Permissoes();
@@ -128,23 +132,25 @@ class permissoesController
             if (!array_key_exists($linha['nome'], $this->permissoes_defaults)) {
                 $permissoes->excluir($linha['nome']);
             } else {
-                $permis_temp_nome[] = $linha['nome'];
-                $permis_temp_seq[] = $linha['seq'];
+                $ctrlBd[$linha['nome']] = $linha['seq'];                
             }
         }
 
 
         // addiciona na BD as permissões ausentes
         $i = 0;
-        foreach ($this->permissoes_defaults as $default_key => $default_Value) {
-            if (!in_array($default_key, $permis_temp_nome)) {
-                $permissoes->salvar($i, $default_key, $this->permissoes_defaults[$default_key][0], $this->permissoes_defaults[$default_key][1], true, "Insert");
-                $permis_temp_seq[] = $i;
-
-                // se existe mas tem valor de "seq" diferente, renumera    
-            } else if ($i <> $permis_temp_seq[$i]) {
-                $permissoes->salvar($i, $default_key, $this->permissoes_defaults[$default_key][0], $this->permissoes_defaults[$default_key][1], true, "Renumera");
-
+        foreach ($this->permissoes_defaults as $default_key => $default_Value) {            
+            if (!in_array($default_key, $ctrlBd)) {  
+                // se não existe na BD, adiciona
+                $permissoes->salvar($i, $default_key, 
+                        $this->permissoes_defaults[$default_key][0], $this->permissoes_defaults[$default_key][1], 
+                        true, "Insert");
+                $ctrlBd[] = [$default_key=>$i];             
+            } else if ($i <> $ctrlBd[$default_key]) {
+                // se existe mas tem valor de "seq" diferente, renumera   
+                $permissoes->salvar($i, $default_key, 
+                    $this->permissoes_defaults[$default_key][0], $this->permissoes_defaults[$default_key][1], 
+                    true, "Renumera");
             }
             $i++;
         }

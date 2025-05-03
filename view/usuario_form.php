@@ -51,7 +51,7 @@ if (!isset($id)) {
         nivelEditar = "<?= $nivel ?>";
 
         // controlo de permissões para usuario_form.php
-        function self_user(uSessao, nSessao, uEditar, nEditar) {
+        function user_self_edit(uSessao, nSessao, uEditar, nEditar) {
 
             if (uEditar == uSessao || nEditar > nSessao || nSessao == 0) {
                 document.getElementById("permissoes").style.display = "none";
@@ -64,7 +64,7 @@ if (!isset($id)) {
 </head>
 
 
-<body onload="self_user(nomeSessao,  nivelSessao, nomeEditar, nivelEditar)">
+<body onload="user_self_edit(nomeSessao,  nivelSessao, nomeEditar, nivelEditar)">
 
     <!-- menu esquerdo -->
     <?php include "menu_esquerdo.php"; ?>
@@ -110,16 +110,16 @@ if (!isset($id)) {
                     <td width="100">Nivel</td>
                     <td>
 
-                        <select style="width:100px" name="nivel" id="nivel">
+                        <select style="width:150px" name="nivel" id="nivel">
                             <?php
                             $numNiveis = count($pc->niveis) - 1;
                             $highNivel = min($numNiveis, $_SESSION['user_nivel']);
 
                             for ($i = 0; $i <= $highNivel; $i++) { // para um utilizador só aparecem niveis iguais ou inferiores ao seu nivel
                                 if ($nivel == $i) {
-                                    echo "<option value='$i' selected>" . $pc->nomeNivel($i, 2) . "</option>";
+                                    echo "<option value='$i' selected>" . $pc->nomeNivel($i, 2). " (" .$pc->nomeNivel($i, 1) . ")" . "</option>";
                                 } else {
-                                    echo "<option value='$i'>" . $pc->nomeNivel($i, 2) . "</option>";
+                                    echo "<option value='$i'>" . $pc->nomeNivel($i, 2) . " (" .$pc->nomeNivel($i, 1) . ")" . "</option>";
                                 }
                             };
                             ?>

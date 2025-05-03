@@ -4,12 +4,16 @@ require_once "db_mysqli.php";
 class sala
 {
  
-	function listar()
+	function listar($filtro='todas')
 	{
 		
 		$db = new Database();
 		
-		$sql = ' select * from sala order by nome;' ;
+		$sql = ' select sala.*, categoria.nome as categoria 
+				 from sala 
+				 left join categoria on sala.categoria_id = categoria.id
+				 where categoria.nome = "'.$filtro.'" or "'.$filtro.'" = "todas"
+					order by sala.nome;' ;
 		return $db->query($sql);
 	}
 	
@@ -20,9 +24,10 @@ class sala
 		
 		$sql = ' select * from sala where id = '. $id; ;
 		return $db->query($sql);
+
 	}
 	
-	function salvar($id,$nome)
+	function salvar($id, $nome, $descricao)
 	{
 	
 		$db = new Database();
@@ -30,14 +35,14 @@ class sala
 		// inserir
 		if($id == 0)
 		{
-			$sql = 'insert into sala ( nome ) values ("'.$nome.'")';
+			$sql = ' insert into sala ( nome, descricao ) values ("'.$nome.'","'. $descricao .'") ';
 			return $db->query_insert($sql);
 		}
 		else
 		{ 
 			// atualizar
-			$sql = ' update sala set nome = "'.$nome.'" where id = ' .$id;
-			return $db->query_update($sql);
+			$sql = ' update sala set nome = "'.$nome.'", descricao = "' . $descricao .'" where id = ' .$id;			
+			return $db->query_update($sql);						
 
 		}
 

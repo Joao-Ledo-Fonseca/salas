@@ -60,6 +60,9 @@ $pc = new permissoesController();
       <li><a class="dropdown-btn" href="#">Admin <i class="fa fa-caret-down"></i> </a></li>
       <div class="dropdown-container">
          <?PHP
+                  if ($pc->validaPermissao("M_Categorias", $u_n)) {
+                     echo '<li><a href="categoria_list.php">Categorias</a></li>';
+                  }
          if ($pc->validaPermissao("M_Salas", $u_n)) {
             echo '<li><a href="sala_list.php">Salas</a></li>';
          }
