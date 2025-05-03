@@ -51,6 +51,8 @@ class ReservaController{
 			
 			$data = new DateTime();
 			$data = date_create_from_format('d/m/Y',$dia);
+
+			$usuario_id = $_SESSION['user_id'];
 			
 			$reserva = new Reserva(); 
 			
@@ -64,8 +66,9 @@ class ReservaController{
 				 }
 			}
 			
-			$id = $reserva->salvar($id,$dia,$professor,$disciplina,$data,$observacao,$status,$sala_id,$periodo_id);	
-			echo $id; // javascript espera esse id par asaber se registro inserido está ok
+			$id = $reserva->salvar($id,$dia,$professor,$disciplina,
+									$data, $observacao, $status, $sala_id, $periodo_id, $usuario_id);	
+			echo $id; // javascript espera esse id para saber se registro inserido está ok
 		
 			// verificar repetições:
 			$data_final = Util::clearparam($_POST['data_final']);
@@ -86,7 +89,8 @@ class ReservaController{
 					if(!isset($id_existente[0]['id'])){
 						// duplicar reserva para a data selecionada.
 						$id = 0;
-						$reserva->salvar($id,$dia,$professor,$disciplina,$data,$observacao,$status,$sala_id,$periodo_id);	
+						$reserva->salvar($id,$dia,$professor,$disciplina,
+						 				$data,$observacao, $status, $sala_id, $periodo_id, $usuario_id);	
 					}
 				
 					$data->modify('+7 day');

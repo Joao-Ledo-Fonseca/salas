@@ -6,6 +6,7 @@ require_once("../controller/dashboardController.php");
 $dsc = new dashboardController();
 
 
+
 if (isset($_GET['data'])) {
 	$hoje = date_create_from_format('d/m/Y', $_GET['data']);
 } else {
@@ -18,6 +19,7 @@ $tabela_topo = $dsc->gerarTopoController();
 
 // gerar o corpo do relatorio
 $tabela_corpo = $dsc->gerarCorpoController($hoje);
+
 
 // configurar dias
 $dia_anterior = date_create_from_format('d/m/Y', $hoje->format("d/m/Y"));
@@ -115,8 +117,8 @@ $dia_next = $dsc->nextController($dia_next);
 
 		<div class="titulo_inicial">
 
-			<img src="img/voltar.png" width="40" height="40" alt="" onclick="alteraData(dia_prev)" />
-			<img src="img/voltar.png" width="40" height="40" alt="" onclick="alteraData(dia_anterior)" />
+			<img src="img/voltar.png" class="left" width="40" height="40" alt="" onclick="alteraData(dia_prev)" />
+			<img src="img/voltar.png" class="left"width="40" height="40" alt="" onclick="alteraData(dia_anterior)" />
 
 			<div>
 				<form method="get" action="index.php" target="_self" name="form1">
@@ -125,8 +127,8 @@ $dia_next = $dsc->nextController($dia_next);
 				</form>
 			</div>
 
-			<img src="img/avancar.png" width="40" height="40" alt="" onclick="alteraData(dia_posterior)" />
-			<img src="img/avancar.png" width="40" height="40" alt="" onclick="alteraData(dia_next)" />			
+			<img src="img/avancar.png" class="right" width="40" height="40" alt="" onclick="alteraData(dia_posterior)" />
+			<img src="img/avancar.png" class="right" width="40" height="40" alt="" onclick="alteraData(dia_next)" />			
 
 		</div>
 		

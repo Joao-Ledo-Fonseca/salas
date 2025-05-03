@@ -3,6 +3,25 @@ require_once "../controller/permissoesController.php";
 $pc = new permissoesController();
 ?>
 
+<style>
+   /* Dropdown container (hidden by default). 
+      Optional: add a lighter background color and some left padding 
+      to change the design of the dropdown content */
+
+   .dropdown-container {
+      display: none;
+      background-color: #262626;
+      padding-left: 8px;
+   }
+
+   /* Optional: Style the caret down icon */
+   .fa-caret-down {
+      float: right;
+      /*
+      padding-right: 8px;
+      */
+   }
+</style>
 
 <div class="menu">
 
@@ -11,10 +30,9 @@ $pc = new permissoesController();
       <?PHP
 
 
-      $id_u = $_SESSION['user_nome'] . ' ';
       $u_n = $_SESSION['user_nivel'];
-      $id_u .= ($u_n == 2) ? '(sa)' : ($u_n == 1 ? '(a)' : '(u)');
-      // $id_u .= (' ' . $u_n);
+      $id_u = $_SESSION['user_nome'] . ' ';           
+      $id_u .= '(' . $pc->nomeNivel($u_n, 1) . ')';     // 1-para mostrar abreviatura do nível
       $id_u = '<a href="usuario_form.php?id=' . $_SESSION['user_id'] . '">' . $id_u . '</a>';
       ?>
 
@@ -24,7 +42,7 @@ $pc = new permissoesController();
    </div>
 
    <div>
-      <li>
+      
       <li><a href="index.php">Home</a></li>
 
       <?php
@@ -38,62 +56,13 @@ $pc = new permissoesController();
       }
       ?>
 
-      <style>
-         /*
-            .sidenav a,
-            .dropdown-btn {
-               padding: 6px 8px 6px 16px;
-               text-decoration: none;
-               font-size: 20px;
-               color: #818181;
-               display: block;
-               border: none;
-               background: none;
-               width: 100%;
-               text-align: left;
-               cursor: pointer;
-               outline: none;
-            }
-
-
-            /* On mouse-over */
-         /*
-            .sidenav a:hover,
-            .dropdown-btn:hover {
-               color: #f1f1f1;
-            }
-            */
-
-
-         /* Add an active class to the active dropdown button */
-         /*
-            .active {
-               background-color: green;
-               color: white;
-            }
-
-            */
-
-         /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
-         .dropdown-container {
-            display: none;
-            background-color: #262626;
-            padding-left: 8px;
-         }
-
-         /* Optional: Style the caret down icon */
-
-         .fa-caret-down {
-            float: right;
-            /*
-               padding-right: 8px;
-               */
-         }
-      </style>
 
       <li><a class="dropdown-btn" href="#">Admin <i class="fa fa-caret-down"></i> </a></li>
       <div class="dropdown-container">
          <?PHP
+                  if ($pc->validaPermissao("M_Categorias", $u_n)) {
+                     echo '<li><a href="categoria_list.php">Categorias</a></li>';
+                  }
          if ($pc->validaPermissao("M_Salas", $u_n)) {
             echo '<li><a href="sala_list.php">Salas</a></li>';
          }
@@ -115,6 +84,7 @@ $pc = new permissoesController();
    </div>
 </div>
 
+
 <script>
    /* Loop through all dropdowns, to toggle between hiding and showing its dropdown content
       This allows to have multiple dropdowns without any conflict */
@@ -124,13 +94,13 @@ $pc = new permissoesController();
    for (i = 0; i < dropdown.length; i++) {
 
       let dentro = dropdown[i].parentNode.nextElementSibling.childNodes;
-      
+
       /* Havendo um elemento <li></li> o array fica com três elementos, pois há sempre um elemento text antes e depois do <li> */
-      if (dentro.length < 3) {         
+      if (dentro.length < 3) {
          dropdown[i].parentNode.style.display = "none";
       };
 
-       dropdown[i].parentNode.addEventListener("click", function () {
+      dropdown[i].parentNode.addEventListener("click", function () {
          this.classList.toggle("active");
          var dropdownContent = this.nextElementSibling;
          if (dropdownContent.style.display === "block") {

@@ -47,8 +47,9 @@ $tabela     = $permissoesController->listar();
                 <thead>
                     <tr>
                         <th style="width:200px;">Nome</th>
-                        <th style="width:70px">User</th>
-                        <th style="width=70px">Admin</th>
+                        <th style="width:70px"><?= $permissoesController->nomeNivel(0, 2) ?></th>
+                        <th style="width:70px"><?= $permissoesController->nomeNivel(1, 2) ?></th>
+                        <th style="width=70px"><?= $permissoesController->nomeNivel(2, 2) ?></th>
                     </tr>
                 </thead>
                 <tbody>

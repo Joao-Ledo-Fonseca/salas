@@ -13,6 +13,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 	$reg_id = $_GET['id'];
 	$sala_id = $_GET['sala_id'];
 	$periodo_id = $_GET['periodo_id'];
+	$usuario_id =$_GET['usuario_id'];
 
 	if ($reg_id > 0) {
 		$row = $reserva->abrirController($reg_id);
@@ -32,6 +33,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		$observacao = '';
 		$periodo = '';
 		$sala = '';
+		$usuario = $_SESSION['user_nome'];		
 
 	}
 
@@ -49,8 +51,9 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		$val++;
 	}
 
-
 	?>
+
+
 	<form name="frm_reserva" id="frm_reserva" onsubmit="return salvaFormularioReserva()">
 
 		<h3> Reserva</h3>
@@ -62,22 +65,27 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		<input type="hidden" name="periodo_id" value="<?= $periodo_id ?>" />
 
 
-		<input type="text" placeholder="dia" name="dia" id="dia" value="<?= $dia ?>"><BR>
+		<input type="text" placeholder="dia" name="dia" id="dia" value="<?= $dia ?>"><BR />
 
-		<input type="text" placeholder="Professor" name="professor" id="professor" value="<?= $professor_desc ?>"><BR>
+		<input type="text" placeholder="Professor" name="professor" id="professor" value="<?= $professor_desc ?>"><BR />
 
-		<input type="text" placeholder="Disciplina" name="disciplina" id="disciplina" value="<?= $disciplina_desc ?>"><BR>
+		<input type="text" placeholder="Disciplina" name="disciplina" id="disciplina" value="<?= $disciplina_desc ?>"><BR />
 
-		<input type="text" placeholder="Observação" name="observacao" id="observacao" value="<?= $observacao ?>"><BR>
-
+		<input type="text" placeholder="Observação" name="observacao" id="observacao" value="<?= $observacao ?>"><BR />
+<br />
 		<select name="status" id="status"><?= $options_status; ?></select><BR>
+		
 
 		<h3> Repetir semanalmente até</h3>
-		<input type="text" placeholder="data final" name="data_final" id="data_final" value=""><BR>
+		<input type="text" placeholder="data final" name="data_final" id="data_final" value=""><BR />
 
 		<input type="button" name="Fechar"  value="Fechar"  onClick="fecharForm()" class="btn1">
 		<input type="button" name="Excluir" value="Excluir" class="btn1" onclick="excluirFormularioReserva(<?= $reg_id ?>)">
 		<input type="submit" name="salvar"  value="Salvar"  class="btn2">
+		<br><br>
+		Reservado por:<br>
+		<input type="text" placeholder="User" name="user" id="user" value="<?= $usuario ?>" disabled><BR />
+		
 	</form>
 	<?php
 

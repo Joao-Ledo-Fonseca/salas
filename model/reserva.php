@@ -19,17 +19,20 @@ class Reserva
 		,a.status
 		,a.observacao
 		,date_format(a.dia,"%d/%m/%Y") as dia
-		
-			
-	 from reserva a
+		,d.nome as usuario
+					
+	 	from reserva a
 	 
-	 inner join periodo b on
-	 a.periodo_id = b.id
+	 	inner join periodo b on
+	 	a.periodo_id = b.id
 	 
-	 inner join sala c on
-	 a.sala_id = c.id
+	 	inner join sala c on
+	 	a.sala_id = c.id
 	 
-	 where a.id = ' . $id;
+		inner join usuario d on
+	 	a.usuario_id = d.id
+
+	 	where a.id = ' . $id;
 
 		return $db->query($sql);
 
@@ -43,13 +46,13 @@ class Reserva
 		$db = new Database();
 
 		$sql = ' select 
-	a.id
+				a.id
 			
-	 from reserva a
+	 			from reserva a
 	 
-	 where a.sala_id =  ' . $sala . '
-	 and a.periodo_id = ' . $periodo . '
-	 and dia = "' . $data->format("Y-m-d") . '"; ';
+	 			where a.sala_id =  ' . $sala . '
+	 			and a.periodo_id = ' . $periodo . '
+	 			and dia = "' . $data->format("Y-m-d") . '"; ';
 
 		return $db->query($sql);
 
@@ -75,7 +78,7 @@ class Reserva
 
 	}
 
-	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo)
+	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo, $usuario)
 	{
 
 		$db = new Database();
@@ -108,6 +111,7 @@ class Reserva
 			 ,disciplina_desc
 			 ,status
 			 ,observacao
+			 ,usuario_id
 			)
 			VALUES
 			(
@@ -116,9 +120,11 @@ class Reserva
 			 ,"' . $data->format("Y-m-d") . '" -- dia - DATE NOT NULL
 			 ,"' . $professor . '" -- professor_desc - VARCHAR(255)
 			 ,"' . $disciplina . '" -- disciplina_desc - VARCHAR(255)
-			 ,' . $status . ' -- status - INT(11) NOT NULL
+			 ,'  . $status . ' -- status - INT(11) NOT NULL
 			 ,"' . $observacao . '" -- observacao - TEXT
+			 ,' . $usuario . ' -- usuario_id - INT(11) NOT NULL
 			) ';
+			
 
 			return $db->query_insert($sql);
 
@@ -139,8 +145,8 @@ class Reserva
 		$res = $db->query($sql);
 		$dia = $res[0]['Min(dia)'];
 
-		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;				
-		
+		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
+
 		$next = new datetime();
 		$next = date_create_from_format('Y-m-d', $dia);
 
@@ -149,7 +155,7 @@ class Reserva
 
 	function prev($hoje)
 	{
-	
+
 		$db = new Database();
 
 		$sql = 'select Max(dia)	
@@ -159,8 +165,8 @@ class Reserva
 		$res = $db->query($sql);
 		$dia = $res[0]['Max(dia)'];
 
-		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;				
-		
+		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
+
 		$prev = new datetime();
 		$prev = date_create_from_format('Y-m-d', $dia);
 
@@ -172,11 +178,11 @@ class Reserva
 
 		$db = new Database();
 
-		$sql = 'select disciplina_desc, nome as sala, dia, status	
+		$sql = 'select disciplina_desc, sala.nome as sala, dia, periodo.nome as periodo, status	
 				from reserva
 				left join sala on sala_id = sala.id
-				order by dia, sala_id';
-
+				left join periodo on periodo_id = periodo.id
+				order by dia, sala_id, periodo.seq';
 
 		return $db->query($sql);
 
