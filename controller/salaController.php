@@ -62,8 +62,7 @@ class salaController
 							<td><a href="sala_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
 							<td>' . $linha['descricao'] . '</td>
 							<td>' . $linha['categoria'] . '</td>
-						</tr>		
-							';
+						</tr>';
 		}
 
 		return $tabela;

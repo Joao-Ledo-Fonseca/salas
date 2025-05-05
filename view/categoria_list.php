@@ -53,8 +53,7 @@ $lista = $categoriaController->listarcontroller();
             <tr>
                <th> id </th>
                <th> Nome </th>
-               <th> Descrição </th>
-               
+               <th> Descrição </th>               
             </tr>
 
          </thead>
