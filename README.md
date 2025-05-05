@@ -11,6 +11,6 @@ Uma reserva é composta por uma data + sala (espaço)  + período (horário) , p
 #Instalação 
 - instalar o servidor web com requisitos solicitados (apache+php+mysql).
 - Rodar o arquivo sgreserva.sql para instalação do banco de dados.
-- configurar sua conexãono com MySQL no arquivo \view\config.php
+- configurar sua conexão no com MySQL no arquivo \view\config.php
 - o primeiro usuário padrão para acesso ao sistema sistema é "teste" com a senha "teste"
 

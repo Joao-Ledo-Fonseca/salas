@@ -97,10 +97,10 @@ if (!isset($id)) {
             </form>
 
         </div>
-        <div class="apar" style="float:right">
+        <div class="apar" style="float:left">
             <?php
             if (strlen($imagem) > 0) {
-                echo '<img src="data:image/jpeg;base64,' . base64_encode($imagem) . '"  width=100% />';
+                echo '<img src="data:image/jpeg;base64,' . base64_encode($imagem) . '"  width=400px />';
                 // echo '<img src="data:'.$tipo_imagem.';base64,'. base64_encode( $imagem ) .'" width=100% />';
                 //echo '<img src="data:'.$tipo_imagem.';base64,'. base64_encode( $imagem )  .'" width=100% />';            
             }
