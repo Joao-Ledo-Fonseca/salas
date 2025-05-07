@@ -18,9 +18,7 @@ class Database
 
 		mysqli_query($this->link, "SET NAMES utf8");
 		$result = mysqli_query($this->link, $sql) or die(mysqli_error($this->link));
-
 		$array_result = array();
-
 
 		//colocar as informações em array
 		while ($row = mysqli_fetch_array($result)) {
@@ -42,10 +40,9 @@ class Database
 
 	function query_update($sql)
 	{
-
 		mysqli_query($this->link, "SET NAMES utf8");
-		if (!mysqli_query($this->link, $sql)) {
-			return mysqli_error($this->link);
+		if (!mysqli_query($this->link, $sql)) {			
+			return mysqli_error($this->link);									
 		}// or die(mysqli_error($this->link));
 
 	}
