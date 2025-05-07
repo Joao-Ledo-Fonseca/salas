@@ -10,17 +10,25 @@ $categoria = $categoriaController->salvar();
 $categoria = $categoriaController->abrir();
 
 if (isset($categoria[0]))
-    extract($categoria[0]);
+    extract($categoria);
 
 
 if (!isset($id)) {
     $id = 0;
     $nome = '';
     $descricao = '';
+    $imagem_id = '';
+
     $nome_img = '';
     $tamanho_img = '';
     $tipo_img = '';
     $imagem = '';
+}
+
+if (isset($_GET['errormsg'])) { 
+    $errormsg = $_GET['errormsg'];
+} else {   
+    $errormsg = '';
 }
 
 ?>
@@ -61,6 +69,7 @@ if (!isset($id)) {
             <form enctype="multipart/form-data" name="form1" method="post" target="_self">
 
                 <input type="hidden" name="id" value="<?= $id ?>" />
+                <input type="hidden" name="imagem_id" value="<?= $imagem_id ?>" />
                 <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
 
                 <table class="tabela_comum" cellpadding="4" cellspacing="4">
@@ -82,7 +91,7 @@ if (!isset($id)) {
                     <tr>
                         <td width="100"> Foto </td>
                         <td>
-                            <div><input name="imagem" type="file" /></div>
+                            <div><input name="imagem" id="newimagem" type="file" onclick="renderizaNovaImagem()"/></div>
                         </td>
                         <td width="30"></td>
                         <td width="100"> </td>
@@ -93,22 +102,38 @@ if (!isset($id)) {
 
                 <input type="submit" name="salvar" value="Salvar" class="btn1" />
                 <input type="submit" name="excluir" value="Excluir" class="btn1" />
+                <span style="color:#900"><?php echo $errormsg; ?></span>
 
             </form>
 
         </div>
-        <div class="apar" style="float:left">
-            <?php
-            if (strlen($imagem) > 0) {
-                echo '<img src="data:image/jpeg;base64,' . base64_encode($imagem) . '"  width=400px />';
-                // echo '<img src="data:'.$tipo_imagem.';base64,'. base64_encode( $imagem ) .'" width=100% />';
-                //echo '<img src="data:'.$tipo_imagem.';base64,'. base64_encode( $imagem )  .'" width=100% />';            
-            }
-
+        <div class="apar">
+            <?php            
+                echo '<img id="imagem" src="data:image/jpeg;base64,' . base64_encode($imagem) . '"  ' . ((strlen($imagem) > 0)?"":"style='display:none'") . 'width=400px ?>';                                                       
             ?>
         </div>
     </div>
 
 </body>
 
+<script>
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#imagem').attr('src', e.target.result);
+            $('#imagem').css('display', 'block');
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#newimagem").change(function(){
+    readURL(this);
+});
+    
+</script>
 </html>

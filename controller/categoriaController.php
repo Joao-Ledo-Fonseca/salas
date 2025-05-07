@@ -2,54 +2,52 @@
 
 require_once "util.php";
 require "../model/categoria.php";
+require "../model/imagem.php";
 
 class categoriaController
 {
 
 	function salvar()
 	{
-
 		if (isset($_POST['salvar'])) {
 			$nome = Util::clearparam($_POST['nome']);
 			$descricao = Util::clearparam($_POST['descricao']);
+			$imagem_id = Util::clearparam($_POST['imagem_id']);
 			$id = Util::clearparam($_POST['id']);
 
-			$imagem = $_FILES['imagem']['tmp_name'];
+			$img_file = $_FILES['imagem']['tmp_name'];
 
-			// Verifica se o ficheiro foi enviado
-			if ($imagem != "none") {
+			// if ($img_file != "") {
 
-				//Verifica se o ficheiro é imagem
-				if (getimagesize($imagem) !== false) {
-					$tamanho_img = $_FILES['imagem']['size'];
-					$tipo_img = $_FILES['imagem']['type'];
-					$nome_img = $_FILES['imagem']['name'];
+			$imagem_lida = Util::imagemUpload($img_file);
 
-					//Lê o ficheiro uploaded
-					$fp = fopen($imagem, "rb");
-					$conteudo = fread($fp, $tamanho_img);
-					$conteudo = addslashes($conteudo);
-					fclose($fp);
 
-				} else {
-					// Se não for uma imagem, não salva
-					$tamanho_img = '';
-					$tipo_img = '';
-					$nome_img = '';
-					$imagem = '';
-					$conteudo = '';
+
+			if (is_array($imagem_lida)) {
+				$imagem = new imagem();
+
+				// Se já existe imagem, exclui
+				if ($imagem_id != 0 && $imagem_id != '') {
+					$imagem->excluir($imagem_id);
 				}
 
-				//
-				if (strlen($nome) > 0) {
+				// Zero no id da imagem, para inserir a nova imagem
+				$imagem_id = 0;
+				$imagem_id = $imagem->salvar($imagem_id, $imagem_lida['nome_img'], $imagem_lida['tamanho_img'], $imagem_lida['tipo_img'], $imagem_lida['conteudo']);
 
-					$categoria = new categoria();
-					$categoria->salvar($id, $nome, $descricao, $nome_img, $tamanho_img, $tipo_img, $conteudo);
-				}
-
-				header("Location: categoria_list.php");
-				exit();
 			}
+			// }			
+
+
+			if (strlen($nome) > 0) {
+
+				$categoria = new categoria();
+				$categoria->salvar($id, $nome, $descricao, $imagem_id);
+			}
+
+			header("Location: categoria_list.php");
+			exit();
+
 		}
 	}
 
@@ -58,9 +56,22 @@ class categoriaController
 
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
+			$imagem_id = Util::clearparam($_POST['imagem_id']);
 
 			$categoria = new categoria();
-			$categoria->excluir($id);
+			$erro = $categoria->excluir($id);
+
+			if (empty($erro)) {
+				$imagem = new imagem();
+				$imagem->excluir($imagem_id);
+			}
+
+			if ($erro) {
+				$errormsg= 'Erro ao excluir a categoria!';
+				
+				header("Location: categoria_form.php?id=" . $id . "&errormsg=" . $errormsg );	
+				exit();
+			} 
 
 			header("Location: categoria_list.php");
 			exit();
@@ -71,13 +82,22 @@ class categoriaController
 
 	function abrir()
 	{
-
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
 			$categoria = new categoria();
+			$cat = $categoria->abrir($_GET['id']);
 
-			return $categoria->abrir($_GET['id']);
+			$imagem_id = $cat[0]['imagem_id'];
 
+			if ($imagem_id != NULL) {
+				$imagem = new imagem();
+				$img = $imagem->abrir($imagem_id);
+			}
+			if (!isset($img[0])) {
+				$img[0] = array('id' => 0, 'nome_imagem' => '', 'tamanho_imagem' => '', 'tipo_imagem' => '', 'imagem' => '');
+			}
+
+			return array_merge($img[0], $cat[0]);
 		}
 	}
 
