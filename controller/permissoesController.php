@@ -12,35 +12,35 @@ class permissoesController
     public $permissoes_defaults = [
         // "nome" => [User, Gestor, Descrição] 
         "M_Categorias" => [true, false, "Activa o Menu de Categorias"],
-        "M_Salas" => [true, false. "Activa o Menu de Salas"],
+        "M_Salas" => [true, false . "Activa o Menu de Salas"],
         "M_Periodos" => [true, false, "Activa o Menu de Períodos"],
         "M_Utilizadores" => [true, false, "Activa o Menu de Utilizadores"],
-        "M_Permissoes" => [true, false, "Activa o Menu de Permissões"], 
+        "M_Permissoes" => [true, false, "Activa o Menu de Permissões"],
         "M_Estatisticas" => [true, false, "Activa o Menu de Estatísticas"],
         "M_Relatorios" => [true, false, "Activa o Menu de Relatórios"],
-        "A_RegNovoUtilizador" => [true, null, "Activa o registo de novos utilizadores no ecrã de login."], 
+        "A_RegNovoUtilizador" => [true, null, "Activa o registo de novos utilizadores no ecrã de login."],
     ];
 
     public $niveis = [
-        0 => array("uexterno","u","User"),  
-        1 => array('uinterno',"g","Gestor"),
-        2 => array("admin","a","Admin"),
-        3 => array("superadmin","sa","SuperAdmin")   //este nivel não tem entradas na BD, e tem TODAS as AUTORIZAÇõES activas.
+        0 => array("uexterno", "u", "User"),
+        1 => array('uinterno', "g", "Gestor"),
+        2 => array("admin", "a", "Admin"),
+        3 => array("superadmin", "sa", "SuperAdmin")   //este nivel não tem entradas na BD, e tem TODAS as AUTORIZAÇõES activas.
     ];
-    
+
 
     //carrega o array global das Permissões salvas na BD
     function __construct()
     {
 
         global $permis_array;
-        
+
         $permissoes = new Permissoes();
         $linhas = $permissoes->listar();
 
         foreach ($linhas as $linha) {
-            $permis_array[$linha["nome"]] =  
-               array($linha[$this->niveis[0][0]], $linha[$this->niveis[1][0]], $linha[$this->niveis[2][0]] ) ;
+            $permis_array[$linha["nome"]] =
+                array($linha[$this->niveis[0][0]], $linha[$this->niveis[1][0]], $linha[$this->niveis[2][0]]);
         }
     }
 
@@ -60,7 +60,7 @@ class permissoesController
         return $valido;
     }
 
-    function nomeNivel($nivel, $tipoNome = 0)    
+    function nomeNivel($nivel, $tipoNome = 0)
     {
         if (array_key_exists($nivel, $this->niveis)) {
             if ($tipoNome == 0) {
@@ -98,12 +98,12 @@ class permissoesController
                     $post_value = $post_value - 2; // o valor do post é 2,3 ou 4, e o array $lista tem os indices 0,1 ou 2.
 
                     if ($post_value == 0) {        // 0 é o utilizador externo
-                        $lista[$post_key][0] = true;                        
+                        $lista[$post_key][0] = true;
                     } else if ($post_value == 1) { // 1 é o gestor
                         $lista[$post_key][1] = true;
                     } else if ($post_value == 2) { // 2 é o admin
-                        $lista[$post_key][2] = true;                        
-                    } 
+                        $lista[$post_key][2] = true;
+                    }
                 }
             }
 
@@ -114,6 +114,7 @@ class permissoesController
             header("Location: permissoes_form.php");
             exit;
         }
+        return false;
     }
 
     // Preencher e verificar base de dados
@@ -132,25 +133,35 @@ class permissoesController
             if (!array_key_exists($linha['nome'], $this->permissoes_defaults)) {
                 $permissoes->excluir($linha['nome']);
             } else {
-                $ctrlBd[$linha['nome']] = $linha['seq'];                
+                $ctrlBd[$linha['nome']] = $linha['seq'];
             }
         }
 
 
         // addiciona na BD as permissões ausentes
         $i = 0;
-        foreach ($this->permissoes_defaults as $default_key => $default_Value) {            
-            if (!in_array($default_key, $ctrlBd)) {  
+        foreach ($this->permissoes_defaults as $default_key => $default_Value) {
+            if (!in_array($default_key, $ctrlBd)) {
                 // se não existe na BD, adiciona
-                $permissoes->salvar($i, $default_key, 
-                        $this->permissoes_defaults[$default_key][0], $this->permissoes_defaults[$default_key][1], 
-                        true, "Insert");
-                $ctrlBd[] = [$default_key=>$i];             
+                $permissoes->salvar(
+                    $i,
+                    $default_key,
+                    $this->permissoes_defaults[$default_key][0],
+                    $this->permissoes_defaults[$default_key][1],
+                    true,
+                    "Insert"
+                );
+                $ctrlBd[] = [$default_key => $i];
             } else if ($i <> $ctrlBd[$default_key]) {
                 // se existe mas tem valor de "seq" diferente, renumera   
-                $permissoes->salvar($i, $default_key, 
-                    $this->permissoes_defaults[$default_key][0], $this->permissoes_defaults[$default_key][1], 
-                    true, "Renumera");
+                $permissoes->salvar(
+                    $i,
+                    $default_key,
+                    $this->permissoes_defaults[$default_key][0],
+                    $this->permissoes_defaults[$default_key][1],
+                    true,
+                    "Renumera"
+                );
             }
             $i++;
         }
@@ -171,16 +182,11 @@ class permissoesController
 
         foreach ($linhas as $linha) {
 
-            $tabela .= '<tr><td>' . $linha[1] . '  </td>';
-
-            for ($i = 2; $i <= 4; $i++) {
-                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha[1] . $i . '" id="' . $linha[1] . $i . '" value=' . $i . ' ' . ($linha[$i] ? "checked" : "") . '>';
-                // $tabela .= '<label for="' . $linha[1] . '" >' . $linha[1] . '</label>' 
-                $tabela .= '</td> ';
-            }
-            //$tabela .= '<td width="30"> </td>';
-            //$tabela .= '<td width="100"> </td>';
-            $tabela .= '</tr>';
+            $tabela .= '<tr><td>' . $linha['nome'] . '  </td>';
+            $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha['nome'] . '2" id="' . $linha['nome'] . '2" value=2 ' . ($linha['uexterno'] ? "checked" : "") . '></td> ';
+            $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha['nome'] . '3" id="' . $linha['nome'] . '3" value=3 ' . ($linha['uinterno'] ? "checked" : "") . '></td> ';
+            $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha['nome'] . '4" id="' . $linha['nome'] . '4" value=4 ' . ($linha['admin'] ? "checked" : "") . '></td> ';
+            $tabela .= '<td></td></tr>';
         }
 
         return $tabela;

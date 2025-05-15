@@ -8,6 +8,12 @@ require "../model/reserva.php";
 class dashboardController
 {
 
+	public $reserva = 'null';
+	function __construct() {
+		
+		$this->reserva = new Reserva();
+	}
+
 	// function que gera o dashboard da index.
 	function gerarTopoController()
 	{
@@ -34,7 +40,8 @@ class dashboardController
 
 		$sl = new sala();
 		$per = new Periodo();
-		$res = new Reserva();
+		//$reserva = new Reserva();
+		 
 
 		$tabela_corpo = '';
 
@@ -55,7 +62,7 @@ class dashboardController
 
 				// checar se esse periodo, nessa sala, nesse dia,  está ocupada.
 
-				$status = $res->verificarCompleto($hoje, $sala['id'], $periodo['id']);
+				$status = $this->reserva->verificarCompleto($hoje, $sala['id'], $periodo['id']);
 
 				if (isset($status[0]['id'])) {
 					if ($status[0]['status'] == 1)
@@ -77,7 +84,7 @@ class dashboardController
 				}
 
 				// Se for um usuario com nivel usuario, só pode alterar as reservas próprias
-				// Os restantes podem ver todas as reservas				
+				// Os restantes podem alterar todas as reservas				
 				if ($_SESSION['user_nivel'] == 0) {
 					$accao = ((($_SESSION["user_id"] == $id_usuario) || ($id_usuario == "")) ? 'onClick="abreReserva(this)"' : '""');
 				} else {
@@ -96,23 +103,26 @@ class dashboardController
 	}
 
 	// Lista de todas as reservas 
-	function listaReservasController()
+	function listaReservasController($hoje = null, $tipo='m')
 	{
-		$res = new Reserva();
-		$row1 = $res->listaReservas();
-
+				
+		// $reserva = new Reserva();
+		$rows = $this->reserva->listaReservas($hoje, $tipo);
+		
 		$tabela = '';
-		foreach ($row1 as $row) {
-			$dia = date_create_from_format('Y-m-d', $row['dia'])->format('d/m/Y');
-			$tabela .= '<tr>
-			<td> </td>
+		foreach ($rows as $row) {
+			// $dia = date_create_from_format('Y-m-d', $row['dia'])->format('d/m/Y');
+			$tabela .= 
+			'<tr>	
+			<td>' . $row['categoria'] . '</td> 		
 			<td>' . $row['sala'] . '</td>
 			<td width="300">' . $row['disciplina_desc'] . ' </td>
-			<td><a href=index.php?data=' . date_create_from_format('Y-m-d', $row['dia'])->format('d/m/Y') . '>' . date_create_from_format('Y-m-d', $row['dia'])->format('d-m-Y') . '</a> </td>
+			<td><a href=index.php?data=' . urlencode( date_create_from_format('Y-m-d', $row['dia'])->format('D d/m/Y') ). '>' . date_create_from_format('Y-m-d', $row['dia'])->format('d-m-Y') . '</a> </td>
 			<td>' . $row['periodo'] . '</td>
 			<td>' . $row['status'] . '</td>
 			</tr>';
 		}
+		
 		return $tabela;
 	}
 
@@ -121,9 +131,8 @@ class dashboardController
 	// relatorio de disciplina com mais reservas
 	function disciplinaMaisReservasController()
 	{
-		$res = new Reserva();
-
-		$row1 = $res->disciplinaMaisReservas();
+		$reserva = new Reserva();
+		$row1 = $reserva->disciplinaMaisReservas();
 
 		$tabela = '';
 		foreach ($row1 as $row) {
@@ -137,7 +146,6 @@ class dashboardController
 
 		return $tabela;
 	}
-
 
 
 
@@ -162,11 +170,10 @@ class dashboardController
 
 	function totalReservasController()
 	{
-		$reserva = new Reserva();
-
+		// $reserva = new Reserva();
 		$hoje = new DateTime();
 
-		$reservas = $reserva->totalReservasMes($hoje);
+		$reservas = $this->reserva->totalReservasMes($hoje);
 
 		$total_reservas = $reservas[0]['total'];
 
@@ -178,16 +185,16 @@ class dashboardController
 	function prevController($dia)
 	{
 
-		$reserva = new Reserva();
-		return $reserva->prev($dia);
+		// $reserva = new Reserva();
+		return $this->reserva->prev($dia);
 
 	}
 
 	function nextController($dia)
 	{
 
-		$reserva = new Reserva();
-		return $reserva->next($dia);
+		// $reserva = new Reserva();
+		return $this->reserva->next($dia);
 
 	}
 

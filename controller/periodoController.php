@@ -5,74 +5,81 @@ require "../model/periodo.php";
 
 class periodoController
 {
-	
+
 	function salvar()
 	{
-		if(isset($_POST['salvar']))
-		{
+		if (isset($_POST['salvar'])) {
 			$id = Util::clearparam($_POST['id']);
 			$seq = Util::clearparam($_POST['seq']);
 			$nome = Util::clearparam($_POST['nome']);
-			
+
 
 			if (strlen($nome) > 0) {
 				$periodo = new Periodo();
-				$periodo->salvar($id,$nome, $seq);
+				$periodo->salvar($id, $nome, $seq);
 			}
 			header("Location: periodo_list.php");
 			exit();
 		}
+		return false;
 	}
-	
-	function excluir()
+
+	function cancelar()
 	{
-		
-		if(isset($_POST['excluir']))
-		{
-			$id = Util::clearparam($_POST['id']);
-			
-			$periodo = new Periodo();
-			$periodo->excluir($id);
-		
+		if (isset($_POST['cancelar'])) {
+
 			header("Location: periodo_list.php");
 			exit();
-				
 		}
-
+		return false;
 	}
-	
+
+
+	function excluir()
+	{
+
+		if (isset($_POST['excluir'])) {
+			$id = Util::clearparam($_POST['id']);
+
+			$periodo = new Periodo();
+			$periodo->excluir($id);
+
+			header("Location: periodo_list.php");
+			exit();
+
+		}
+		return false;
+	}
+
 	function abrir()
 	{
-		
-		if(isset($_GET['id']) && is_numeric($_GET['id']))
-		{
+
+		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 			$periodo = new Periodo();
-			return $periodo->abrir( $_GET['id']);
-		}	
-		
+			return $periodo->abrir($_GET['id']);
+		}
+
 	}
 
 	// listagem
 	function listarcontroller()
 	{
-		
-		$periodo = new Periodo();	
+
+		$periodo = new Periodo();
 		$linhas = $periodo->listar();
-		
+
 		$tabela = '';
-		foreach($linhas as $linha)
-		{
+		foreach ($linhas as $linha) {
 			// 
-			$tabela .= '<tr>
-							<td>'.$linha['id'].'</td>
-							<td>'.$linha['seq'].'</td>
-							<td><a href="periodo_form.php?id='.$linha['id'].'">'.$linha['nome'].'</a></td>
-						</tr>';
+			$tabela .= '<tr><td><a href="periodo_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
+							<td>' . $linha['seq'] . '</td>							
+							<td>' . $linha['id'] . '</td>
+							<td></td></tr>';
 		}
-		
+
 		return $tabela;
 	}
-	
+
 }
 
 ?>

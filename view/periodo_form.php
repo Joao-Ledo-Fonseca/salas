@@ -4,7 +4,7 @@ require_once "seguranca.php";
 require_once "../controller/periodoController.php";
 
 $periodoController = new periodoController();
-
+$periodo = $periodoController->cancelar();
 $periodo = $periodoController->excluir();
 $periodo = $periodoController->salvar();
 $periodo = $periodoController->abrir();
@@ -50,34 +50,41 @@ if (!isset($id)) {
 
         <h3> Cadastro de Períodos </h3>
 
-        <form name="form1" method="post" target="_self">
-
-            <input type="hidden" name="id" value="<?= $id ?>" />
-
-            <table class="tabela_comum" cellpadding="4" cellspacing="4">
-                <tr>
-                    <td width="100"> Nome </td>
-                    <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
-                    <td width="30"> </td>
-                    <td width="100"> </td>
-                    <td> </td>
-                </tr>
-                <tr>
-                    <td width="100"> Seq </td>
-                    <td><input type="number" name="seq" value="<?= $seq ?>" /> </td>
-                    <td width="30"> </td>
-                    <td width="100"> </td>
-                    <td> </td>
-                </tr>
-            </table>
+        <div class="container_conteudo lista_comum">
 
 
-            <input type="submit" name="salvar" value="Salvar" class="btn1" />
+            <form name="form1" method="post" target="_self">
 
-            <input type="submit" name="excluir" value="Excluir" class="btn1" />
+                <input type="hidden" name="id" value="<?= $id ?>" />
 
-        </form>
+                <table class="tabela_comum" cellpadding="4" cellspacing="4">
+                    <tr>
+                        <td width="100"> Nome </td>
+                        <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
+                        <td width="30"> </td>
+                        <td width="100"> </td>
+                        <td> </td>
+                    </tr>
+                    <tr>
+                        <td width="100"> Seq </td>
+                        <td><input type="number" name="seq" value="<?= $seq ?>" /> </td>
+                        <td width="30"> </td>
+                        <td width="100"> </td>
+                        <td> </td>
+                    </tr>
+                </table>
 
+                <br>
+                <div class="form_sel lista_comum">
+
+                    <input type="submit" name="salvar" value="Salvar" class="btn1" />
+                    <input type="submit" name="excluir" value="Excluir" class="btn1" />
+                    <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar"
+                            style="display:inline" onclick="cancelaInputsRequired()" />
+                </div>
+            </form>
+
+        </div>
     </div>
 
 </body>

@@ -100,9 +100,7 @@ class Reserva
 		}
 		// salvar novo registro
 		else {
-			$sql = '
-			
-			INSERT INTO reserva
+			$sql = 'INSERT INTO reserva
 			(
 			 sala_id
 			 ,periodo_id
@@ -120,11 +118,11 @@ class Reserva
 			 ,"' . $data->format("Y-m-d") . '" -- dia - DATE NOT NULL
 			 ,"' . $professor . '" -- professor_desc - VARCHAR(255)
 			 ,"' . $disciplina . '" -- disciplina_desc - VARCHAR(255)
-			 ,'  . $status . ' -- status - INT(11) NOT NULL
+			 ,' . $status . ' -- status - INT(11) NOT NULL
 			 ,"' . $observacao . '" -- observacao - TEXT
 			 ,' . $usuario . ' -- usuario_id - INT(11) NOT NULL
 			) ';
-			
+
 
 			return $db->query_insert($sql);
 
@@ -173,17 +171,37 @@ class Reserva
 		return $prev;
 	}
 
-	function listaReservas()
+	function listaReservas($dia = null, $tipo = 'm')
 	{
-
 		$db = new Database();
 
-		$sql = 'select disciplina_desc, sala.nome as sala, dia, periodo.nome as periodo, status	
-				from reserva
-				left join sala on sala_id = sala.id
-				left join periodo on periodo_id = periodo.id
-				order by dia, sala_id, periodo.seq';
+		// Define o filtro padrão como o mês atual, se não for fornecido
+		if (is_null($dia))
+			$dia = new dateTime();
 
+
+		if ($tipo == 'm') {   // m - mês ; w - week
+			// Verifica se o filtro é uma data válida		
+			$data_filtro = $dia->format('Ym');
+			$filtro = 'EXTRACT(YEAR_MONTH FROM dia)';
+		} else {
+			$data_filtro = $dia->format('WY');
+			$filtro = 'CONCAT(EXTRACT(WEEK FROM dia),EXTRACT(YEAR FROM dia))';			
+		}
+
+		// Consulta corrigida com a cláusula WHERE antes do ORDER BY e uso de parâmetros
+		$sql = ' SELECT '. $filtro .' as data, categoria.nome AS categoria, sala.nome AS sala, disciplina_desc, dia, periodo.nome AS periodo, status
+            FROM reserva
+            LEFT JOIN sala ON sala_id = sala.id
+            LEFT JOIN periodo ON periodo_id = periodo.id
+            LEFT JOIN categoria ON sala.categoria_id = categoria.id
+            WHERE    '.$filtro .' = "' . $data_filtro . '" 
+			            ORDER BY dia, categoria, sala, periodo.seq';
+
+		// var_dump($tipo, $dia, $filtro, $data_filtro, $sql);
+		// exit;
+
+		// Executa a consulta com o parâmetro
 		return $db->query($sql);
 
 	}

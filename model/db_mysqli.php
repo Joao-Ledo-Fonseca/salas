@@ -15,15 +15,14 @@ class Database
 	function query($sql)
 	{
 
-
 		mysqli_query($this->link, "SET NAMES utf8");
 		$result = mysqli_query($this->link, $sql) or die(mysqli_error($this->link));
+				
 		$array_result = array();
-
 		//colocar as informações em array
-		while ($row = mysqli_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {					
 			$array_result[] = $row;
-		}
+		}		
 
 		return $array_result;
 	}

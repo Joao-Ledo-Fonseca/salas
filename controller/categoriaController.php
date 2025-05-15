@@ -10,18 +10,17 @@ class categoriaController
 	function salvar()
 	{
 		if (isset($_POST['salvar'])) {
+			$id = Util::clearparam($_POST['id']);
 			$nome = Util::clearparam($_POST['nome']);
 			$descricao = Util::clearparam($_POST['descricao']);
 			$imagem_id = Util::clearparam($_POST['imagem_id']);
-			$id = Util::clearparam($_POST['id']);
+
 
 			$img_file = $_FILES['imagem']['tmp_name'];
 
 			// if ($img_file != "") {
 
 			$imagem_lida = Util::imagemUpload($img_file);
-
-
 
 			if (is_array($imagem_lida)) {
 				$imagem = new imagem();
@@ -36,11 +35,9 @@ class categoriaController
 				$imagem_id = $imagem->salvar($imagem_id, $imagem_lida['nome_img'], $imagem_lida['tamanho_img'], $imagem_lida['tipo_img'], $imagem_lida['conteudo']);
 
 			}
-			// }			
 
 
 			if (strlen($nome) > 0) {
-
 				$categoria = new categoria();
 				$categoria->salvar($id, $nome, $descricao, $imagem_id);
 			}
@@ -49,6 +46,7 @@ class categoriaController
 			exit();
 
 		}
+		return false;
 	}
 
 	function excluir()
@@ -67,23 +65,32 @@ class categoriaController
 			}
 
 			if ($erro) {
-				$errormsg= 'Erro ao excluir a categoria!';
-				
-				header("Location: categoria_form.php?id=" . $id . "&errormsg=" . $errormsg );	
+				$errormsg = 'Erro ao excluir a categoria!';
+
+				header("Location: categoria_form.php?id=" . $id . "&errormsg=" . $errormsg);
 				exit();
-			} 
+			}
 
 			header("Location: categoria_list.php");
 			exit();
 
 		}
+		return false;
+	}
 
+	function cancelar()
+	{
+		if (isset($_POST['cancelar'])) {
+
+			header("Location: categoria_list.php");
+			exit();
+		}
+		return false;
 	}
 
 	function abrir()
 	{
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-
 			$categoria = new categoria();
 			$cat = $categoria->abrir($_GET['id']);
 
@@ -99,6 +106,7 @@ class categoriaController
 
 			return array_merge($img[0], $cat[0]);
 		}
+		return false;
 	}
 
 	// listagem
@@ -109,25 +117,45 @@ class categoriaController
 		$linhas = $categoria->listar();
 
 		if ($tipo == 'tabela') {
-
-			$tabela = '';
+			$categorias = '';
 			foreach ($linhas as $linha) {
 
-				$tabela .= '<tr><td>' . $linha['id'] . '</td>
+				$categorias .= '<tr>								
 								<td><a href="categoria_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
 								<td>' . $linha['descricao'] . '</td>
+								<td>' . $linha['id'] . '</td>
+								<td></td>
 							</tr>';
 			}
 		} else {
-			$tabela = array();
-			foreach ($linhas as $linha) {
-				$tabela[] = $linha['nome'];
-			}
+			$categorias = $linhas;
 		}
 
-		return $tabela;
+		return $categorias;
 	}
 
+	function optionsCategoria($todas = false, $selected_nome = '', $selected_id = '')
+	{
+		$categoria = new categoria();
+		$linhas = $categoria->listar();
+
+		$options = '';
+
+		// Adiciona a opção "Todas" se necessário
+		if ($todas) {
+			$options .= '<option value="todas"' . ($selected_nome === "todas" ? " selected" : "") . '>Todas</option>';
+		}
+
+		// Gera as opções com base nas categorias
+		foreach ($linhas as $linha) {
+			$selected = ($linha['id'] == $selected_id || $linha['nome'] == $selected_nome) ? ' selected' : '';
+
+			$value = $todas ? $linha['nome'] : $linha['id'];
+			$options .= '<option value="' . $value . '"' . $selected . '>' . $linha['nome'] . '</option>';
+		}
+
+		return $options;
+	}
 
 }
 

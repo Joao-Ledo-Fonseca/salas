@@ -41,26 +41,32 @@ $lista = $usuarioController->listarcontroller();
 
         <h3>Lista de Utilizadores</h3>
 
-        <input type="button" name="novo" value="novo" class="btn1" onclick="abre('usuario_form.php')" />
+        <div class="container_top lista_comum">
+            <div class="form_sel">
+                <input type="button" name="novo" value="novo" class="btn1" onclick="abre('usuario_form.php')" />
+            </div>
+        </div>
+        <div class="container_conteudo lista_comum">
 
-        <table class="lista_comum" cellpadding="4" cellspacing="4">
-            <thead>
-                <tr>
-                    <th> id </th>
-                    <th> Nome </th>
-                    <th> E-mail </th>
-                    <th> Nível</th>
-                </tr>
-            </thead>
+            <table cellpadding="4" cellspacing="4">
+                <thead>
+                    <tr>
+                        <th width="150px"> Nome </th>
+                        <th> E-mail </th>
+                        <th width="100px"> Nível</th>
+                        <th width="50px"> id </thwidth>
+                        <th></th>
+                    </tr>
+                </thead>
 
-            <tbody>
+                <tbody>
 
-                <?= $lista ?>
+                    <?= $lista ?>
 
-            </tbody>
+                </tbody>
 
-        </table>
-
+            </table>
+        </div>
     </div>
 
 </body>

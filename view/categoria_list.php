@@ -22,16 +22,16 @@ $lista = $categoriaController->listarcontroller();
    <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
 
    <script src="js/lib.js"></script>
+   <title>Cadastro de Categorias</title>
 
 </head>
 
-<title>Cadastro de Categorias</title>
+
 
 <body>
 
    <!-- form -->
    <div class="form">
-
    </div>
 
 
@@ -41,32 +41,30 @@ $lista = $categoriaController->listarcontroller();
    <!-- conteudo -->
 
    <div class="corpo">
-
       <h3> Cadastro de Categorias </h3>
+      <div class="container_top lista_comum">
+         <form class="form_sel" name="form1" method="post" target="_self">
+            <span style="float:left;">
+               <input type="button" name="novo" value="novo" class="btn1" onclick="abre('categoria_form.php')">
+            </span>
+      </div>
 
-      <input type="button" name="novo" value="novo" class="btn1" onclick="abre('categoria_form.php')" />
+      <div class="container_conteudo lista_comum">
+         <table cellpadding="4" cellspacing="4">
+            <thead>
+               <tr>
+                  <th> Nome </th>
+                  <th> Descrição </th>
+                  <th> id </th>
+                  <th></th>
+               </tr>
+            </thead>
+            <tbody>
+               <?= $lista ?>
+            </tbody>
+         </table>
 
-      <table class="lista_comum" cellpadding="4" cellspacing="4">
-
-         <thead>
-
-            <tr>
-               <th> id </th>
-               <th> Nome </th>
-               <th> Descrição </th>               
-            </tr>
-
-         </thead>
-
-         <tbody>
-
-            <?= $lista ?>
-
-         </tbody>
-
-      </table>
-
-   </div>
+      </div>
 </body>
 
 </html>

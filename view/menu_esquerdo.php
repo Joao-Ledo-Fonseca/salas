@@ -3,33 +3,10 @@ require_once "../controller/permissoesController.php";
 $pc = new permissoesController();
 ?>
 
-<style>
-   /* Dropdown container (hidden by default). 
-      Optional: add a lighter background color and some left padding 
-      to change the design of the dropdown content */
-
-   .dropdown-container {
-      display: none;
-      background-color: #262626;
-      padding-left: 8px;
-   }
-
-   /* Optional: Style the caret down icon */
-   .fa-caret-down {
-      float: right;
-      /*
-      padding-right: 8px;
-      */
-   }
-</style>
-
 <div class="menu">
 
    <div class="user">
-
       <?PHP
-
-
       $u_n = $_SESSION['user_nivel'];
       $id_u = $_SESSION['user_nome'] . ' ';           
       $id_u .= '(' . $pc->nomeNivel($u_n, 1) . ')';     // 1-para mostrar abreviatura do nível
@@ -57,7 +34,8 @@ $pc = new permissoesController();
       ?>
 
 
-      <li><a class="dropdown-btn" href="#">Admin <i class="fa fa-caret-down"></i> </a></li>
+      <!-- <li><a class="dropdown-btn" href="#">Admin <i class="fa fa-caret-down"></i> </a></li> -->
+      <li><a class="dropdown-btn" href="#">Admin <img src="./img/caret-down.png" width="13"></im> </a></li>
       <div class="dropdown-container">
          <?PHP
                   if ($pc->validaPermissao("M_Categorias", $u_n)) {

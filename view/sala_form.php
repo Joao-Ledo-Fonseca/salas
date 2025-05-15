@@ -1,21 +1,44 @@
-﻿<?php
-
+﻿<?php 
 require_once "seguranca.php";
 require_once "../controller/salaController.php";
+require_once "../controller/categoriaController.php";
 
 $salaController = new salaController();
-
+$sala = $salaController->cancelar();
 $sala = $salaController->excluir();
 $sala = $salaController->salvar();
 $sala = $salaController->abrir();
-if (isset($sala[0]))
-    extract($sala[0]);
 
+
+
+
+if (isset($sala['id'])) {        
+    extract($sala);
+}
+    
 if (!isset($id)) {
     $id = 0;
     $nome = '';
     $descricao = '';
+	$categoria_nome = (isset($_GET['categoria'])? Util::clearparam($_GET['categoria']) : '');       
+    $categoria_id = '';
+    $imagem_id = '';
+
+    $nome_img = '';
+    $tamanho_img = '';
+    $tipo_img = '';
+    $imagem = '';
 }
+
+
+if (isset($_GET['errormsg'])) {
+    $errormsg = $_GET['errormsg'];
+} else {
+    $errormsg = '';
+}
+
+$categoriaController = new categoriaController();
+$categorias = $categoriaController->listarController('id_nomes');
 
 ?>
 <!DOCTYPE html
@@ -37,10 +60,12 @@ if (!isset($id)) {
     <script src="js/lib.js"></script>
 
 </head>
+
 <title>Cadastro de salas</title>
 
 <body>
 
+                
     <!-- menu esquerdo -->
     <?php include "menu_esquerdo.php"; ?>
 
@@ -49,32 +74,87 @@ if (!isset($id)) {
 
         <h3> Cadastro de Salas </h3>
 
+        <div class="container">
+            <div class="a_par">
 
-        <form name="form1" method="post" target="_self">
-            <input type="hidden" name="id" value="<?= $id ?>" />
-            <table class="tabela_comum" cellpadding="4" cellspacing="4">
-                <tr>
-                    <td width="100"> Nome </td>
-                    <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
-                    <td width="30"></td>
-                    <td width="100"> </td>
-                    <td> </td>
-                </tr>
-                <tr>
-                    <td width="100"> Descrição </td>
-                    <td><input type="text" name="descricao" value="<?= $descricao ?>" /> </td>
-                    <td width="30"></td>
-                    <td width="100"> </td>
-                    <td> </td>
-                </tr>
-            </table>
-            <input type="submit" name="salvar" value="Salvar" class="btn1" />
-            <input type="submit" name="excluir" value="Excluir" class="btn1" />
+                <form enctype="multipart/form-data" name="form1" method="post" target="_self">
+                    
+                    <input type="hidden" name="id" value="<?= $id ?>" />
+                    <input type="hidden" name="imagem_id" value="<?= $imagem_id ?>" />
+                    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
+                    
+                    <table class="tabela_comum" cellpadding="4" cellspacing="4">
+                        <tr>
+                            <td width="100"> Nome </td>
+                            <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
+                            <td width="30"></td>
+                            <td width="100"> </td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td width="100"> Descrição </td>
+                            <td><input type="text" name="descricao" value="<?= $descricao ?>" /> </td>
+                            <td width="30"></td>
+                            <td width="100"> </td>
+                            <td> </td>
+                        </tr>
+                        <td width="100"> Categoria </td>
+                        <td>
+                            <select name="categoria_id" style="width:200px" id="selecao">
+                                <?= $categoriaController->optionsCategoria(false, $categoria_nome); ?>;
+                            </select>
+                        </td>
+                        <tr>
+                            <td width="100"> Foto </td>
+                            <td>
+                                <div>
+                                    <label for="newimagem" class="custom-file-upload btn1">Ficheiro</label>
+                                    <input name="imagem" id="newimagem" type="file" onclick="renderizaNovaImagem()" />
+                                </div>
+                            </td>
+                            <td width="30"></td>
+                            <td width="100"> </td>
+                            <td> </td>
+                        </tr>
 
-        </form>
+                        <td width="100"> </td>
+                        <td> </td>
+                    </table>
+                    <input type="submit" name="salvar" value="Salvar" class="btn1" />
+                    <input type="submit" name="excluir" value="Excluir" class="btn1" />
+                    <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar" style="float:inline"
+                    onclick="cancelaInputsRequired()" />                            
 
+                </form>                
+            </div>
+            <div class="apar">
+                <?php
+                echo '<img id="imagem" src="data:image/jpeg;base64,' . base64_encode($imagem) . '"  ' . ((strlen($imagem) > 0) ? "" : "style='display:none'") . 'width=400px ?>';
+                ?>
+            </div>
+        </div>
     </div>
 
 </body>
+<script>
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imagem').attr('src', e.target.result);
+                $('#imagem').css('display', 'block');
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#newimagem").change(function () {
+        readURL(this);
+    });
+
+</script>
 
 </html>

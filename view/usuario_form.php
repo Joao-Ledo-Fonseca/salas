@@ -75,67 +75,71 @@ if (!isset($id)) {
 
         <h3>Perfil de utilizador</h3>
 
-        <form name="form1" method="post" target="_self">
 
-            <input type="hidden" name="id" value="<?= $id ?>" />
+        <div class="container_conteudo lista_comum">
 
-            <table class="tabela_comum" cellpadding="4" cellspacing="4">
+            <form name="form1" method="post" target="_self">
 
-                <tr>
-                    <td width="100"> Nome </td>
-                    <td><input type="text" name="nome" value="<?= $nome ?>" required /> </td>
-                </tr>
-                <tr>
-                    <!-- <td width="30"></td> -->
-                    <td width="100"> E-mail</td>
-                    <td> <input type="email" name="email" value="<?= $email ?>" /></td>
-                </tr>
-                <tr>
-                    <td width="100"> Senha </td>
-                    <td><input type="password" name="senha" value="<?= $senha ?>" /> </td>
-                </tr>
+                <input type="hidden" name="id" value="<?= $id ?>" />
 
-                <tr>
-                    <td width="100"> Telefone </td>
-                    <td><input type="text" name="telefone" value="<?= $telefone ?>" /> </td>
-                </tr>
+                <table class="tabela_comum" cellpadding="4" cellspacing="4">
 
-                <tr>
-                    <td width="100"> NIF </td>
-                    <td><input type="text" name="NIF" value="<?= $NIF ?>" /> </td>
-                </tr>
+                    <tr>
+                        <td width="100"> Nome </td>
+                        <td><input type="text" name="nome" value="<?= $nome ?>" required /> </td>
+                    </tr>
+                    <tr>
+                        <!-- <td width="30"></td> -->
+                        <td width="100"> E-mail</td>
+                        <td> <input type="email" name="email" value="<?= $email ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td width="100"> Senha </td>
+                        <td><input type="password" name="senha" value="<?= $senha ?>" /> </td>
+                    </tr>
 
-                <tr id="permissoes">
-                    <!-- <td width="30"></td> -->
-                    <td width="100">Nivel</td>
-                    <td>
+                    <tr>
+                        <td width="100"> Telefone </td>
+                        <td><input type="text" name="telefone" value="<?= $telefone ?>" /> </td>
+                    </tr>
 
-                        <select style="width:150px" name="nivel" id="nivel">
-                            <?php
-                            $numNiveis = count($pc->niveis) - 1;
-                            $highNivel = min($numNiveis, $_SESSION['user_nivel']);
+                    <tr>
+                        <td width="100"> NIF </td>
+                        <td><input type="text" name="NIF" value="<?= $NIF ?>" /> </td>
+                    </tr>
 
-                            for ($i = 0; $i <= $highNivel; $i++) { // para um utilizador só aparecem niveis iguais ou inferiores ao seu nivel
-                                if ($nivel == $i) {
-                                    echo "<option value='$i' selected>" . $pc->nomeNivel($i, 2). " (" .$pc->nomeNivel($i, 1) . ")" . "</option>";
-                                } else {
-                                    echo "<option value='$i'>" . $pc->nomeNivel($i, 2) . " (" .$pc->nomeNivel($i, 1) . ")" . "</option>";
+                    <tr id="permissoes">
+                        <!-- <td width="30"></td> -->
+                        <td width="100">Nivel</td>
+                        <td>
+
+                            <select style="width:150px" name="nivel" id="nivel">
+                                <?php
+                                $numNiveis = count($pc->niveis) - 1;
+                                $highNivel = min($numNiveis, $_SESSION['user_nivel']);
+
+                                for ($i = 0; $i <= $highNivel; $i++) { // para um utilizador só aparecem niveis iguais ou inferiores ao seu nivel
+                                    if ($nivel == $i) {
+                                        echo "<option value='$i' selected>" . $pc->nomeNivel($i, 2) . " (" . $pc->nomeNivel($i, 1) . ")" . "</option>";
+                                    } else {
+                                        echo "<option value='$i'>" . $pc->nomeNivel($i, 2) . " (" . $pc->nomeNivel($i, 1) . ")" . "</option>";
+                                    }
                                 }
-                            };
-                            ?>
-                        </select>
-                    </td>
-                </tr>
+                                ;
+                                ?>
+                            </select>
+                        </td>
+                    </tr>
 
-            </table>
+                </table>
 
-            <input type="submit" name="salvar" value="Salvar" class="btn1" />
-            <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar" style="display:inline"
-                onclick="cancelaInputsRequired()" />
-            <input type="submit" name="excluir" value="Excluir" class="btn1" id="excluir" style="display:inline" />
+                <input type="submit" name="salvar" value="Salvar" class="btn1" />
+                <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar" style="display:inline"
+                    onclick="cancelaInputsRequired()" />
+                <input type="submit" name="excluir" value="Excluir" class="btn1" id="excluir" style="display:inline" />
 
-        </form>
-
+            </form>
+        </div>
     </div>
 
 </body>

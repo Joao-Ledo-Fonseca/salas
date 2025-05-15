@@ -7,61 +7,59 @@ $periodoController = new periodoController();
 $lista = $periodoController->listarcontroller();
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!DOCTYPE html>
+<html lang="pt-PT">
+
 <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<script src="js/jquery.js"></script>
-   		<script src="js/jquery.datetimepicker.full.js"></script>
-        <script src="js/dateformat.js"></script>
-        
-        <!-- <link href="css/select2.min.css" rel="stylesheet" /> -->
-        <link rel="stylesheet" type="text/css" href="css/estilo.css">
-        <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
-        
-		<!-- <script src="js/select2.min.js"></script> -->
-  	 <script src="js/lib.js"></script>
-     
-     </head>
-     <title>Cadastro de Períodos</title>
-     <body>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.datetimepicker.full.js"></script>
+    <script src="js/dateformat.js"></script>
 
-<!-- form -->
-<div class="form">
+    <link rel="stylesheet" type="text/css" href="css/estilo.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
 
-</div>
+    <script src="js/lib.js"></script>
 
+    <title>Cadastro de Períodos</title>
+</head>
 
-<!-- menu esquerdo -->
-<?php include "menu_esquerdo.php"; ?>
+<body>
 
-<!-- conteudo -->
-<div class="corpo">
+    <!-- form -->
+    <div class="form">
+    </div>
 
-<h3> Cadastro de Períodos </h3>
+    <!-- menu esquerdo -->
+    <?php include "menu_esquerdo.php"; ?>
 
-<input type="button" name="novo" value="novo" class="btn1" onclick="abre('periodo_form.php')" />
+    <!-- conteudo -->
+    <div class="corpo">
+        <h3>Cadastro de Períodos</h3>
+        <div class="container_top lista_comum">
+            <div class="form_sel">
+                <input type="button" name="novo" value="novo" class="btn1" onclick='abre("periodo_form.php")'>
+            </div>
+        </div>
+        <div class="container_conteudo lista_comum">
+            <table style="border-spacing: 4px; padding: 4px;">
+                <thead>
+                    <tr>
+                        <th> Nome </th>
+                        <th> Sequência </th>
+                        <th> id </th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?= $lista ?>
+                </tbody>
+            </table>
 
-<table class="lista_comum" cellpadding="4" cellspacing="4">
-
-<thead>
-    <tr>
-        <th> id </th>
-        <th> Sequência </th>
-        <th> Nome </th>
-	</tr>
-</thead>
-
-<tbody>
-
-<?= $lista ?>
-
-</tbody>
-
-</table>
-
-</div>
-
+        </div>
 </body>
+
 </html>

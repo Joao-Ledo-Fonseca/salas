@@ -4,8 +4,6 @@ function getVisible() {
 	// configurar a altura da div para nao dar scroll
 	$(".tabelarow").css("height", window.innerHeight - 120);
 	$(".form").css("height", window.innerHeight - 30);
-
-
 }
 
 
@@ -35,7 +33,8 @@ function abreReserva(o) {
 			dataType: 'html',
 			success: function (response) {
 
-				$(".corpo").css("max-width", "calc(100% - 510px)");
+				// a tabela de reservas já não estica e encolhe para comodar o form
+				// $(".corpo").css("max-width", "calc(100% - 510px)"); 
 
 				$('.form').show("fast", "", function () {
 
@@ -60,13 +59,14 @@ function abreReserva(o) {
 
 function fecharForm() {
 	$('.form').hide("fast", "", function () {
-		$(".corpo").css("max-width", "calc(100% - 180px)");
+		// a tabela de reservas já não estica e encolhe para comodar o form
+		// $(".corpo").css("max-width", "calc(100% - 180px)");
 		$(".corpo td").css("background-color", "");	
 		$(".corpo td").css("color", "black");	
 	});
 }
 
-
+// ???
 var salvando = false;
 
 function salvaFormularioReserva() {
@@ -86,7 +86,7 @@ function salvaFormularioReserva() {
 
 			// recarregar pagina no dia atual.
 			if ($.isNumeric(response))
-				window.location.href = "index.php?data=" + data;
+				window.location.href = "index.php?data=" + data_pt;
 			else {
 				alert(response);
 				salvando = false;
@@ -111,7 +111,7 @@ function excluirFormularioReserva(id) {
 			success: function (response) {
 				// recarregar pagina no dia atual.
 				if ($.isNumeric(response))
-					window.location.href = "index.php?data=" + data;
+					window.location.href = "index.php?data=" + data_pt;
 				else
 					alert(response)
 			}

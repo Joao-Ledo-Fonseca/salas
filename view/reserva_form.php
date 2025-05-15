@@ -83,8 +83,8 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		<input type="button" name="Excluir" value="Excluir" class="btn1" onclick="excluirFormularioReserva(<?= $reg_id ?>)">
 		<input type="submit" name="salvar"  value="Salvar"  class="btn2">
 		<br><br>
-		Reservado por:<br>
-		<input type="text" placeholder="User" name="user" id="user" value="<?= $usuario ?>" disabled><BR />
+		Registado por: <span class="input"><?= $usuario ?></span>
+		<input type="text" placeholder="User" name="user" id="user" value="<?= $usuario ?>" disabled><BR /> 
 		
 	</form>
 	<?php

@@ -10,14 +10,23 @@ class UsuarioController
 	function salvar()
 	{
 		if (isset($_POST['salvar']) || isset($_POST['validar'])) {
+
 			$nome = Util::clearparam($_POST['nome']);
 			$email = Util::clearparam($_POST['email']);
 			$senha = Util::clearparam($_POST['senha']);
 
+			$id = Util::clearparam($_POST['id']);
+
+
+			if (isset($_POST['salvar'])) {
 			$telefone = Util::clearparam(isset($_POST['telefone']) ? $_POST['telefone'] : '');
 			$NIF = Util::clearparam(isset($_POST['NIF'])? $_POST['NIF'] : null);
-			$nivel = Util::clearparam((isset($_POST['nivel']) ? $_POST['nivel'] : ''));
-			$id = Util::clearparam($_POST['id']);
+			$nivel = Util::clearparam((isset($_POST['nivel']) ? $_POST['nivel'] : ''));						
+			} else {
+				$telefone = '';
+				$NIF = '';				
+				$nivel = 0;
+			}
 
 			// se nao alterou a senha, nao salvar novamente pois está criptografada
 			if (strlen($senha) == 32) {
@@ -48,7 +57,6 @@ class UsuarioController
 
 	function excluir()
 	{
-
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
 
@@ -57,8 +65,8 @@ class UsuarioController
 
 			header("Location: usuario_list.php");
 			exit();
-
 		}
+		return false;
 	}
 
 	function cancelar() {
@@ -67,6 +75,7 @@ class UsuarioController
 			header("Location: usuario_list.php");
 			exit();
 		}
+		return false;
 	}
 
 	function abrir()
@@ -90,12 +99,13 @@ class UsuarioController
 
 				$tabela = '';
 		foreach ($linhas as $linha) {
-			$tabela .= '<tr>
-							<td>' . " " . '</td>
+			$tabela .= '<tr>							
 							<td><a href="usuario_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
 							<td>' . $linha['email'] . '</td>
 							<td>' . $permissoes->nomeNivel($linha['nivel'], 2) . '</td>
-						</tr>'; // <td>' . $linha['id'] . '</td>
+							<td>' . $linha['id'] . '</td>
+							<td></td>
+						</tr>'; 
 
 		}
 		return $tabela;
