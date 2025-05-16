@@ -71,6 +71,7 @@ $tabela_s = $permissoesController->listar('s'); // Configurações simples
                             <?= $tabela_n ?>
                         </tbody>
                     </table>
+                    
                     <table cellpadding="4" cellspacing="4">
                         <thead>
                             <tr>

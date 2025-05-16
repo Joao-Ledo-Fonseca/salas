@@ -20,42 +20,43 @@ $pc = new permissoesController();
 
    <div>
 
-      <li><a href="index.php">Home</a></li>
+      <a href="index.php"><li>Home</li></a>
 
       <?php
 
       if ($pc->validaPermissao("M_Estatisticas", $u_n)) {
-         echo '<li><a href="relatorios.php">Estatisticas</a></li>';
+         echo '<a href="relatorios.php"><li>Estatisticas</li></a>';
       }
 
       if ($pc->validaPermissao("M_Relatorios", $u_n)) {
-         echo '<li><a href="relatorios2.php">Relatorios</a></li>';
+         echo '<a href="relatorios2.php"><li>Relatorios</li></a>';
       }
       ?>
 
-      <!-- <li><a class="dropdown-btn" href="#">Admin <i class="fa fa-caret-down"></i> </a></li> -->
-      <li><a class="dropdown-btn" href="#">Admin <img src="./img/caret-down.png" width="13"></im> </a></li>
+      
+      <a class="dropdown-btn" href="#"><li>Admin &#9660;</li></a>
+      
       <div class="dropdown-container">
          <?PHP
          if ($pc->validaPermissao("M_Categorias", $u_n)) {
-            echo '<li><a href="categoria_list.php">Categorias</a></li>';
+            echo '<a href="categoria_list.php"><li>Categorias</li></a>';
          }
          if ($pc->validaPermissao("M_Salas", $u_n)) {
-            echo '<li><a href="sala_list.php">Salas</a></li>';
+            echo '<a href="sala_list.php"><li>Salas</li></a>';
          }
          if ($pc->validaPermissao("M_Periodos", $u_n)) {
-            echo '<li><a href="periodo_list.php">Períodos</a></li>';
+            echo '<a href="periodo_list.php"><li>Períodos</li></a>';
          }
          if ($pc->validaPermissao("M_Utilizadores", $u_n)) {
-            echo '<li><a href="usuario_list.php">Utilizadores</a></li>';
+            echo '<a href="usuario_list.php"><li>Utilizadores</li></a>';
          }
          if ($pc->validaPermissao("M_Permissoes", $u_n)) {
-            echo '<li><a href="permissoes_form.php">Permissões</a></li>';
+            echo '<a href="permissoes_form.php"><li>Permissões</li></a>';
          }
          ?>
       </div>
       <hr />
-      <li><a href="logout.php">Sair</a></li>
+      <a href="logout.php"><li>Sair</li></a>
       </ul>
    </div>
 </div>
@@ -69,15 +70,16 @@ $pc = new permissoesController();
 
    for (i = 0; i < dropdown.length; i++) {
 
-      let dentro = dropdown[i].parentNode.nextElementSibling.childNodes;
+      let dentro = dropdown[i].nextElementSibling.childNodes;
+      /* let dentro = dropdown[i].parentNode.nextElementSibling.childNodes;
 
       /* Havendo um elemento <li></li> o array fica com três elementos, pois há sempre um elemento text antes e depois do <li> */
       if (dentro.length < 3) {
-         dropdown[i].parentNode.style.display = "none";
+         dropdown[i].style.display = "none";
       };
 
-      dropdown[i].parentNode.addEventListener("click", function () {
-         this.classList.toggle("active");
+      dropdown[i].addEventListener("click", function () {
+         this.classList.toggle("active");         
          var dropdownContent = this.nextElementSibling;
          if (dropdownContent.style.display === "block") {
             dropdownContent.style.display = "none";

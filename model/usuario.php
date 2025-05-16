@@ -3,41 +3,39 @@ require_once "db_mysqli.php";
 
 class Usuario 
 {
+	private $db = null;
+
+	function __construct()
+	{
+		$this->db = new Database();
+	}
+
 
 	function autenticar($email, $senha)
 	{
 
-		$db = new Database();
-
 		$sql = ' select id, nome, nivel from usuario where (email = "' . $email . '" or nome = "' . $email . '") and senha="' . $senha . '";';
-		return $db->query($sql);
+		return$this->db->query($sql);
 
 	}
 
 	function listar()
-	{
-
-		$db = new Database();
+	{	
 
 		$sql = ' select * from usuario order by nivel desc;';
-		return $db->query($sql);
+		return$this->db->query($sql);
 	}
 
 
 	function abrir($id)
-	{
+	{	
 
-		$db = new Database();
-
-		$sql = ' select * from usuario where id = ' . $id;
-		;
-		return $db->query($sql);
+		$sql = ' select * from usuario where id = ' . $id;		
+		return $this->db->query($sql);
 	}
 
 	function salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel)
-	{
-
-		$db = new Database();
+	{		
 
 		// inserir
 		if ($id == 0) {
@@ -46,7 +44,7 @@ class Usuario
 
 			$sql = ' insert into usuario ( nome, email, senha, telefone, NIF, nivel) 
 					values ("' . $nome . '","' . $email . '","' . $senha . '","' . $telefone . '","' . $NIF . '","' . $nivel . '")';					
-			return $db->query_insert($sql);			
+			return $this->db->query_insert($sql);			
 		}
 		// atualizar
 		else {
@@ -58,7 +56,7 @@ class Usuario
 			$sql = ' update usuario set nome = "' . $nome . '", email = "' . $email . '" ' . $and . ', telefone = "'. $telefone . '", NIF = "' . $NIF .'", nivel = ' . $nivel . '  where id = ' . $id;
 				//var_dump($sql);
 				// exit();
-			return $db->query_update($sql);
+			return $this->db->query_update($sql);
 
 		}
 
@@ -70,7 +68,7 @@ class Usuario
 		$db = new Database();
 		
 		$sql = 'delete from usuario where id = ' . $id;
-		return $db->query_update($sql);
+		return $this->db->query_update($sql);
 	}
 
 }

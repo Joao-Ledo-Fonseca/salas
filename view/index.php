@@ -48,13 +48,6 @@ $dia_next = date_create_from_format('d/m/Y', $hoje->format('d/m/Y'));
 $dia_next = $dsc->nextController($dia_next);
 $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 
-/* DESNECESSÁRIA
-function compara_data($d1, $d2) 
-{
-	return ($d1->format("d/m/Y") == $d2->format("d/m/Y"));
-}
-*/
-
 ?>
 
 <!DOCTYPE html
@@ -115,8 +108,6 @@ function compara_data($d1, $d2)
 		function alteraData(data_arg) {
 			window.location.href = "index.php?data=" + data_arg;
 		}
-
-
 
 	</script>
 

@@ -15,10 +15,8 @@ if (isset($_POST['entrar'])) {
     if (isset($_POST['validar'])) {
         $result = $usuarioController->salvar();
         $errormsg = ($result == 0 ? 'Nome ou email já existe!' : 'Utilizador criado com sucesso!');
-    }
-    ;
-}
-;
+    };
+};
 
 
 $validar = ((isset($_POST['validar']) && $result > 0) ? true : false);

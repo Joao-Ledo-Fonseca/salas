@@ -3,10 +3,16 @@ require_once "db_mysqli.php";
 
 class Reserva
 {
+
+	private $db = null;
+
+	function __construct()
+	{
+		$this->db = new Database();
+	}
+
 	function abrir($id)
 	{
-
-		$db = new Database();
 
 		$sql = ' select 
 		a.id
@@ -34,7 +40,7 @@ class Reserva
 
 	 	where a.id = ' . $id;
 
-		return $db->query($sql);
+		return $this->db->query($sql);
 
 	}
 
@@ -43,7 +49,7 @@ class Reserva
 	function verificar($data, $sala, $periodo)
 	{
 
-		$db = new Database();
+		
 
 		$sql = ' select 
 				a.id
@@ -54,34 +60,29 @@ class Reserva
 	 			and a.periodo_id = ' . $periodo . '
 	 			and dia = "' . $data->format("Y-m-d") . '"; ';
 
-		return $db->query($sql);
+		return $this->db->query($sql);
 
 	}
 
 
 	function verificarCompleto($data, $sala, $periodo)
-	{
-		$db = new Database();
+	{		
 
 		$sql = 'select * from reserva where sala_id =  ' . $sala . ' and periodo_id = ' . $periodo . ' and dia = "' . $data->format("Y-m-d") . '" ;';
-		return $db->query($sql);
+		return $this->db->query($sql);
 	}
 
 	function excluir($id)
 	{
-		$db = new Database();
-
 		$sql = ' delete from reserva where id =' . $id;
+		$this->db->query_update($sql);
 
-		$db->query_update($sql);
 		return 0;
 
 	}
 
 	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo, $usuario)
-	{
-
-		$db = new Database();
+	{		
 
 		// atualizar
 		if ($id > 0) {
@@ -90,11 +91,11 @@ class Reserva
 			,professor_desc = "' . $professor . '"
 			,disciplina_desc = "' . $disciplina . '"
 			,observacao = "' . $observacao . '"
-			,status = ' . $status . '
-			
+			,status = ' . $status . '			
 			where id  =	' . $id;
+			
+			$this ->db->query_update($sql);
 
-			$db->query_update($sql);
 			return $id;
 
 		}
@@ -124,7 +125,7 @@ class Reserva
 			) ';
 
 
-			return $db->query_insert($sql);
+			return $this->db->query_insert($sql);
 
 		}
 
@@ -133,14 +134,12 @@ class Reserva
 
 	function next($hoje)
 	{
-		//stuff to get data next reserva
-		$db = new Database();
-
+		//stuff to get data next reserva		
 		$sql = 'select Min(dia)	
 				   from reserva
 				   where dia >"' . $hoje->format("Y-m-d") . '"';
 
-		$res = $db->query($sql);
+		$res = $this->db->query($sql);
 		$dia = $res[0]['Min(dia)'];
 
 		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
@@ -152,15 +151,13 @@ class Reserva
 	}
 
 	function prev($hoje)
-	{
-
-		$db = new Database();
+	{		
 
 		$sql = 'select Max(dia)	
 				   from reserva
 				   where dia <"' . $hoje->format("Y-m-d") . '"';
 
-		$res = $db->query($sql);
+		$res = $this->db->query($sql);
 		$dia = $res[0]['Max(dia)'];
 
 		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
@@ -172,8 +169,7 @@ class Reserva
 	}
 
 	function listaReservas($dia = null, $tipo = 'm')
-	{
-		$db = new Database();
+	{		
 
 		// Define o filtro padrão como o mês atual, se não for fornecido
 		if (is_null($dia))
@@ -202,15 +198,13 @@ class Reserva
 		// exit;
 
 		// Executa a consulta com o parâmetro
-		return $db->query($sql);
+		return $this->db->query($sql);
 
 	}
 
 
 	function disciplinaMaisReservas()
-	{
-
-		$db = new Database();
+	{		
 
 		$sql = 'select disciplina_desc, count(id) as total	
 				from reserva
@@ -218,18 +212,17 @@ class Reserva
 				order by total desc';
 
 
-		return $db->query($sql);
+		return $this->db->query($sql);
 
 	}
 
 
 	function totalReservasMes($hoje)
-	{
-		$db = new Database();
+	{		
 
 		$sql = '  		
 		select count(id) as total from reserva where month(dia) = ' . $hoje->format("m") . ';';
-		return $db->query($sql);
+		return $this->db->query($sql);
 
 	}
 }

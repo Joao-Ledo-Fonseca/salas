@@ -26,8 +26,6 @@ $lista = $categoriaController->listarcontroller();
 
 </head>
 
-
-
 <body>
 
    <!-- form -->

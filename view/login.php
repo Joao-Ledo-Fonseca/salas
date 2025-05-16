@@ -20,7 +20,7 @@ if (isset($_POST['entrar'])) {
 }
 ;
 
-
+/* Variáveis que controlam a apresentação de forms e botões */
 $validar = ((isset($_POST['validar']) && $result > 0) ? true : false);
 $cancelar = (isset($_POST['cancelar']) || isset($_POST['OK']) ? true : false);
 $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result == 0)) ? true : false);
@@ -72,18 +72,18 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result =
                     espa&ccedil;os.
                 </div>
             </div>
-            
+
             <div id="direito">
 
-            <div>
-                
-                <br />
-                <img src="img/logo.png" alt="Sistema de Reservas de Salas de Aula"
-                    title="Sistema de Reservas de Salas de Aula" width="220" height="72" />
-                <br />
-                <br />
-                versão <strong>1.3</strong>&nbsp;<br />
-            </div>
+                <div>
+
+                    <br />
+                    <img src="img/logo.png" alt="Sistema de Reservas de Salas de Aula"
+                        title="Sistema de Reservas de Salas de Aula" width="220" height="72" />
+                    <br />
+                    <br />
+                    versão <strong>1.3</strong>&nbsp;<br />
+                </div>
                 <!-- <span style="color:#900"><?php echo $errormsg; ?></span><br /> -->
 
                 <div id="direito_log">
@@ -206,7 +206,6 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result =
                 $("#cancelar").hide();
             };
         });
-
 
 </script>
 
