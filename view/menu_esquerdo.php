@@ -8,7 +8,7 @@ $pc = new permissoesController();
    <div class="user">
       <?PHP
       $u_n = $_SESSION['user_nivel'];
-      $id_u = $_SESSION['user_nome'] . ' ';           
+      $id_u = $_SESSION['user_nome'] . ' ';
       $id_u .= '(' . $pc->nomeNivel($u_n, 1) . ')';     // 1-para mostrar abreviatura do nível
       $id_u = '<a href="usuario_form.php?id=' . $_SESSION['user_id'] . '">' . $id_u . '</a>';
       ?>
@@ -19,7 +19,7 @@ $pc = new permissoesController();
    </div>
 
    <div>
-      
+
       <li><a href="index.php">Home</a></li>
 
       <?php
@@ -33,14 +33,13 @@ $pc = new permissoesController();
       }
       ?>
 
-
       <!-- <li><a class="dropdown-btn" href="#">Admin <i class="fa fa-caret-down"></i> </a></li> -->
       <li><a class="dropdown-btn" href="#">Admin <img src="./img/caret-down.png" width="13"></im> </a></li>
       <div class="dropdown-container">
          <?PHP
-                  if ($pc->validaPermissao("M_Categorias", $u_n)) {
-                     echo '<li><a href="categoria_list.php">Categorias</a></li>';
-                  }
+         if ($pc->validaPermissao("M_Categorias", $u_n)) {
+            echo '<li><a href="categoria_list.php">Categorias</a></li>';
+         }
          if ($pc->validaPermissao("M_Salas", $u_n)) {
             echo '<li><a href="sala_list.php">Salas</a></li>';
          }
@@ -55,7 +54,6 @@ $pc = new permissoesController();
          }
          ?>
       </div>
-
       <hr />
       <li><a href="logout.php">Sair</a></li>
       </ul>

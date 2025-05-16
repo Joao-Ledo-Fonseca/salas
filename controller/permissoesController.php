@@ -8,56 +8,53 @@ $permis_array = array();
 class permissoesController
 {
 
-    //valores defaul para as permissions da aplicação    
+    // valores default para as permissões da aplicação
+    // a aplicação cria-os na BD     
     public $permissoes_defaults = [
-        // "nome" => [User, Gestor, Descrição] 
-        "M_Categorias" => [true, false, "Activa o Menu de Categorias"],
-        "M_Salas" => [true, false . "Activa o Menu de Salas"],
-        "M_Periodos" => [true, false, "Activa o Menu de Períodos"],
-        "M_Utilizadores" => [true, false, "Activa o Menu de Utilizadores"],
-        "M_Permissoes" => [true, false, "Activa o Menu de Permissões"],
-        "M_Estatisticas" => [true, false, "Activa o Menu de Estatísticas"],
-        "M_Relatorios" => [true, false, "Activa o Menu de Relatórios"],
-        "A_RegNovoUtilizador" => [true, null, "Activa o registo de novos utilizadores no ecrã de login."],
+        // "nome" => [tipo, permissão User, permissão Gestor, Descrição] 
+        "M_Categorias" => ['n', false, true, false, "Autoriza acesso ao Menu de Categorias"],
+        "M_Salas" => ['n', false, true, false, "Autoriza acesso ao Menu de Salas"],
+        "M_Periodos" => ['n', false, true, false, "Autoriza acesso ao Menu de Períodos"],
+        "M_Utilizadores" => ['n', false, true, false, "Autoriza acesso ao Menu de Utilizadores"],
+        "M_Permissoes" => ['n', false, true, false, "Autoriza acesso ao Menu de Permissões"],
+        "M_Estatisticas" => ['n', false, true, false, "Autoriza acesso ao Menu de Estatísticas"],
+        "M_Relatorios" => ['n', false, true, false, "Autoriza acesso ao Menu de Relatórios"],
+        "A_RegNovoUtilizador" => ['s', true, null, null, "Activa o registo de novos utilizadores no ecrã de login. (não implementado)"],
+        "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"]
     ];
 
+
+    //valores fixos para os níveis de utilizador
     public $niveis = [
+        // [ nivel => Nome na BD, Abreviatura, Nome Extenso]
         0 => array("uexterno", "u", "User"),
         1 => array('uinterno', "g", "Gestor"),
         2 => array("admin", "a", "Admin"),
-        3 => array("superadmin", "sa", "SuperAdmin")   //este nivel não tem entradas na BD, e tem TODAS as AUTORIZAÇõES activas.
+        // Este nivel não tem entradas na BD, programáticamente tem 
+        // ====    TODAS AS AUTORIZAÇõES activas ====        
+        3 => array("superadmin", "sa", "SuperAdmin")
     ];
+    
 
-
-    //carrega o array global das Permissões salvas na BD
     function __construct()
     {
+        //carrega o array global das Permissões salvas na BD    
 
-        global $permis_array;
+        global $permis_array;        
 
-        $permissoes = new Permissoes();
+        $permissoes = new Permissoes();    
         $linhas = $permissoes->listar();
 
-        foreach ($linhas as $linha) {
-            $permis_array[$linha["nome"]] =
-                array($linha[$this->niveis[0][0]], $linha[$this->niveis[1][0]], $linha[$this->niveis[2][0]]);
+        foreach ($linhas as $l) {
+            $permis_array[$l["nome"]] = array($l[$this->niveis[0][0]], $l[$this->niveis[1][0]], $l[$this->niveis[2][0]]);
         }
+
     }
 
     function validaPermissao($permissao, $nivel)
     {
         global $permis_array;
-
-        if ($this->niveis[$nivel][0] == "superadmin") {
-            $valido = true;
-        } else {
-            if (array_key_exists($permissao, $permis_array)) {
-                $valido = $permis_array[$permissao][$nivel];
-            } else {
-                $valido = false;
-            }
-        }
-        return $valido;
+        return array_key_exists($permissao, $permis_array) || ($this->niveis[$nivel][0] == "superadmin");
     }
 
     function nomeNivel($nivel, $tipoNome = 0)
@@ -84,31 +81,37 @@ class permissoesController
         if (isset($_POST['salvar'])) {
 
             // Prepara um array $lista para recolher dados do $POST
-            foreach ($this->permissoes_defaults as $key => $Value) {
-                $lista[$key] = array(false, false, false);
+            foreach ($this->permissoes_defaults as $nome => $value) {
+
+                $tipo = $value[0];
+
+                if ($value[0] = 'n') {
+                    $lista[$nome] = array($tipo, false, false, false);
+                } else {
+                    $lista[$nome] = array($tipo, false, null, null);
+                }
             }
 
             // Preenche o array $lista com os valores do $POST
-            foreach ($_POST as $post_key => $post_value) {
+            foreach ($_POST as $post_nome => $post_value) {
                 // para serem distintos os names no post, o name tem um identificador adicional que é necessário retirar
-                $post_key = substr($post_key, 0, strlen($post_key) - 1);
+                $post_nome = substr($post_nome, 0, strlen($post_nome) - 1);
 
                 //Se o nome de permissão existe nos defaults
-                if (array_key_exists($post_key, $this->permissoes_defaults)) {
-                    $post_value = $post_value - 2; // o valor do post é 2,3 ou 4, e o array $lista tem os indices 0,1 ou 2.
+                if (array_key_exists($post_nome, $this->permissoes_defaults)) {
 
                     if ($post_value == 0) {        // 0 é o utilizador externo
-                        $lista[$post_key][0] = true;
+                        $lista[$post_nome][0] = true;
                     } else if ($post_value == 1) { // 1 é o gestor
-                        $lista[$post_key][1] = true;
+                        $lista[$post_nome][1] = true;
                     } else if ($post_value == 2) { // 2 é o admin
-                        $lista[$post_key][2] = true;
+                        $lista[$post_nome][2] = true;
                     }
                 }
             }
 
             foreach ($lista as $k => $l) {
-                $permissoes->salvar(null, $k, $l[0], $l[1], $l[2], "Update");
+                $permissoes->update(null, $k, $l[0], $l[0], $l[1], $l[2], "Update");
             }
 
             header("Location: permissoes_form.php");
@@ -121,72 +124,76 @@ class permissoesController
     function validarTabelaPermissoes()
     {
 
-        // $permis_temp_nome = array();
-        // $permis_temp_seq = array();
-
-
         $permissoes = new Permissoes();
         $linhas = $permissoes->listar();
 
-        // Verifica permissoes na bd e elimina as não existentes
+        $ctrl_seq[''] = '0';
         foreach ($linhas as $linha) {
             if (!array_key_exists($linha['nome'], $this->permissoes_defaults)) {
+                // Verifica permissoes na bd, e elimina as não parametrizadas em $permissoes_defaults
                 $permissoes->excluir($linha['nome']);
             } else {
-                $ctrlBd[$linha['nome']] = $linha['seq'];
+                // para as permissoes válidas, regista o numero de seq que está na BD
+                $ctrl_seq[$linha['nome']] = $linha['seq'];
             }
         }
 
-
-        // addiciona na BD as permissões ausentes
         $i = 0;
-        foreach ($this->permissoes_defaults as $default_key => $default_Value) {
-            if (!in_array($default_key, $ctrlBd)) {
+        foreach ($this->permissoes_defaults as $nome => $value) {
+            // atualiza na BD as permissões ausentes ou a sequencia das já existentes  
+            if (!array_key_exists($nome, $ctrl_seq)) {
                 // se não existe na BD, adiciona
                 $permissoes->salvar(
                     $i,
-                    $default_key,
-                    $this->permissoes_defaults[$default_key][0],
-                    $this->permissoes_defaults[$default_key][1],
-                    true,
-                    "Insert"
+                    $nome,
+                    $value[0],
+                    $value[1],
+                    $value[2],
+                    $value[3]
                 );
-                $ctrlBd[] = [$default_key => $i];
-            } else if ($i <> $ctrlBd[$default_key]) {
-                // se existe mas tem valor de "seq" diferente, renumera   
-                $permissoes->salvar(
-                    $i,
-                    $default_key,
-                    $this->permissoes_defaults[$default_key][0],
-                    $this->permissoes_defaults[$default_key][1],
-                    true,
-                    "Renumera"
-                );
+                $ctrlBd[] = [$nome => $i];
+
+            } else if ($i <> $ctrl_seq[$nome]) {
+                // se existe mas tem valor de "seq" diferente, renumera                   
+                $permissoes->renumerar($i, $nome, );
             }
             $i++;
         }
-
-
     }
 
     // listagem
-    function listar()
+    function listar($tipo)
     {
 
         $this->validarTabelaPermissoes();
 
         $permissoes = new Permissoes();
-        $linhas = $permissoes->listar();
+        $linhas = $permissoes->listar($tipo);
 
         $tabela = '';
 
-        foreach ($linhas as $linha) {
 
-            $tabela .= '<tr><td>' . $linha['nome'] . '  </td>';
-            $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha['nome'] . '2" id="' . $linha['nome'] . '2" value=2 ' . ($linha['uexterno'] ? "checked" : "") . '></td> ';
-            $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha['nome'] . '3" id="' . $linha['nome'] . '3" value=3 ' . ($linha['uinterno'] ? "checked" : "") . '></td> ';
-            $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $linha['nome'] . '4" id="' . $linha['nome'] . '4" value=4 ' . ($linha['admin'] ? "checked" : "") . '></td> ';
-            $tabela .= '<td></td></tr>';
+        foreach ($linhas as $linha) {
+            $nome = $linha['nome']; // nome da permissão
+
+            if ($tipo == 'n') {
+                $tabela .= '<tr class="show">';
+                $tabela .= '<td style="display:none"></td>';
+                $tabela .= '<td>' . $nome . '</td>';
+                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '0" id="' . $nome . '2" value=0 ' . ($linha['uexterno'] ? "checked" : "") . '></td> ';
+                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '1" id="' . $nome . '3" value=1 ' . ($linha['uinterno'] ? "checked" : "") . '></td> ';
+                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '2" id="' . $nome . '4" value=2 ' . ($linha['admin'] ? "checked" : "") . '></td> ';
+                $tabela .= '<td><input type="checkbox"                         name="' . $nome . '3" id="' . $nome . '5" value=3 ' . 'checked' . ' disabled  ></td> ';
+                $tabela .= '<td class="hidden"> ' . $this->permissoes_defaults[$linha['nome']][4] . '</td>';
+                $tabela .= '<td></td></tr>';
+            } else if ($tipo == 's') {
+                $tabela .= '<tr class="show">';
+                $tabela .= '<td style="display:none"></td>';
+                $tabela .= '<td>' . $nome . '  </td>';
+                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '0" id="' . $nome . '0" value=0 ' . ($linha['uexterno'] ? "checked" : "") . '></td> ';
+                $tabela .= '<td class="hidden"> ' . $this->permissoes_defaults[$linha['nome']][4] . '</td>';
+                $tabela .= '<td></td></tr>';
+            }
         }
 
         return $tabela;

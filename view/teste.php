@@ -53,6 +53,7 @@ $lista = $salaController->listarcontroller($selecao);
         <h3>Cadastro de Salas</h3>
 
         <div class="lista_comum container_top">
+            
             <form class="form_sel" name="form1" method="post" target="_self">
                 <span style="float:left;">
                     <input type="button" name="novo" value="Novo" class="btn1"
@@ -73,6 +74,7 @@ $lista = $salaController->listarcontroller($selecao);
 
                     </select>
                 </span>
+
             </form>
         </div>
 

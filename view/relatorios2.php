@@ -235,7 +235,7 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
                 paging: true,
                 pageLength: 25,
                 lengthMenu: [10, 25, 50, 100, 200],
-                autoWidth: false,
+                autoWidth: false,                
                 columnDefs:
                     [
                         { targets: [0], width: '80px' },
@@ -260,12 +260,30 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
                     bottom2: 'info',
                     bottom3:
                     {
-                        buttons:
+                        buttons:                            
                             [
                                 {
                                     extend: 'collection',
-                                    text: 'Exportação',
-                                    buttons: ['copy', 'csv', 'excel', 'print', 'pdf']
+                                    text: 'Exporta',                                    
+                                    buttons: ['copy', 
+                                                { extend: 'csv',
+                                                    title: "Reserva de Salas",
+                                                    filename: "*"
+                                                }, 
+                                                {   extend: 'excel', 
+                                                    title: "Reserva de Salas",
+                                                    sheetName: "Reserva de Salas.xls"
+                                                },
+                                                {   extend: 'print', 
+                                                    title: "Reserva de Salas",
+                                                    header: false
+                                                },
+                                                {   extend: 'pdf', 
+                                                    title: "Reserva de Salas",
+                                                    filename: "*",
+                                                    header: false
+                                                }                                                 
+                                            ]
                                 },
                             ]
                     },

@@ -37,9 +37,7 @@ h3 { font-weight:300; }
 .menu li {  padding:15px; margin:0px; color:#FFFFFF;  list-style:none;  transition: background-color 0.5s ease, color 0.5s ease;  background-color:#575757; cursor:pointer; }
 .menu li:hover, .dropdown-btn:hover { background-color:#D4D4D4; }
 .menu a{ color:#FFFFFF; text-decoration:none; }
-.menu li:hover a{  color:#3B3B3B; }
-
-
+.menu li:hover a{color:#3B3B3B; }
 
 /* Geral */
 .corpo { width:100%; max-width:calc(100% - 180px); float:left; height:100%;   padding:15px;  } 
@@ -65,12 +63,12 @@ input[type="text"], input[type="password"], input[type="email"]{ padding:10px; m
 */
 .input, input[type="text"], input[type="password"], input[type="email"] { padding:10px; margin:0px; height:35px; width:100%; border:none; border-bottom:1px solid #E1E1E1; }
 input[type="button"], input[type="submit"] { width:100px; height:40px; padding:10px; margin:10px 0px; border:1px solid #969696; cursor:pointer;}
-button { width:100px; height:40px; padding:10px; margin:10px 0px; border:1px solid #969696; cursor:pointer;}
+button { padding:10px; margin:10px 0px; border:1px solid #969696; cursor:pointer;}
 select { padding:10px; margin-top:10px; height:40px; width:100%; border:none; border:1px solid #E1E1E1; }
 input[type="file"] {display: none;}
 .custom-file-upload {width:100px; height:35px; padding:5px 0px 0px; margin:10px 0px; border:1px solid #969696; text-align:center; font-size:13px; font-weight:normal ;cursor:pointer; display:inline-block }
-.btn1{ background-color:#ECECEC;  }
-.btn2{ background-color:#D4F7C4;  }
+.btn1{ background-color:#ECECEC; width:100px; height:40px; }
+.btn2{ background-color:#D4F7C4; width:100px; height:40px; }
 
 /* estrutura das tabelas */
 .tabelarow { overflow:auto; overflow-x:hidden;}
@@ -83,6 +81,16 @@ table td{ border-bottom: solid 1px #E6E6E6; text-align:left; overflow:hidden}
 table td:nth-child(1){  font-size:12px; font-weight:bold; max-width:80px; }
 table a { color:#4E4E4E; font-weight: bold; }
 hr { border:none; border-bottom:dashed 1px #E6E6E6; }
+
+/*
+table { table-layout:fixed; padding:0px; margin:0px; width:100%; border:2px; font-size:12px; line-height:30px; border-collapse:collapse; }
+table th{ border-bottom:1px solid #E6E6E6; max-width:200px; text-align:left; overflow:hidden}
+table th:nth-child(1){ font-size:14px;}
+table td{ border-bottom: solid 1px #E6E6E6; text-align:left; overflow:hidden}
+table td:nth-child(1){  font-size:12px; font-weight:bold; max-width:80px; }
+table a { color:#4E4E4E; font-weight: bold; }
+hr { border:none; border-bottom:dashed 1px #E6E6E6; }
+*/
 
 .lista_comum, .tabela_comum { width:70%;}
 .lista_comum th, .lista_comum td{ text-align:left;  }

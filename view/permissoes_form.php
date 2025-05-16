@@ -5,7 +5,8 @@ require_once "../controller/permissoesController.php";
 
 $permissoesController = new permissoesController();
 $permissoes = $permissoesController->salvar();
-$tabela = $permissoesController->listar();
+$tabela_n = $permissoesController->listar('n'); // Permissoes por nivel
+$tabela_s = $permissoesController->listar('s'); // Configurações simples
 
 
 ?>
@@ -28,48 +29,72 @@ $tabela = $permissoesController->listar();
     <!-- <script src="js/select2.min.js"></script> -->
     <script src="js/lib.js"></script>
 
+    <style>
+        .hidden {visibility: hidden}
+        .show:hover > .hidden {visibility: visible}
+    </style>
+
+    <title>Permissoes</title>
+
 </head>
-<title>Permissoes</title>
+
 
 <body>
 
     <!-- menu esquerdo -->
     <?php include "menu_esquerdo.php"; ?>
 
-    <!-- conteudo -->
-    <div class="corpo">
+    <!-- Formulário -->
+    <div class="form"></div>
 
+    <!-- conteudo Principal-->
+    <div class="corpo">
         <h3>Permissões</h3>
 
-        <div class="container_conteudo lista_comum">
-
-            <form name="form1" method="post" target="_self">
-
-                <table cellpadding="1" cellspacing="1">
-                    <thead>
-                        <tr>
-                            <th style="display:none"></th>
-                            <th style="width:200px;">Nome</th>
-                            <th style="width:70px"><?= $permissoesController->nomeNivel(0, 2) ?></th>
-                            <th style="width:70px"><?= $permissoesController->nomeNivel(1, 2) ?></th>
-                            <th style="width=70px"><?= $permissoesController->nomeNivel(2, 2) ?></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?PHP
-                        echo $tabela
-                            ?>
-                    </tbody>
-                </table>
-        </div>
-        <div class="container_bottom lista_comum" id="salvar" style="display:none">
-            <div class="form_sel ">
-                <input type="submit" name="salvar" value="Salvar" class="btn1" />
+        <div class="container_conteudo">
+            <div class="lista_comum">
+                <form name="form1" method="post" target="_self">
+                    <table cellpadding="4" cellspacing="4">
+                        <thead>
+                            <tr>
+                                <th style="display:none"></th>
+                                <th style="width:200px;">Nome</th>
+                                <th style="width:60px;"><?= $permissoesController->nomeNivel(0, 2) ?></th>
+                                <th style="width:60px;"><?= $permissoesController->nomeNivel(1, 2) ?></th>
+                                <th style="width:60px;"><?= $permissoesController->nomeNivel(2, 2) ?></th>
+                                <th style="width:100px;"><?= $permissoesController->nomeNivel(3, 2) ?></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?= $tabela_n ?>
+                        </tbody>
+                    </table>
+                    <table cellpadding="4" cellspacing="4">
+                        <thead>
+                            <tr>
+                                <th style="display:none"></th>
+                                <th style="width:200px;">Nome</th>
+                                <th style="width:60px;">Activar</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?= $tabela_s ?>
+                        </tbody>
+                    </table>
             </div>
-        </div>
-        </form>
 
+            <div class="lista_comum" id="salvar" style="display:none">
+                <div class="form_sel ">
+                    <input type="submit" name="salvar" value="Salvar" class="btn1" />
+                </div>
+            </div>
+
+            </form>
+        </div>
     </div>
 
 </body>
