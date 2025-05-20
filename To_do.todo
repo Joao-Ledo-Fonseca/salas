@@ -1,0 +1,64 @@
+
+TO DO LIST:
+
+Tarefas Técnicas:        
+☐ Verificar sanitização de todos os parametros dos GET's em todos os ficheiros Controller
+☐ Tratar erros retornados pela BD, especialmente nas violações de integridade referencial.
+☐ Limitar comprimento dos campos nos forms, de acordo com os campos da BD
+☐ Substituir icons por caracteres na escolha de datas
+☐ Acertar Menu para devices estreitos 
+
+
+Tarefas Funcionais:
+
+Recursos
+☐ Adicionar cadastro de recursos (WiFi/Internet, WiFi rede propria, Televisor, Projector, Maquina Café, Coffe Brake, etc.)
+☐ SALAS: Suporte aos recursos
+        ☐ recursos nativos (por defeito)
+        ☐ recursos disponiveis (podem ser solicitados)
+
+Salas
+☐ Adicionar Recursos às Salas
+
+☐ Adicionar atributos de salas:
+        ☐ numero de lugares 
+
+☐ Categorias passam a "Àreas" (?)
+
+Reservas
+☐ Adicionar classificação de interna/externa
+☐ Adição de recursos requeridos.
+
+Agenda
+☐ SELEÇÃO por Categorias
+☐ visão por HORA/PERIODO
+
+Periodos
+Modificação de dados!
+☐ Nos periodos incluir a gestão por hora
+☐ Nas reservas incluir o registo de horas
+
+☐ Adicionar LANDING PAGE para users externos
+
+
+
+☐ Adicionar atributos às reservas        
+        - Identificação do utilizador (substitui o "professor")
+        - Descrição da utilização (Substitui "disciplina")
+        - Entidade de faturação
+        - Responsável (o responsável interno pela validação)        
+
+☐ o Id só deve aparecer para os Superadministradores, nas listas de
+        - Categorias
+        - Salas
+        - Periodos
+        - Utilizadores
+
+Features adicionais:
+
+        ☐ Delete/Passagem a histórico de reservas anteriores a uma data (incorporar dados dependentes no ficheiro de histórico)
+        ☐ Delete/conversão/passagem a histórico, em cascata de @low
+        - Salas, 
+        - Categorias, 
+        - Users
+        - Periodos

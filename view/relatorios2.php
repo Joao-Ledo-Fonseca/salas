@@ -5,12 +5,23 @@ require_once "../controller/dashboardController.php";
 
 $dateFormat = $fm = 'M Y';
 $tipo = 'm'; // w - week ; m - month
-if (isset($_GET['tipo'])) {
-    if ($_GET['tipo'] == 'w') {
-        $dateFormat = $fm = 'W - Y (M)';
-        $tipo = 'w'; // w - week ; m - month     
-    }
 
+if (isset($_GET['tipo'])) {   // 
+    $tipo = $_GET['tipo'];  //- week ; m - month; p - periodo     
+    switch ($tipo) {
+        case 'w':
+            $dateFormat = $fm = 'W - Y (M)';
+            // $tipo = 'w';
+            break;
+        case 'p':
+            $dateFormat = $fm = 'd/m/Y';
+            //$tipo = 'p';
+            break;
+        case 'm':
+            $dateFormat = $fm = 'M Y';
+            // $tipo = 'm'; // w - week ; m - month
+            break;
+    }
 }
 
 
@@ -30,6 +41,8 @@ $dia_posterior = date_create_from_format('dmY', $hoje->format("dmY"));
 $dia_posterior->modify(($tipo == 'm' ? '+1 month' : '+1 week'));
 // $dia_posterior_pt = traduz_data($dia_posterior->format($dateFormat), 'pt');
 
+
+
 function traduz_data($date, $lang = 'en', &$fm = '')
 {
     $meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -47,11 +60,10 @@ function traduz_data($date, $lang = 'en', &$fm = '')
 
 }
 
-
-
-// Prepara a lista para a dat escolhida
+// Prepara a lista para a data escolhida
 $dsc = new dashboardController();
 $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
+
 
 ?>
 <!DOCTYPE html
@@ -153,15 +165,27 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
             });
         });
 
-
-        function toogletipo() {
-            if (tipo == 'm') {
-                tipo = "w";
-            } else {
-                tipo = 'm';
-            }
+        function toogletipo(tipo) {
             window.location.href = "relatorios2.php?data=" + data + "&tipo=" + tipo;
         }
+
+        $(document).ready(function () {
+            if (tipo == 'w') {
+                $('#semanal').addClass('active');
+                $('#mensal').removeClass('active');
+                $('#periodo').removeClass('active');
+            };
+            if (tipo == 'm') {
+                $('#semanal').removeClass('active');
+                $('#mensal').addClass('active');
+                $('#periodo').removeClass('active');
+            };
+            if (tipo == 'p') {
+                $('#semanal').removeClass('active');
+                $('#mensal').removeClass('active');
+                $('#periodo').addClass('active');
+            };
+        });
 
     </script>
 
@@ -179,25 +203,31 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
 
         <div>
 
-            <div class="titulo_inicial">
+            <div class="container">
+                <div class="titulo_inicial">
 
-                <img src="img/chevron_left.png" width="40" height="40" alt="" onclick="alteraData(dia_anterior)" />
-                <form method="get" action="relatori2.php" target="_self" name="form1"
-                    style="display:inline;vertical-align: top;">
-                    <input type="text" name="data_pt" id="data_pt" value="<?= $hoje_pt ?>" style="text-align:center" readonly="readonly">
-                    <input type="text" name="data" id="data" value="<?= $hoje->format("dmY") ?>"
-                        onchange="atualizaTela(this)" style="visibility:hidden;position:absolute;z-index:-1; " />
-                </form>
-                <img src="./img/chevron_right.png" width="40" height="40" alt="" onclick="alteraData(dia_posterior)" />
+                    <img src="img/chevron_left.png" width="40" height="40" alt="" onclick="alteraData(dia_anterior)" />
 
-                <span style="float:right">
-                    <?= $tipo == 'w' ? 'Semanal ' : 'Mensal ' ?><button type="button" class="btn1"
-                        onclick="toogletipo()">Troca</button>
-                </span>
+                    <form method="get" action="relatori2.php" target="_self" name="form1"
+                        style="display:inline;vertical-align: top;">
+                        <input type="text" name="data_pt" id="data_pt" value="<?= $hoje_pt ?>" style="text-align:center"
+                            readonly="readonly">
+                        <input type="text" name="data" id="data" value="<?= $hoje->format("dmY") ?>"
+                            onchange="atualizaTela(this)" style="visibility:hidden;position:absolute;z-index:-1; " />
+                    </form>
+                    <img src="./img/chevron_right.png" width="40" height="40" alt=""
+                        onclick="alteraData(dia_posterior)" />
+
+                    <span style="float:right">
+                        <!-- <?= $tipo == 'w' ? 'Semanal ' : 'Mensal ' ?> -->
+                        <button type="button" id="semanal" class="btn1" onclick="toogletipo('w')">Semanal</button>
+                        <button type="button" id="mensal" class="btn1" onclick="toogletipo('m')">Mensal</button>
+                        <button type="button" id="periodo" class="btn1" onclick="toogletipo('p')">Período</button>
+                    </span>
+                </div>
             </div>
 
-
-            <div id="mensagem"></div>
+            <div id="mensagem"> </div>
 
             <div class="container">
 
@@ -224,7 +254,25 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
 
 </body>
 
+<?PHP
+
+switch ($tipo) {
+    case 'w':
+        $titulo = '"Reservas - Semana ' . $hoje->format("W/Y") . '"';
+        break;
+    case 'm':
+        $titulo = '"Reservas - ' . $hoje->format("M Y") . '"';
+        break;
+    case 'p':
+        $titulo = '"Reservas - ' . $hoje->format("d/m/Y") . '"';
+        break;
+    default:
+        $titulo = '"Reservas - ' . $hoje->format("d/m/Y") . '"';
+}
+
+?>
 <script>
+    titulo = <?= $titulo ?>;
 
     $(document).ready(function () {
         var table = new DataTable('#print',
@@ -235,7 +283,7 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
                 paging: true,
                 pageLength: 25,
                 lengthMenu: [10, 25, 50, 100, 200],
-                autoWidth: false,                
+                autoWidth: false,
                 columnDefs:
                     [
                         { targets: [0], width: '80px' },
@@ -260,30 +308,34 @@ $tabela_reservas = $dsc->listaReservasController($hoje, $tipo);
                     bottom2: 'info',
                     bottom3:
                     {
-                        buttons:                            
+                        buttons:
                             [
                                 {
                                     extend: 'collection',
-                                    text: 'Exporta',                                    
-                                    buttons: ['copy', 
-                                                { extend: 'csv',
-                                                    title: "Reserva de Salas",
-                                                    filename: "*"
-                                                }, 
-                                                {   extend: 'excel', 
-                                                    title: "Reserva de Salas",
-                                                    sheetName: "Reserva de Salas.xls"
-                                                },
-                                                {   extend: 'print', 
-                                                    title: "Reserva de Salas",
-                                                    header: false
-                                                },
-                                                {   extend: 'pdf', 
-                                                    title: "Reserva de Salas",
-                                                    filename: "*",
-                                                    header: false
-                                                }                                                 
-                                            ]
+                                    text: 'Exporta',
+                                    buttons: ['copy',
+                                        {
+                                            extend: 'csv',
+                                            title: "Reserva de Salas",
+                                            filename: "*"
+                                        },
+                                        {
+                                            extend: 'excel',
+                                            title: "Reserva de Salas",
+                                            sheetName: "Reserva de Salas.xls"
+                                        },
+                                        {
+                                            extend: 'print',
+                                            title: titulo,
+                                            header: false
+                                        },
+                                        {
+                                            extend: 'pdf',
+                                            title: "Reserva de Salas",
+                                            filename: "*",
+                                            header: false
+                                        }
+                                    ]
                                 },
                             ]
                     },

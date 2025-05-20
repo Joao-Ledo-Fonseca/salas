@@ -14,16 +14,15 @@ if (isset($_POST['entrar'])) {
     $errormsg = '';
     if (isset($_POST['validar'])) {
         $result = $usuarioController->salvar();
-        $errormsg = ($result == 0 ? 'Nome ou email já existe!' : 'Utilizador criado com sucesso!');
-    }
-    ;
-}
-;
+        $errormsg = (is_numeric($result) ? 'Utilizador criado com sucesso!':'Nome ou email inválidos ou já existentes!'); 
+    };
+    
+};
 
 /* Variáveis que controlam a apresentação de forms e botões */
-$validar = ((isset($_POST['validar']) && $result > 0) ? true : false);
-$cancelar = (isset($_POST['cancelar']) || isset($_POST['OK']) ? true : false);
-$registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result == 0)) ? true : false);
+$validou = ((isset($_POST['validar']) && is_numeric($result)) ? true : false);
+$retornou = (isset($_POST['cancelar']) || isset($_POST['OK']) ? true : false);
+$registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numeric($result) )) ? true : false);
 
 ?>
 
@@ -89,9 +88,9 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result =
                 <div id="direito_log">
                     <form action="login.php" method="post" name="Formulario">
 
-                        <span style="color:#900"><?php echo $errormsg; ?></span><br />
+                        <span style="color:#900"><?php echo $errormsg; ?></span><br /><br />
 
-                        <input type="text" name="email" id="email" placeholder="E-mail" autocomplete="on" /><br /><br />
+                        <input type="text" name="email" id="email" placeholder="Nome de utilizador ou e-mail" autocomplete="on" /><br /><br />
                         <input type="password" name="senha" id="senha" placeholder="Senha"
                             autocomplete="on" /><br /><br />
 
@@ -129,13 +128,13 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result =
                 <div id="direito_reg" name="novo" style="display:none">
                     <form action="login.php" method="post" name="Formulario2">
 
-                        <span style="color:#900"><?php echo $errormsg; ?></span><br />
+                        <span style="color:#900"><?php echo $errormsg; ?></span><br /><br/>
 
                         <input type="hidden" name="id" value=0 />
                         <input type="text" name="nome" id="nome_r" placeholder="Nome de Utilizador" required />
                         <br />
                         <br />
-                        <input type="text" name="email" id="email_r" placeholder="E-mail" autocomplete="on" required />
+                        <input type="text" name="email" id="email_r" placeholder="e-mail" autocomplete="on" required />
                         <br />
                         <br />
                         <input type="password" name="senha" id="senha_r" placeholder="Senha" autocomplete="on" />
@@ -178,7 +177,7 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result =
 
     $(document).ready(
         function () {
-            var x = <?= json_encode($cancelar) ?>;
+            var x = <?= json_encode($retornou) ?>;
             if (x) {
                 $("#direito_log").show();
                 $("direito_reg").hide();
@@ -196,7 +195,7 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && $result =
 
     $(document).ready(
         function () {
-            var x = <?= json_encode($validar) ?>;
+            var x = <?= json_encode($validou) ?>;
             if (x) {
                 $("#direito_log").hide();
                 $("#direito_reg").show();

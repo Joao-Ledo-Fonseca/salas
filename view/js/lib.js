@@ -29,11 +29,12 @@ function abreReserva(o) {
 			type: "GET",
 			url: "reserva_form.php",
 			method: "GET",
+			
 			data: "id=" + $(o).attr("id") + "&data=" + data + "&sala_id=" + $(o).attr("sala") + "&periodo_id=" + $(o).attr("periodo") + "&usuario_id=" + $(o).attr("usuario_id"),
 			dataType: 'html',
 			success: function (response) {
 
-				// a tabela de reservas já não estica e encolhe para comodar o form
+				// a tabela de reservas já não estica e encolhe para acomodar o form
 				// $(".corpo").css("max-width", "calc(100% - 510px)"); 
 
 				$('.form').show("fast", "", function () {

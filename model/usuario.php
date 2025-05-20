@@ -13,10 +13,8 @@ class Usuario
 
 	function autenticar($email, $senha)
 	{
-
 		$sql = ' select id, nome, nivel from usuario where (email = "' . $email . '" or nome = "' . $email . '") and senha="' . $senha . '";';
 		return$this->db->query($sql);
-
 	}
 
 	function listar()
@@ -29,15 +27,14 @@ class Usuario
 
 	function abrir($id)
 	{	
-
-		$sql = ' select * from usuario where id = ' . $id;		
-		return $this->db->query($sql);
+		$sql = ' select * from usuario where id = ' . $id;				
+		return $this->db->query($sql);						
 	}
 
 	function salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel)
 	{		
 
-		// inserir
+		// inserir		
 		if ($id == 0) {
 			
 			$senha = md5($senha);
@@ -53,11 +50,14 @@ class Usuario
 			else
 				$and = '';
 
-			$sql = ' update usuario set nome = "' . $nome . '", email = "' . $email . '" ' . $and . ', telefone = "'. $telefone . '", NIF = "' . $NIF .'", nivel = ' . $nivel . '  where id = ' . $id;
-				//var_dump($sql);
-				// exit();
+			$sql = ' update usuario set nome = "' . $nome . '", 
+						email = "' . $email . '" ' . 
+						$and . ', 
+						telefone = "'. $telefone . '", 
+						NIF = "' . $NIF .'", 
+						nivel = ' . $nivel . '  
+						where id = ' . $id;
 			return $this->db->query_update($sql);
-
 		}
 
 

@@ -11,9 +11,8 @@ class Reserva
 		$this->db = new Database();
 	}
 
-	function abrir($id)
-	{
-
+	function abrir($id)	
+	{		
 		$sql = ' select 
 		a.id
 		,a.sala_id
@@ -48,9 +47,7 @@ class Reserva
 
 	function verificar($data, $sala, $periodo)
 	{
-
 		
-
 		$sql = ' select 
 				a.id
 			
@@ -67,9 +64,10 @@ class Reserva
 
 	function verificarCompleto($data, $sala, $periodo)
 	{		
+		$sql = 'select * from reserva where sala_id =  ' . $sala . ' and periodo_id = ' . $periodo . ' and dia = "' . $data->format("Y-m-d") . '" ;';				
+		$resultado = $this->db->query($sql);
 
-		$sql = 'select * from reserva where sala_id =  ' . $sala . ' and periodo_id = ' . $periodo . ' and dia = "' . $data->format("Y-m-d") . '" ;';
-		return $this->db->query($sql);
+		return $resultado;
 	}
 
 	function excluir($id)
@@ -192,13 +190,20 @@ class Reserva
             LEFT JOIN periodo ON periodo_id = periodo.id
             LEFT JOIN categoria ON sala.categoria_id = categoria.id
             WHERE    '.$filtro .' = "' . $data_filtro . '" 
-			            ORDER BY dia, categoria, sala, periodo.seq';
-
-		// var_dump($tipo, $dia, $filtro, $data_filtro, $sql);
-		// exit;
+			            ORDER BY dia, categoria, sala, periodo.seq';		
 
 		// Executa a consulta com o parâmetro
-		return $this->db->query($sql);
+		$reservas = $this->db->query($sql);
+
+		$status_n = array('reservada','confirmada','cancelada');
+		
+
+		foreach($reservas as $key=>$valor) {
+			$status_nome = $status_n[$valor['status']-1];
+			$reservas[$key]['status_nome'] = $status_nome;
+		}
+
+		return $reservas;
 
 	}
 

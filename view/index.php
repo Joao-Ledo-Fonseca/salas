@@ -5,22 +5,22 @@ require_once("../controller/dashboardController.php");
 
 
 if (isset($_GET['data'])) {
-  $hoje_pt = $_GET['data'];
-  $hoje = date_create_from_format('D d/m/Y', traduz_data($hoje_pt, 'en'));    
+	$hoje_pt = $_GET['data'];
+	$hoje = date_create_from_format('D d/m/Y', traduz_data($hoje_pt, 'en'));
 } else {
-  $hoje = new DateTime();
-  $hoje_pt = traduz_data($hoje->format('D d/m/Y'), 'pt');
+	$hoje = new DateTime();
+	$hoje_pt = traduz_data($hoje->format('D d/m/Y'), 'pt');
 }
 
 function traduz_data($date, $lang = 'en')
 {
-  $meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' , 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab' ];
-  $meses_en = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' , 'Sun', 'Mon', 'Tue', 'Thu', 'Wed', 'Fri', 'Sat'];
-  if ($lang == 'en') {
-    return str_replace($meses_pt, $meses_en, $date);
-  } else {
-    return str_replace($meses_en, $meses_pt, $date);
-  }
+	$meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+	$meses_en = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Sun', 'Mon', 'Tue', 'Thu', 'Wed', 'Fri', 'Sat'];
+	if ($lang == 'en') {
+		return str_replace($meses_pt, $meses_en, $date);
+	} else {
+		return str_replace($meses_en, $meses_pt, $date);
+	}
 }
 
 $dsc = new dashboardController();
@@ -56,9 +56,9 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 
 <head>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 
 
 	<script src="js/jquery.js"></script>
@@ -117,10 +117,7 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 <body>
 
 	<!-- form -->
-	<div class="form">
-
-	</div>
-
+	<div class="form"></div>
 
 	<!-- menu esquerdo -->
 	<?php
@@ -130,24 +127,30 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 	<!-- conteudo -->
 	<div class="corpo">
 
-		<div class="titulo_inicial" >
+		<div class="titulo_inicial" style="font-size:30pt;vertical-align:middle">
 
-			<img src="img/double_arrow_left.png" class="left" width="40" height="40" alt="" <?= ($dia_prev == $hoje_pt)?'style="opacity: 0.1"':''; ?> onclick="alteraData(dia_prev)" />
-			<img src="img/chevron_left.png" class="left" width="40" height="40" alt="" onclick="alteraData(dia_anterior)" />
+			<!--
+			<span class="left" style="font-size:30pt;padding-right:30px;vertical-align:middle" onclick="alteraData(dia_prev)">&#171;</span>
+			<span  class="left" style="font-size:30pt;padding-right:30px;vertical-align:middle" onclick="alteraData(dia_anterior)">&#8249;</span>
+			-->
+			<img src="img/double_arrow_left.png" class="left" width="30" height="30" alt="" <?= ($dia_prev == $hoje_pt) ? 'style="opacity: 0.3"' : ''; ?> onclick="alteraData(dia_prev)" />
+			<img src="img/chevron_left.png"      class="left" width="30" height="30" alt="" onclick="alteraData(dia_anterior)" />
 
-			<div >
+			<div>
 				<form method="get" action="index.php" target="_self" name="form1">
-					<input type="text" readonly="readonly" name="data" id="data"
-						value="<?= $hoje_pt ?>" onchange="atualizaTela(this)" />
+					<input type="text" name="data" id="data" value="<?= $hoje_pt ?>" style="size:200px" onchange="atualizaTela(this)" readonly />
 				</form>
 			</div>
 
-			<img src="img/chevron_right.png" class="right" width="40" height="40" alt=""
-				onclick="alteraData(dia_posterior)" />
-			<img src="img/double_arrow_right.png" class="right" width="40" height="40" alt="" <?= ($dia_next == $hoje_pt)?'style="opacity: 0.1"':''; ?> onclick="alteraData(dia_next)" />
 
+			<img src="img/chevron_right.png"      class="right" width="30" height="30" alt="" onclick="alteraData(dia_posterior)" />
+			<img src="img/double_arrow_right.png" class="right" width="30" height="30" alt="" <?= ($dia_next == $hoje_pt) ? 'style="opacity: 0.3"' : ''; ?> onclick="alteraData(dia_next)" />
+			<!--
+				<span class="left" style="font-size:30pt;padding-left:30px;vertical-align:middle" onclick="alteraData(dia_posterior)">&#8250; </span>   
+				<span class="left" style="font-size:30pt;padding-left:30px;vertical-align:middle" onclick="alteraData(dia_next)"> &#187;</span>
+			-->
 		</div>
-		
+
 
 		<table style="border:0" cellpadding="4" cellspacing="0">
 

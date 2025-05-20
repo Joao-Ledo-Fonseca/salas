@@ -9,6 +9,12 @@ $pc = new PermissoesController();
 
 $usuario = $usuarioController->cancelar();
 $usuario = $usuarioController->excluir();
+
+$errormsg = '';
+if (isset($_POST['excluir']) && is_string($usuario)) 
+        $errormsg = 'Utilizador não pode ser excluido. Existem reservas em seu nome.';    
+
+
 $usuario = $usuarioController->salvar();
 $usuario = $usuarioController->abrir();
 
@@ -77,7 +83,7 @@ if (!isset($id)) {
 
 
         <div class="container_conteudo lista_comum">
-
+            <div class=aviso style="color:red"><?= $errormsg ?></div>
             <form name="form1" method="post" target="_self">
 
                 <input type="hidden" name="id" value="<?= $id ?>" />

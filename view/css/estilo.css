@@ -70,8 +70,9 @@ button { padding:10px; margin:10px 0px; border:1px solid #969696; cursor:pointer
 select { padding:10px; margin-top:10px; height:40px; width:100%; border:none; border:1px solid #E1E1E1; }
 input[type="file"] {display: none;}
 .custom-file-upload {width:100px; height:35px; padding:5px 0px 0px; margin:10px 0px; border:1px solid #969696; text-align:center; font-size:13px; font-weight:normal ;cursor:pointer; display:inline-block }
-.btn1{ background-color:#ECECEC; width:100px; height:40px; }
+.btn1{ background-color:#ECECEC; width:100px; height:40px; border-radius: 2px; background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%) }
 .btn2{ background-color:#D4F7C4; width:100px; height:40px; }
+.active {background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(150, 150, 150, 0.9) 100%)}
 
 /* estrutura das tabelas */
 .tabelarow { overflow:auto; overflow-x:hidden;}
@@ -107,6 +108,7 @@ div.dt-container {margin: 0;width: 80%;}
 .titulo_inicial { height: 40px; line-height:40px; text-align:center; width:100%; vertical-align:top; }
 .titulo_inicial div { height: 38px;  width:120px; display:inline-block; vertical-align:top; line-height:38px; }
 .titulo_inicial img{ display: inline-block; cursor:pointer; }
+.titulo_inicial span{ display: inline-block; cursor:pointer; }
 .titulo_inicial input[type="text"] { height:38px; width:160px; border:none; outline: none; padding:0px; margin-left:0px; cursor:pointer; font-size: 18px;font-weight:  bold; }
 
 .reservado{ background-color:#FBFABB ; cursor:pointer; }

@@ -1,27 +1,39 @@
-﻿<?php 
+﻿<?php
 require_once "seguranca.php";
 require_once "../controller/salaController.php";
 require_once "../controller/categoriaController.php";
 
+if (isset($_GET['categoria_filtro'])) {
+    $categoria_filtro = Util::clearparam($_GET['categoria_filtro']);
+} elseif (isset($_POST['categoria_filtro'])) {
+    $categoria_filtro = Util::clearparam($_POST['categoria_filtro']);
+} else {
+    $categoria_filtro = 0;
+}
+
+
 $salaController = new salaController();
-$sala = $salaController->cancelar();
-$sala = $salaController->excluir();
-$sala = $salaController->salvar();
+// passa-se o $categoria_filtro para permitir retornar à sala_list com o mesmo filtro
+$sala = $salaController->cancelar($categoria_filtro);
+$sala = $salaController->excluir($categoria_filtro);
+$sala = $salaController->salvar($categoria_filtro);
 $sala = $salaController->abrir();
 
+// Para o "<Select>" de Categorias
+$categoriaController = new categoriaController();
+// $categorias = $categoriaController->listarController('id_nomes');
 
-
-
-if (isset($sala['id'])) {        
+if (isset($sala['id'])) {
     extract($sala);
 }
-    
+
 if (!isset($id)) {
     $id = 0;
     $nome = '';
     $descricao = '';
-	$categoria_nome = (isset($_GET['categoria'])? Util::clearparam($_GET['categoria']) : '');       
-    $categoria_id = '';
+    $categoria_id = $categoria_filtro;
+    $lugares = 0;
+    $activa = true;
     $imagem_id = '';
 
     $nome_img = '';
@@ -36,9 +48,6 @@ if (isset($_GET['errormsg'])) {
 } else {
     $errormsg = '';
 }
-
-$categoriaController = new categoriaController();
-$categorias = $categoriaController->listarController('id_nomes');
 
 ?>
 <!DOCTYPE html
@@ -65,7 +74,7 @@ $categorias = $categoriaController->listarController('id_nomes');
 
 <body>
 
-                
+
     <!-- menu esquerdo -->
     <?php include "menu_esquerdo.php"; ?>
 
@@ -76,34 +85,51 @@ $categorias = $categoriaController->listarController('id_nomes');
 
         <div class="container">
             <div class="a_par">
+                <div class=aviso style="color:red"><?= $errormsg ?></div>
 
                 <form enctype="multipart/form-data" name="form1" method="post" target="_self">
-                    
+
                     <input type="hidden" name="id" value="<?= $id ?>" />
                     <input type="hidden" name="imagem_id" value="<?= $imagem_id ?>" />
                     <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
-                    
+                    <input type="hidden" name="categoria_filtro" value= <?= $categoria_filtro ?> />
+
                     <table class="tabela_comum" cellpadding="4" cellspacing="4">
                         <tr>
                             <td width="100"> Nome </td>
                             <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
                             <td width="30"></td>
-                            <td width="100"> </td>
                             <td> </td>
                         </tr>
                         <tr>
                             <td width="100"> Descrição </td>
                             <td><input type="text" name="descricao" value="<?= $descricao ?>" /> </td>
                             <td width="30"></td>
-                            <td width="100"> </td>
                             <td> </td>
                         </tr>
-                        <td width="100"> Categoria </td>
-                        <td>
-                            <select name="categoria_id" style="width:200px" id="selecao">
-                                <?= $categoriaController->optionsCategoria(false, $categoria_nome); ?>;
-                            </select>
-                        </td>
+                        <tr>
+                            <td width="100"> Categoria </td>
+                            <td>
+                                <select name="categoria_id" style="width:180px" id="selecao">
+                                    <?= $categoriaController->optionsCategoria(false, $categoria_id); ?>;
+                                </select>
+                            </td>
+                            <td> </td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td width="100"> Nº Lugares </td>
+                            <td><input type="text" name="lugares" value="<?= $lugares ?>" /> </td>
+                            <td width="30"></td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td width="100"> Activa </td>
+                            <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?>>
+                            </td>
+                            <td width="30"></td>
+                            <td> </td>
+                        </tr>
                         <tr>
                             <td width="100"> Foto </td>
                             <td>
@@ -113,19 +139,15 @@ $categorias = $categoriaController->listarController('id_nomes');
                                 </div>
                             </td>
                             <td width="30"></td>
-                            <td width="100"> </td>
                             <td> </td>
                         </tr>
-
-                        <td width="100"> </td>
-                        <td> </td>
                     </table>
                     <input type="submit" name="salvar" value="Salvar" class="btn1" />
                     <input type="submit" name="excluir" value="Excluir" class="btn1" />
-                    <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar" style="float:inline"
-                    onclick="cancelaInputsRequired()" />                            
+                    <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar"
+                        style="float:inline" onclick="cancelaInputsRequired()" />
 
-                </form>                
+                </form>
             </div>
             <div class="apar">
                 <?php

@@ -1,6 +1,6 @@
 ﻿<?php
 
-require "util.php";
+require_once "util.php";
 require "../model/periodo.php";
 
 class periodoController
@@ -51,12 +51,21 @@ class periodoController
 		return false;
 	}
 
+	function nomePeriodo($periodo_id)
+	{
+		$periodo = new Periodo();
+		$per = $periodo->abrir($periodo_id);		
+		return $per[0]['nome'];
+	}
+
 	function abrir()
 	{
 
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+
+			$id = Util::clearparam($_GET['id']);
 			$periodo = new Periodo();
-			return $periodo->abrir($_GET['id']);
+			return $periodo->abrir($id);
 		}
 
 	}

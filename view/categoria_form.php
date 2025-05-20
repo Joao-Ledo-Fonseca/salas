@@ -13,7 +13,6 @@ $categoria = $categoriaController->abrir();
 if (isset($categoria['id']))
     extract($categoria);
 
-
 if (!isset($id)) {
     $id = 0;
     $nome = '';
@@ -63,11 +62,12 @@ if (isset($_GET['errormsg'])) {
     <!-- conteudo -->
 
     <div class="corpo">
-
+        
         <h3> Cadastro de Categorias </h3>
-        <div class="container">
+        
+        <div class="container">            
             <div class="a_par">
-
+                <div class=aviso style="color:red"><?= $errormsg ?></div>
                 <form enctype="multipart/form-data" name="form1" method="post" target="_self">
 
                     <input type="hidden" name="id" value="<?= $id ?>" />
@@ -105,7 +105,7 @@ if (isset($_GET['errormsg'])) {
                         <input type="submit" name="excluir" value="Excluir" class="btn1" />
                         <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar"
                             style="float:inline" onclick="cancelaInputsRequired()" />
-                        <span style="color:#900"><?php echo $errormsg; ?></span>
+                        <!-- <span style="color:#900"><?php echo $errormsg; ?></span> -->
                     </div>
 
                 </form>

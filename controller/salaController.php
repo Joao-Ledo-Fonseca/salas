@@ -6,12 +6,20 @@ require "../model/sala.php";
 class salaController
 {
 
-	function salvar()
+	function salvar($categoria_filtro)
 	{
 		if (isset($_POST['salvar'])) {
 			$id = Util::clearparam($_POST['id']);
 			$nome = Util::clearparam($_POST['nome']);
 			$descricao = Util::clearparam($_POST['descricao']);
+			$lugares = Util::clearparam($_POST['lugares']);
+			if (isset($_POST['activa'])) {
+				$activa = Util::clearparam($_POST['activa']);
+				$activa = ($_POST['activa'] == "activa" ? true : false);
+			} else {
+				$activa = false;
+			}
+
 			$categoria_id = Util::clearparam($_POST['categoria_id']);
 			$imagem_id = Util::clearparam($_POST['imagem_id']);
 
@@ -33,45 +41,70 @@ class salaController
 
 			}
 
-
 			if (strlen($nome) > 0) {
 				$sala = new sala();
-				$sala->salvar($id, $nome, $descricao, $categoria_id, $imagem_id);
+				$sala->salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id);
 			}
 
-			header("Location: sala_list.php");
+			$param = array("categoria_id"=>$categoria_filtro);
+			Util::redirect_POST("sala_list.php", $param );
+			//header("Location: sala_list.php?categoria_id=".$categoria_filtro);
 			exit();
 		}
 		return false;
 	}
 
-	function excluir()
+	function excluir($categoria_filtro)
 	{
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
 
 			$sala = new sala();
-			$sala->excluir($id);
+			$erro = $sala->excluir($id);
 
-			header("Location: sala_list.php");
+			if ($erro) {
+				$errormsg = 'Erro ao excluir a sala. Existem reservas.';
+
+				header("Location: sala_form.php?id=" . $id . "&categoria_filtro=" . $categoria_filtro . "&errormsg=" . $errormsg);
+				exit();
+			}
+
+			$post_data = array("categoria_id"=>$categoria_filtro);
+			$url = "sala_list.php";
+			
+			Util::url_POST($url, $post_data);
+
+			// header("Location: sala_list.php?categoria_id=" . $categoria_filtro);
 			exit();
 		}
 		return false;
 	}
 
-	function cancelar()
+	function cancelar($categoria_filtro)
 	{
 		if (isset($_POST['cancelar'])) {
 
-			header("Location: sala_list.php");
+			$post_data["categoria_id"] = $categoria_filtro ;			
+			$url = "sala_list.php";
+			
+			Util::redirect_POST($url, $post_data);		
+			// header("Location: sala_list.php?categoria_id=" . $categoria_filtro);
 			exit();
 		}
 		return false;
+	}
+
+	function nomeSala($sala_id)
+	{
+		$sala = new sala();
+		$sal = $sala->abrir($sala_id);
+		return $sal[0]['nome'];
 	}
 
 	function abrir()
 	{
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+
 			$sala = new sala();
 			$sal = $sala->abrir($_GET['id']);
 
@@ -90,26 +123,29 @@ class salaController
 	}
 
 	// listagem
-	function listarController($filtro = 'todas')
+	function listarController($filtro_categoria_id = 0 ,$filtro_activas='todas')
 	{
 
+	
 		$sala = new sala();
-		$linhas = $sala->listar($filtro);
+		$linhas = $sala->listar($filtro_categoria_id, $filtro_activas);
 
 		$tabela = '';
-		$cat_activa = '';
+		$cat_label = '';
 		foreach ($linhas as $linha) {
-			$categoria_display = ($cat_activa == $linha['categoria'] ? '' : $linha['categoria']);
-			$cat_activa = $linha['categoria'];
+			$categoria_display = ($cat_label == $linha['categoria'] ? '' : $linha['categoria']);
+			$cat_label = $linha['categoria'];
 
 			$tabela .= '<tr>
 			<td style="border:none">' . $categoria_display . '</td>
-			<td><a href="sala_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
+			<td><a href="sala_form.php?id=' . $linha['id'] . '&categoria_filtro='. $filtro_categoria_id.'">' . $linha['nome'] . '</a></td>
 			<td>' . $linha['descricao'] . '</td>
-			<td>' . $linha['id'] . '</td>
+			<td>' . ($linha['activa']?'&#10003;':'-') . '</td> 
+			<td>' . $linha['id'] . '</td>			
 			<td></td>
 		</tr>';
-
+			// &#10003;
+			// &#10005;
 		}
 
 		return $tabela;

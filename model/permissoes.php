@@ -3,7 +3,7 @@ require_once "db_mysqli.php";
 
 class Permissoes
 {
-
+	
 	private $db = null;
 
 	function __construct()
@@ -13,7 +13,9 @@ class Permissoes
 
 	function listar($tipo = 't')
 	{
-	
+		//  Permissoes são tipo do tipo 
+		// 		s -> simples  (só o campo uexterno é usado)
+		// 		n -> por niveis (são usados os três campos uexterno, uinterno, admin)
 		$selector = ($tipo <> 't' ? 'where tipo="' . $tipo . '"' : '');
 		$sql = ' select seq, nome, tipo, uexterno, uinterno, admin 
 				from permissoes ' .

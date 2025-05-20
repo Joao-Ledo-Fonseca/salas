@@ -65,7 +65,7 @@ class categoriaController
 			}
 
 			if ($erro) {
-				$errormsg = 'Erro ao excluir a categoria!';
+				$errormsg = 'Erro ao excluir a categoria! Existem salas na categoria.';
 
 				header("Location: categoria_form.php?id=" . $id . "&errormsg=" . $errormsg);
 				exit();
@@ -91,8 +91,10 @@ class categoriaController
 	function abrir()
 	{
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+
+			$id = Util::clearparam($_GET['id']);
 			$categoria = new categoria();
-			$cat = $categoria->abrir($_GET['id']);
+			$cat = $categoria->abrir($id);
 
 			$imagem_id = $cat[0]['imagem_id'];
 
@@ -116,25 +118,27 @@ class categoriaController
 		$categoria = new categoria();
 		$linhas = $categoria->listar();
 
-		if ($tipo == 'tabela') {
-			$categorias = '';
-			foreach ($linhas as $linha) {
+		switch ($tipo) {
+			case 'tabela':
+				$categorias = '';
+				foreach ($linhas as $linha) {
 
-				$categorias .= '<tr>								
+					$categorias .= '<tr>								
 								<td><a href="categoria_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
 								<td>' . $linha['descricao'] . '</td>
 								<td>' . $linha['id'] . '</td>
 								<td></td>
 							</tr>';
-			}
-		} else {
-			$categorias = $linhas;
+				};
+				break;
+			default:
+				$categorias = $linhas;
 		}
 
 		return $categorias;
 	}
 
-	function optionsCategoria($todas = false, $selected_nome = '', $selected_id = '')
+	function optionsCategoria($todas = false, $selected_id = '')
 	{
 		$categoria = new categoria();
 		$linhas = $categoria->listar();
@@ -143,15 +147,14 @@ class categoriaController
 
 		// Adiciona a opção "Todas" se necessário
 		if ($todas) {
-			$options .= '<option value="todas"' . ($selected_nome === "todas" ? " selected" : "") . '>Todas</option>';
+			$options .= '<option value=0 ' . ($selected_id === 0 ? " selected" : "") . '>Todas</option>';
 		}
 
 		// Gera as opções com base nas categorias
 		foreach ($linhas as $linha) {
-			$selected = ($linha['id'] == $selected_id || $linha['nome'] == $selected_nome) ? ' selected' : '';
+			$selected = ($linha['id'] == $selected_id ? ' selected' : '');			
 
-			$value = $todas ? $linha['nome'] : $linha['id'];
-			$options .= '<option value="' . $value . '"' . $selected . '>' . $linha['nome'] . '</option>';
+			$options .= '<option value="' . $linha['id'] . '"' . $selected . '>' . $linha['nome'] . '</option>';
 		}
 
 		return $options;

@@ -19,12 +19,12 @@ class UsuarioController
 
 
 			if (isset($_POST['salvar'])) {
-			$telefone = Util::clearparam(isset($_POST['telefone']) ? $_POST['telefone'] : '');
-			$NIF = Util::clearparam(isset($_POST['NIF'])? $_POST['NIF'] : null);
-			$nivel = Util::clearparam((isset($_POST['nivel']) ? $_POST['nivel'] : ''));						
+				$telefone = Util::clearparam(isset($_POST['telefone']) ? $_POST['telefone'] : '');
+				$NIF = Util::clearparam(isset($_POST['NIF']) ? $_POST['NIF'] : null);
+				$nivel = Util::clearparam((isset($_POST['nivel']) ? $_POST['nivel'] : ''));
 			} else {
 				$telefone = '';
-				$NIF = '';				
+				$NIF = '';
 				$nivel = 0;
 			}
 
@@ -35,17 +35,19 @@ class UsuarioController
 
 			// O nome é obrigatório
 			if (strlen($nome) > 0) {
+
 				$usuario = new Usuario();
-				$resultado = $usuario->salvar($id, $nome, $email, $senha, $telefone, $NIF,  $nivel);				
+				$resultado = $usuario->salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel);
 			}
 
 			// Se a gravação foi feita do ecrã de login
-			if (isset($_POST['validar'])) {				
+			// Ainda não está logado e não tem sessão -> nada a fazer
+			if (isset($_POST['validar'])) {
 				return $resultado;
-			} 
-			
+			}
+
 			if ($id == $_SESSION['user_id']) {
-				// se alterou o nome do usuario logado, atualiza a sessao
+				// se alterou o nome do usuario logado, atualiza o nome na sessao
 				$this->startSession(array('id' => $id, 'nome' => $nome, 'nivel' => $nivel));
 			}
 
@@ -61,17 +63,22 @@ class UsuarioController
 			$id = Util::clearparam($_POST['id']);
 
 			$usuario = new Usuario();
-			$usuario->excluir($id);
-
-			header("Location: usuario_list.php");
-			exit();
+			$res = $usuario->excluir($id);
+			
+			if (is_numeric($res)) {
+				header("Location: usuario_list.php");
+				exit();
+			} else {
+				return $res;
+			}
 		}
 		return false;
 	}
 
-	function cancelar() {
+	function cancelar()
+	{
 		if (isset($_POST['cancelar'])) {
-						
+
 			header("Location: usuario_list.php");
 			exit();
 		}
@@ -91,13 +98,13 @@ class UsuarioController
 	// listagem
 	function listarcontroller()
 	{
-		$permissoes=new PermissoesController();
+		$permissoes = new PermissoesController();
 		$usuario = new Usuario();
-		
+
 
 		$linhas = $usuario->listar();
 
-				$tabela = '';
+		$tabela = '';
 		foreach ($linhas as $linha) {
 			$tabela .= '<tr>							
 							<td><a href="usuario_form.php?id=' . $linha['id'] . '">' . $linha['nome'] . '</a></td>
@@ -105,7 +112,7 @@ class UsuarioController
 							<td>' . $permissoes->nomeNivel($linha['nivel'], 2) . '</td>
 							<td>' . $linha['id'] . '</td>
 							<td></td>
-						</tr>'; 
+						</tr>';
 
 		}
 		return $tabela;
@@ -128,7 +135,6 @@ class UsuarioController
 				// encontrou usuario
 				if (isset($row[0]['id'])) {
 					$this->startSession($row[0]);
-					
 
 					header("Location: index.php"); // pagina inicial
 					exit();

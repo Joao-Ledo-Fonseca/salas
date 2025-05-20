@@ -2,8 +2,12 @@
 
 require_once "seguranca.php";
 require_once '../controller/reservaController.php';
+require_once '../controller/periodoController.php';
+require_once '../controller/salaController.php';
 
 $reserva = new ReservaController();
+$periodo = new PeriodoController();
+$sala    = new SalaController();
 
 // salvar dados
 $reserva->salvarController();
@@ -31,26 +35,16 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		$professor_desc = '';
 		$disciplina_desc = '';
 		$observacao = '';
-		$periodo = '';
-		$sala = '';
+		$periodo = $periodo->nomePeriodo($periodo_id);
+		$sala = $sala->nomeSala($sala_id);
 		$usuario = $_SESSION['user_nome'];		
-
 	}
 
-	//1 reservada, 2 confirmada, 3 cancelada 
-	$a_options_status = array("Reservado", "Confirmado", "Cancelado");
-	$val = 1;
-	$options_status = '';
 
-	foreach ($a_options_status as $opt_stat) {
-		if ($status == $val)
-			$selected = ' selected="selected" ';
-		else
-			$selected = '';
-		$options_status .= "<option value=\"$val\" $selected>$opt_stat</option>";
-		$val++;
-	}
-
+	
+	// Verificar que funciona
+	// 1 reservada, 2 confirmada, 3 cancelada 
+   	$options_status = $reserva->options_status($status);
 	?>
 
 
@@ -59,14 +53,20 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		<h3> Reserva</h3>
 
 		<input type="hidden" name="id" value="<?= $reg_id ?>" />
+		<!-- 
 		<input type="hidden" name="sala" value="<?= $sala ?>" />
-		<input type="hidden" name="periodo" value="<?= $periodo ?>" />
+		<input type="hidden" name="periodo" value="<?= $periodo ?>" />		
+		-->
+
 		<input type="hidden" name="sala_id" value="<?= $sala_id ?>" />
 		<input type="hidden" name="periodo_id" value="<?= $periodo_id ?>" />
 
 
 		<input type="text" placeholder="dia" name="dia" id="dia" value="<?= $dia ?>"><BR />
-
+		<!-- eram hidden --> 
+		<input type="text" name="sala" value="<?= $sala ?>" disabled />
+		<input type="text" name="periodo" value="<?= $periodo ?>" disabled />
+		<!-- eram hidden -->
 		<input type="text" placeholder="Professor" name="professor" id="professor" value="<?= $professor_desc ?>"><BR />
 
 		<input type="text" placeholder="Disciplina" name="disciplina" id="disciplina" value="<?= $disciplina_desc ?>"><BR />
@@ -79,12 +79,13 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		<h3> Repetir semanalmente até</h3>
 		<input type="text" placeholder="data final" name="data_final" id="data_final" value=""><BR />
 
-		<input type="button" name="Fechar"  value="Fechar"  onClick="fecharForm()" class="btn1">
-		<input type="button" name="Excluir" value="Excluir" class="btn1" onclick="excluirFormularioReserva(<?= $reg_id ?>)">
-		<input type="submit" name="salvar"  value="Salvar"  class="btn2">
+		<input type="button" name="Fechar"  value="Fechar"  class="btn1" style="width:80px" onClick="fecharForm()" >
+		<input type="button" name="Excluir" value="Excluir" class="btn1" style="width:80px" onclick="excluirFormularioReserva(<?= $reg_id ?>)">
+		<input type="submit" name="salvar"  value="Salvar"  class="btn1" style="width:80px">
 		<br><br>
-		Registado por: <span class="input"><?= $usuario ?></span>
-		<input type="text" placeholder="User" name="user" id="user" value="<?= $usuario ?>" disabled><BR /> 
+		<Label for="user" >Registado por: </Label>
+		<!-- Registado por: <span class="input"><?= $usuario ?></span> -->
+		<input type="text" placeholder="User" name="user" id="user" value="<?= $usuario ?>" style="width:50%" disabled><BR />
 		
 	</form>
 	<?php

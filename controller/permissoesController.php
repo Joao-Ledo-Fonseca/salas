@@ -39,7 +39,6 @@ class permissoesController
     function __construct()
     {
         //carrega o array global das Permissões salvas na BD    
-
         global $permis_array;        
 
         $permissoes = new Permissoes();    
@@ -47,14 +46,18 @@ class permissoesController
 
         foreach ($linhas as $l) {
             $permis_array[$l["nome"]] = array($l[$this->niveis[0][0]], $l[$this->niveis[1][0]], $l[$this->niveis[2][0]]);
-        }
 
+            
+        }
     }
 
     function validaPermissao($permissao, $nivel)
     {
         global $permis_array;
-        return array_key_exists($permissao, $permis_array) || ($this->niveis[$nivel][0] == "superadmin");
+        
+           $validade =  ($this->niveis[$nivel][0] == "superadmin") || (array_key_exists($permissao, $permis_array) && $permis_array[$permissao][$nivel]);        
+
+        return $validade;
     }
 
     function nomeNivel($nivel, $tipoNome = 0)
