@@ -6,7 +6,14 @@ require_once "../controller/categoriaController.php";
 
 // Obtém a seleção de categoria e activas
 $categoria_id = (isset($_POST['categoria_id']) ? Util::clearparam($_POST['categoria_id']) : (int) 0 );
-$activas = (isset($_POST['activas']) ? Util::clearparam($_POST['activas']) : 'todas') ;   
+$activas = (isset($_POST['activas']) ? Util::clearparam($_POST['activas']) : 'activas') ;   
+
+/*
+if (isset($_POST['categoria_id'])) {
+    var_dump($categoria_id,$activas);
+    exit;
+}
+*/
 
 // Controladores
 $categoriaController = new categoriaController();

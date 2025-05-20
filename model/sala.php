@@ -39,23 +39,26 @@ class sala
 		return $this->db->query($sql);
 	}
 			 
+	
 	function salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id)	
 	{
-			
+
 		if ($imagem_id == '') {
 			$imagem_id = 'NULL';;
 		}
+
+		$activa=$activa?1:0; // converte para tinyint do MySql
 
 		if ($id == 0) {
 			// inserir
 			$sql = ' insert into sala ( nome, descricao, categoria_id, lugares, activa, imagem_id ) 
 							values ( "' . $nome . '", "' . $descricao . '", "' . $categoria_id . '", ' . $lugares . ',' . $activa . ',' . $imagem_id . ') ';			
 							
+
 			return $this->db->query_insert($sql);			
 		} else {
 			// atualizar
-			$sql = ' update sala set nome = "' . $nome . '", descricao = "' . $descricao . '", categoria_id= "'. $categoria_id . '" , lugares=' . $lugares .' ,activa=' . $activa . ', imagem_id = ' . $imagem_id . ' where id = ' . $id;
-			
+			$sql = ' update sala set nome = "' . $nome . '", descricao = "' . $descricao . '", categoria_id= "'. $categoria_id . '" , lugares=' . $lugares .' ,activa=' . $activa . ', imagem_id = ' . $imagem_id . ' where id = ' . $id;						
 			return $this->db->query_update($sql);
 		}
 

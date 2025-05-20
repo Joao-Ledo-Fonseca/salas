@@ -11,12 +11,21 @@ if (isset($_GET['categoria_filtro'])) {
     $categoria_filtro = 0;
 }
 
+if (isset($_GET['activas'])) {
+    $activas_filtro = Util::clearparam($_GET['activas']);
+} elseif (isset($_POST['activas'])) {
+    $activas_filtro = Util::clearparam($_POST['activas']);
+} else {
+    $activas_filtro = 'activas';
+}
+
+
 
 $salaController = new salaController();
 // passa-se o $categoria_filtro para permitir retornar à sala_list com o mesmo filtro
-$sala = $salaController->cancelar($categoria_filtro);
-$sala = $salaController->excluir($categoria_filtro);
-$sala = $salaController->salvar($categoria_filtro);
+$sala = $salaController->cancelar($categoria_filtro, $activas_filtro );
+$sala = $salaController->excluir($categoria_filtro, $activas_filtro);
+$sala = $salaController->salvar($categoria_filtro, $activas_filtro);
 $sala = $salaController->abrir();
 
 // Para o "<Select>" de Categorias
@@ -81,7 +90,7 @@ if (isset($_GET['errormsg'])) {
     <!-- conteudo -->
     <div class="corpo">
 
-        <h3> Cadastro de Salas </h3>
+        <h3> Cadastro de Salas </h3><br>Categorias:<?= $categoria_filtro ?> Activas:<?= $activas_filtro ?>
 
         <div class="container">
             <div class="a_par">
@@ -93,6 +102,7 @@ if (isset($_GET['errormsg'])) {
                     <input type="hidden" name="imagem_id" value="<?= $imagem_id ?>" />
                     <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
                     <input type="hidden" name="categoria_filtro" value= <?= $categoria_filtro ?> />
+                    <input type="hidden" name="activas" value= <?= $activas_filtro ?> />
 
                     <table class="tabela_comum" cellpadding="4" cellspacing="4">
                         <tr>
@@ -125,7 +135,7 @@ if (isset($_GET['errormsg'])) {
                         </tr>
                         <tr>
                             <td width="100"> Activa </td>
-                            <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?>>
+                            <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?> >
                             </td>
                             <td width="30"></td>
                             <td> </td>

@@ -6,21 +6,17 @@ require "../model/sala.php";
 class salaController
 {
 
-	function salvar($categoria_filtro)
+	function salvar($categoria_filtro, $activas_filtro)
 	{
 		if (isset($_POST['salvar'])) {
 			$id = Util::clearparam($_POST['id']);
 			$nome = Util::clearparam($_POST['nome']);
 			$descricao = Util::clearparam($_POST['descricao']);
 			$lugares = Util::clearparam($_POST['lugares']);
-			if (isset($_POST['activa'])) {
-				$activa = Util::clearparam($_POST['activa']);
-				$activa = ($_POST['activa'] == "activa" ? true : false);
-			} else {
-				$activa = false;
-			}
-
 			$categoria_id = Util::clearparam($_POST['categoria_id']);
+
+			$activa = (isset($_POST['activa']));  //converte para bool			
+			
 			$imagem_id = Util::clearparam($_POST['imagem_id']);
 
 			$img_file = $_FILES['imagem']['tmp_name'];
@@ -43,18 +39,21 @@ class salaController
 
 			if (strlen($nome) > 0) {
 				$sala = new sala();
-				$sala->salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id);
+				$sala->salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id );
 			}
 
-			$param = array("categoria_id"=>$categoria_filtro);
+			$param["categoria_id"] = $categoria_filtro;
+			$param["activas"] = $activas_filtro;
+
 			Util::redirect_POST("sala_list.php", $param );
+			
 			//header("Location: sala_list.php?categoria_id=".$categoria_filtro);
 			exit();
 		}
 		return false;
 	}
 
-	function excluir($categoria_filtro)
+	function excluir($categoria_filtro, $activas_filtro)
 	{
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
@@ -70,6 +69,7 @@ class salaController
 			}
 
 			$post_data = array("categoria_id"=>$categoria_filtro);
+			$post_data["activas"] = $activas_filtro ;
 			$url = "sala_list.php";
 			
 			Util::url_POST($url, $post_data);
@@ -80,11 +80,12 @@ class salaController
 		return false;
 	}
 
-	function cancelar($categoria_filtro)
+	function cancelar($categoria_filtro, $activas_filtro)
 	{
 		if (isset($_POST['cancelar'])) {
 
-			$post_data["categoria_id"] = $categoria_filtro ;			
+			$post_data["categoria_id"] = $categoria_filtro ;
+			$post_data["activas"] = $activas_filtro ;
 			$url = "sala_list.php";
 			
 			Util::redirect_POST($url, $post_data);		
@@ -123,9 +124,8 @@ class salaController
 	}
 
 	// listagem
-	function listarController($filtro_categoria_id = 0 ,$filtro_activas='todas')
-	{
-
+	function listarController($filtro_categoria_id = 0, $filtro_activas='activas')
+	{		
 	
 		$sala = new sala();
 		$linhas = $sala->listar($filtro_categoria_id, $filtro_activas);
@@ -138,7 +138,7 @@ class salaController
 
 			$tabela .= '<tr>
 			<td style="border:none">' . $categoria_display . '</td>
-			<td><a href="sala_form.php?id=' . $linha['id'] . '&categoria_filtro='. $filtro_categoria_id.'">' . $linha['nome'] . '</a></td>
+			<td><a href="sala_form.php?id=' . $linha['id'] . '&categoria_filtro='. $filtro_categoria_id.'&activas=' . $filtro_activas . '"  >' . $linha['nome'] . '</a></td>
 			<td>' . $linha['descricao'] . '</td>
 			<td>' . ($linha['activa']?'&#10003;':'-') . '</td> 
 			<td>' . $linha['id'] . '</td>			
@@ -147,6 +147,8 @@ class salaController
 			// &#10003;
 			// &#10005;
 		}
+
+		    	
 
 		return $tabela;
 

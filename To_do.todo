@@ -2,10 +2,10 @@
 TO DO LIST:
 
 Tarefas Técnicas:        
-☐ Verificar sanitização de todos os parametros dos GET's em todos os ficheiros Controller
-☐ Tratar erros retornados pela BD, especialmente nas violações de integridade referencial.
+✔ Verificar sanitização de todos os parametros dos GET's em todos os ficheiros Controller @done(25-05-20 18:55)
+✔ Tratar erros retornados pela BD, especialmente nas violações de integridade referencial. @done(25-05-20 18:55)
 ☐ Limitar comprimento dos campos nos forms, de acordo com os campos da BD
-☐ Substituir icons por caracteres na escolha de datas
+✔ Substituir icons por caracteres na escolha de datas @done(25-05-20 18:55)
 ☐ Acertar Menu para devices estreitos 
 
 
@@ -43,22 +43,27 @@ Modificação de dados!
 
 
 ☐ Adicionar atributos às reservas        
-        - Identificação do utilizador (substitui o "professor")
-        - Descrição da utilização (Substitui "disciplina")
-        - Entidade de faturação
-        - Responsável (o responsável interno pela validação)        
+        ☐ Identificação do utilizador (substitui o "professor")
+        ☐ Descrição da utilização (Substitui "disciplina")
+        ☐ Entidade de faturação
+        ☐ Responsável (o responsável interno pela validação)        
 
 ☐ o Id só deve aparecer para os Superadministradores, nas listas de
-        - Categorias
-        - Salas
-        - Periodos
-        - Utilizadores
+        ☐ Categorias
+        ☐ Salas
+        ☐ Periodos
+        ☐ Utilizadores
+
+☐ Relatorio
+        ☐ O titulo deve refletir a escolha de data (ecrã e impressões/exportaçõe). 
+        ☐ Adicionar 
+
 
 Features adicionais:
 
-        ☐ Delete/Passagem a histórico de reservas anteriores a uma data (incorporar dados dependentes no ficheiro de histórico)
-        ☐ Delete/conversão/passagem a histórico, em cascata de @low
-        - Salas, 
-        - Categorias, 
-        - Users
-        - Periodos
+☐ Delete/Passagem a histórico de reservas anteriores a uma data (incorporar dados dependentes no ficheiro de histórico)
+☐ Delete/conversão/passagem a histórico, em cascata de @low
+        ☐ Salas, 
+        ☐ Categorias, 
+        ☐ Users
+        ☐ Periodos
