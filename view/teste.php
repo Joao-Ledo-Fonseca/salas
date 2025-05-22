@@ -30,11 +30,44 @@ $lista = $salaController->listarcontroller($selecao);
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
+    <!--
     <link rel="stylesheet" href="./css/estilo.css">
     <link rel="stylesheet" href="styles.css">
+    -->
 
     <style>
-        * {border: 1px solid black;}
+        
+       body{ padding:0px; margin:0px;font-family: 'Open Sans', sans-serif; color:#4E4E4E; overflow:hidden; background-color:#FFFFFF; }
+        h3 { font-weight:300; }
+
+        /* Menu-Esquerdo */
+.menu  {  background-color:#464646; font-size:14px; width:130px;  height:100%; float:left; padding-top:100px;  }
+.menu .user {color:#FFFFFF;padding-left:15px; padding-bottom: 20px;} 
+.menu hr {border: 0px solid #FFFFFF;}
+.menu ul{ padding:0px; margin:0px; }
+.menu li {  padding:15px; margin:0px; color:#FFFFFF;  list-style:none;  transition: background-color 0.7s ease, color 0.7s ease;  background-color:#575757; cursor:pointer; }
+.menu li:hover, .dropdown-btn:hover { background-color:#D4D4D4; }
+.menu a{ color:#FFFFFF; text-decoration:none; }
+.menu li:hover a{color:#3B3B3B; }
+.hamb { display:none;}
+        
+  
+        
+        
+        .corpo {width:100%-100px;float:left;margin: 0px 10px 10px};
+        .container_conteudo {width:100%;display:block;height:auto}
+        .container_top {width:100%;display:block;height:auto;padding: 0px 0px 30px; }      
+
+        .lista_comum {}
+        .tabela_comum {}
+
+        .form {}
+        .form_sel {width:100%;display:block;clear:both;height:auto}    
+        
+        table {}
+;
+        * {border: 1px solid black;};
+        .menu * {border: 0px;}
     </style>
 
 </head>
@@ -52,9 +85,8 @@ $lista = $salaController->listarcontroller($selecao);
     <div class="corpo">
         <h3>Cadastro de Salas</h3>
 
-        <div class="lista_comum container_top">
-            
-            <form class="form_sel" name="form1" method="post" target="_self">
+        <div class="form_sel">
+            <form name="form1" method="post" target="_self">
                 <span style="float:left;">
                     <input type="button" name="novo" value="Novo" class="btn1"
                         onclick="abre('sala_form.php?categoria=<?= $selecao ?>')" />
@@ -72,10 +104,11 @@ $lista = $salaController->listarcontroller($selecao);
                             </option>
                         <?php endforeach; ?>
 
-                    </select>
+                    </select>                    
                 </span>
 
             </form>
+            
         </div>
 
         <div class="container_conteudo">
@@ -85,6 +118,7 @@ $lista = $salaController->listarcontroller($selecao);
                         <th width="150px">Categoria</th>
                         <th width="150px">Nome</th>
                         <th width="200px">Descrição</th>
+                        <th width="50px">Activa</th>
                         <th width="50px">ID</th>
                         <th> </th>
                     </tr>

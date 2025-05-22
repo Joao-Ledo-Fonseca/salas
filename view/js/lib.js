@@ -21,9 +21,9 @@ function abreReserva(o) {
 	
 	
 	//abre o formulario por AJAX preenchido
-	let abre = true;
+	let abre = true;  
 
-	if (abre) {
+	if (abre) {  // ???
 
 		$.ajax({
 			type: "GET",
@@ -132,7 +132,8 @@ function show_salvar() {
 }
 
 function cancelaInputsRequired() {        
-	$('input').prop('required', false);
+	$('input').prop('value','');
+	$('input').prop('required', false);		
 }
 
 function printDiv() {

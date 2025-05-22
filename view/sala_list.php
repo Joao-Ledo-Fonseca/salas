@@ -28,9 +28,9 @@ $lista = $salaController->listarcontroller($categoria_id, $activas);
 <html lang="pt-PT">
 
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Salas</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">       
 
     <!-- Scripts -->
     <script src="js/jquery.js"></script>
@@ -41,6 +41,8 @@ $lista = $salaController->listarcontroller($categoria_id, $activas);
     <!-- Estilos -->
     <link rel="stylesheet" href="css/jquery.datetimepicker.css">
     <link rel="stylesheet" href="css/estilo.css">
+
+    <title>Cadastro de Salas</title>
 </head>
 
 <body>

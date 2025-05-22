@@ -13,15 +13,17 @@ class Usuario
 
 	function autenticar($email, $senha)
 	{
-		$sql = ' select id, nome, nivel from usuario where (email = "' . $email . '" or nome = "' . $email . '") and senha="' . $senha . '";';
-		return$this->db->query($sql);
+		$sql = ' select id, nome, nivel, email from usuario where (email = "' . $email . '" or nome = "' . $email . '") and senha="' . $senha . '";';
+		$resultado = $this->db->query($sql);
+
+		return $resultado;
 	}
 
 	function listar()
 	{	
 
 		$sql = ' select * from usuario order by nivel desc;';
-		return$this->db->query($sql);
+		return $this->db->query($sql);
 	}
 
 

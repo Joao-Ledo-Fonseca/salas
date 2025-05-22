@@ -36,6 +36,7 @@ h3 { font-weight:300; }
 .menu li:hover, .dropdown-btn:hover { background-color:#D4D4D4; }
 .menu a{ color:#FFFFFF; text-decoration:none; }
 .menu li:hover a{color:#3B3B3B; }
+.hamb { display:none;}
 
 /* Dropdown para Menu-Esquerdo */
 .dropdown-container {display: none; background-color: #262626; padding-left: 0px;}
@@ -48,11 +49,14 @@ h3 { font-weight:300; }
 .container { padding: 20px; text-align: left; }
 .a_par {width:50%; float: left; }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 900px) {
+    .a_par {  width:100%; margin: auto; }
     .menu  {  background-color:#464646; font-size:14px; width:130px;height:100%; float:left; padding-top:100px; display:none}
+    .hamb  {  display:inline-block; }
     .corpo {  width:100%; max-width:calc(100%); float:left; height:100%;   padding:15px;  } 
     .container_top { padding: 0px; float: left; display:block; }
 }
+
 
 .container_top { padding: 20px; float: left; display:block; }
 .container_conteudo { padding: 20px; float: left; display:block;}
@@ -115,7 +119,6 @@ div.dt-container {margin: 0;width: 80%;}
 .confirmado { background-color:#BFF9B9; cursor:pointer; }
 .cancelado{ background-color:#FCC5C5; cursor:pointer; }
 
-
 .reservado hr, .cancelado hr, .confirmado hr{ border:none; }
 .disponivel:hover { background-color:#DFDFDF; cursor:pointer; }
 
@@ -125,6 +128,4 @@ div.dt-container {margin: 0;width: 80%;}
 .tooltip .tooltiptext { visibility: hidden; width: 300px; background-color: #F0F0F0;  color: #999; text-align: center; padding: 5px 0; border-radius: 8px; border: solid 1px #CCC; opacity: 0.9; transition: width 5s, opacity 3.9s; 
             position: absolute; z-index: 1;top: 40px; left: 95%;}
 .tooltip:hover .tooltiptext {visibility: visible;}
-
-
 

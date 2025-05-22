@@ -6,14 +6,14 @@ require_once "../controller/usuarioController.php";
 $usuarioController = new UsuarioController();
 
 
-if (isset($_POST['entrar'])) {
+if (isset($_POST['entrar'])) {  
     $result = $usuarioController->autenticarController();
     $errormsg = ($result == 0 ? 'E-mail ou senha inválidos' : '');
 
 } else {
-    $errormsg = '';
-    if (isset($_POST['validar'])) {
-        $result = $usuarioController->salvar();
+    $errormsg = '';    
+    if (isset($_POST['validar'])) {        
+        $result = $usuarioController->salvar();        
         $errormsg = (is_numeric($result) ? 'Utilizador criado com sucesso!':'Nome ou email inválidos ou já existentes!'); 
     };
     
@@ -21,9 +21,8 @@ if (isset($_POST['entrar'])) {
 
 /* Variáveis que controlam a apresentação de forms e botões */
 $validou = ((isset($_POST['validar']) && is_numeric($result)) ? true : false);
-$retornou = (isset($_POST['cancelar']) || isset($_POST['OK']) ? true : false);
 $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numeric($result) )) ? true : false);
-
+$retornou = (isset($_POST['cancelar']) || isset($_POST['OK']) ? true : false);
 ?>
 
 <!DOCTYPE html>
@@ -40,9 +39,7 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numer
     <link rel="stylesheet" type="text/css" href="css/estilo.css" />
 
     <style type="text/css">
-        body,
-        td,
-        th {
+        body, td, th {
             font-family: "Open Sans", sans-serif;
         }
 
@@ -72,8 +69,9 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numer
                 </div>
             </div>
 
-            <div id="direito">
 
+
+            <div id="direito">
                 <div>
 
                     <br />
@@ -86,36 +84,38 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numer
                 <!-- <span style="color:#900"><?php echo $errormsg; ?></span><br /> -->
 
                 <div id="direito_log">
+
                     <form action="login.php" method="post" name="Formulario">
 
                         <span style="color:#900"><?php echo $errormsg; ?></span><br /><br />
 
-                        <input type="text" name="email" id="email" placeholder="Nome de utilizador ou e-mail" autocomplete="on" /><br /><br />
-                        <input type="password" name="senha" id="senha" placeholder="Senha"
+                        <input type="text" name="email_l" id="email" placeholder="Nome de utilizador ou e-mail" autocomplete="on" /><br /><br />
+                        <input type="password" name="senha_l" id="senha" placeholder="Senha"
                             autocomplete="on" /><br /><br />
-
+                        
+                        <input type="submit" id="entrar" name="entrar" value="Entrar" class="btn1" />
 
                         <!--
-                    <<span class="tooltip">
+                        <<span class="tooltip">
                         <input type="submit" id="entrar" name="entrar" value="Entrar" class="btn1" />
                         <?= ((strlen($errormsg) > 0) ? '<span class="tooltiptext">Use um Email e Senha válidos!</span>' : ""); ?>
-                    </span>
-                    -->
+                        </span>
+                        -->
 
-                        <input type="submit" id="entrar" name="entrar" value="Entrar" class="btn1" />
+                        
 
                         <!--
-                    <span class="tooltip">
+                        <span class="tooltip">
                         <input type="submit" id="registar" name="registar" value="Registar" class="btn1" style="display:none">
                         <span class="tooltiptext">Registar novo utilizador</span>
-                    </span>
-                    -->
+                        </span>
+                        -->
 
                         <br /><br /><br />
 
                         <div class="link">
                             <span class="tooltip">
-                                <a id="registar" name="registar" value="Registar" class="link" style="display:none"
+                                <a style="display:none" id="registar" name="registar" value="Registar" class="link" 
                                     href="./login.php?registar=registar">&#10132; Registar novo utilizador</a>
                                 <span class="tooltiptext">Crie a sua nova conta de utilizador</span>
                             </span>
@@ -131,13 +131,13 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numer
                         <span style="color:#900"><?php echo $errormsg; ?></span><br /><br/>
 
                         <input type="hidden" name="id" value=0 />
-                        <input type="text" name="nome" id="nome_r" placeholder="Nome de Utilizador" required />
+                        <input type="text" name="nome" id="nome" placeholder="Nome de Utilizador" required />
                         <br />
                         <br />
-                        <input type="text" name="email" id="email_r" placeholder="e-mail" autocomplete="on" required />
+                        <input type="email" name="email" id="email" placeholder="e-mail" autocomplete="on" required />
                         <br />
                         <br />
-                        <input type="password" name="senha" id="senha_r" placeholder="Senha" autocomplete="on" />
+                        <input type="password" name="senha" id="senha" placeholder="Senha" autocomplete="on" />
                         <br />
                         <br />
 
@@ -180,7 +180,7 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numer
             var x = <?= json_encode($retornou) ?>;
             if (x) {
                 $("#direito_log").show();
-                $("direito_reg").hide();
+                $("#direito_reg").hide();
             };
         });
 

@@ -64,9 +64,7 @@ if (isset($_GET['errormsg'])) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <script src="js/jquery.js"></script>
     <script src="js/jquery.datetimepicker.full.js"></script>
@@ -108,39 +106,50 @@ if (isset($_GET['errormsg'])) {
 
                     <table class="tabela_comum" cellpadding="4" cellspacing="4">
                         <tr>
-                            <td width="100px"> Nome </td>
+                            <td width="100"> Nome </td>
                             <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
+                            <td width="30"></td>
+                            <td> </td>
                         </tr>
                         <tr>
-                            <td width="100px"> Descrição </td>
-                            <td><input type="text" name="descricao" value="<?= $descricao ?>" /> </td>                            
+                            <td width="100"> Descrição </td>
+                            <td><input type="text" name="descricao" value="<?= $descricao ?>" /> </td>
+                            <td width="30"></td>
+                            <td> </td>
                         </tr>
                         <tr>
-                            <td width="100px"> Categoria </td>
+                            <td width="100"> Categoria </td>
                             <td>
                                 <select name="categoria_id" style="width:180px" id="selecao">
                                     <?= $categoriaController->optionsCategoria(false, $categoria_id); ?>;
                                 </select>
-                            </td>                            
+                            </td>
+                            <td> </td>
+                            <td> </td>
                         </tr>
                         <tr>
-                            <td width="100px"> Nº Lugares </td>
-                            <td><input type="text" name="lugares" value="<?= $lugares ?>" /> </td>                            
+                            <td width="100"> Nº Lugares </td>
+                            <td><input type="text" name="lugares" value="<?= $lugares ?>" /> </td>
+                            <td width="30"></td>
+                            <td> </td>
                         </tr>
                         <tr>
-                            <td width="100px"> Activa </td>
+                            <td width="100"> Activa </td>
                             <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?> >
                             </td>
-
+                            <td width="30"></td>
+                            <td> </td>
                         </tr>
                         <tr>
-                            <td width="100px"> Foto </td>
+                            <td width="100"> Foto </td>
                             <td>
                                 <div>
                                     <label for="newimagem" class="custom-file-upload btn1">Ficheiro</label>
                                     <input name="imagem" id="newimagem" type="file" onclick="renderizaNovaImagem()" />
                                 </div>
-                            </td>                            
+                            </td>
+                            <td width="30"></td>
+                            <td> </td>
                         </tr>
                     </table>
                     <input type="submit" name="salvar" value="Salvar" class="btn1" />

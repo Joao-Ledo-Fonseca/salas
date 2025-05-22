@@ -109,23 +109,43 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 			window.location.href = "index.php?data=" + data_arg;
 		}
 
+
+		/* Set the width of the sidebar to 250px (show it) */
+		function openNav() {
+  			var x = document.getElementsByClassName("menu");
+			// x[0].style.width = "250px";
+			x[0].style.display = "inline-block";
+		}
+
+		/* Set the width of the sidebar to 0 (hide it) */
+		function closeNav() {
+  			document.getElementById("menu").style.width = "0";
+		}
+
 	</script>
 
 	<title>Reserva de Salas</title>
+	
+	
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="../favicon.ico">
+	<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+    <link rel="manifest" href="../site.webmanifest">   
+	
 </head>
 
 <body>
 
-	<!-- form -->
-	<div class="form"></div>
+
 
 	<!-- menu esquerdo -->
-	<?php
-	include "menu_esquerdo.php";
-	?>
+	<?php include "menu_esquerdo.php"; ?>
 
 	<!-- conteudo -->
 	<div class="corpo">
+
+		<div class="hamb" style="font-size:40px; color: black; float:left" onclick="openNav()">&#9776;</div>
 
 		<div class="titulo_inicial" style="font-size:30pt;vertical-align:middle">
 
@@ -134,17 +154,22 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 			<span  class="left" style="font-size:30pt;padding-right:30px;vertical-align:middle" onclick="alteraData(dia_anterior)">&#8249;</span>
 			-->
 			<img src="img/double_arrow_left.png" class="left" width="30" height="30" alt="" <?= ($dia_prev == $hoje_pt) ? 'style="opacity: 0.3"' : ''; ?> onclick="alteraData(dia_prev)" />
-			<img src="img/chevron_left.png"      class="left" width="30" height="30" alt="" onclick="alteraData(dia_anterior)" />
+			<img src="img/chevron_left.png" class="left" width="30" height="30" alt=""
+				onclick="alteraData(dia_anterior)" />
 
 			<div>
 				<form method="get" action="index.php" target="_self" name="form1">
-					<input type="text" name="data" id="data" value="<?= $hoje_pt ?>" style="size:200px" onchange="atualizaTela(this)" readonly />
+					<input type="text" name="data" id="data" value="<?= $hoje_pt ?>" style="size:200px"
+						onchange="atualizaTela(this)" readonly />
 				</form>
 			</div>
 
 
-			<img src="img/chevron_right.png"      class="right" width="30" height="30" alt="" onclick="alteraData(dia_posterior)" />
+			<img src="img/chevron_right.png" class="right" width="30" height="30" alt=""
+				onclick="alteraData(dia_posterior)" />
 			<img src="img/double_arrow_right.png" class="right" width="30" height="30" alt="" <?= ($dia_next == $hoje_pt) ? 'style="opacity: 0.3"' : ''; ?> onclick="alteraData(dia_next)" />
+
+
 			<!--
 				<span class="left" style="font-size:30pt;padding-left:30px;vertical-align:middle" onclick="alteraData(dia_posterior)">&#8250; </span>   
 				<span class="left" style="font-size:30pt;padding-left:30px;vertical-align:middle" onclick="alteraData(dia_next)"> &#187;</span>
@@ -176,6 +201,8 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 
 	</div>
 
+	<!-- form -->
+	<div class="form"></div>
 
 </body>
 
