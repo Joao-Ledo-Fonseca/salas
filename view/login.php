@@ -1,3 +1,6 @@
+<!DOCTYPE html>   
+<html lang="pt-PT">
+
 <?php
 
 require_once "config.php";
@@ -25,8 +28,7 @@ $registar = ((isset($_GET['registar']) || (isset($_POST['validar']) && !is_numer
 $retornou = (isset($_POST['cancelar']) || isset($_POST['OK']) ? true : false);
 ?>
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+
 
 <head>
 

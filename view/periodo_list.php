@@ -1,4 +1,8 @@
-﻿<?php
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+
+<?php
 
 require_once "seguranca.php";
 require_once "../controller/periodoController.php";
@@ -8,8 +12,6 @@ $lista = $periodoController->listarcontroller();
 
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-PT">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,15 +33,16 @@ $lista = $periodoController->listarcontroller();
 <body>
 
     <!-- form -->
-    <div class="form">
-    </div>
+    <div class="form"></div>
 
     <!-- menu esquerdo -->
     <?php include "menu_esquerdo.php"; ?>
 
     <!-- conteudo -->
     <div class="corpo">
+        
         <h3>Cadastro de Períodos</h3>
+
         <div class="container_top lista_comum">
             <div class="form_sel">
                 <input type="button" name="novo" value="novo" class="btn1" onclick='abre("periodo_form.php")'>

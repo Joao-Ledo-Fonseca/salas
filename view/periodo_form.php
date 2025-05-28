@@ -1,4 +1,7 @@
-﻿<?php
+<!DOCTYPE html>   
+<html lang="pt-PT">
+
+<?php
 
 require_once "seguranca.php";
 require_once "../controller/periodoController.php";
@@ -18,9 +21,7 @@ if (!isset($id)) {
 }
 
 ?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
 
 <head>    
 
@@ -62,17 +63,13 @@ if (!isset($id)) {
                 <table class="tabela_comum" cellpadding="4" cellspacing="4">
                     <tr>
                         <td width="100"> Nome </td>
-                        <td><input type="text" name="nome" value="<?= $nome ?>" /> </td>
-                        <td width="30"> </td>
-                        <td width="100"> </td>
-                        <td> </td>
+                        <td><input type="text" name="nome" value="<?= $nome ?>" maxlength="30" size="30" width="30px" /> </td>
+                        
                     </tr>
                     <tr>
                         <td width="100"> Seq </td>
                         <td><input type="number" name="seq" value="<?= $seq ?>" /> </td>
-                        <td width="30"> </td>
-                        <td width="100"> </td>
-                        <td> </td>
+                        
                     </tr>
                 </table>
 

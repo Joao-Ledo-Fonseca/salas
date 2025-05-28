@@ -1,134 +1,288 @@
-<?php
-require_once "seguranca.php";
-//require_once("../controller/dashboardController.php");
-
-require_once "../controller/salaController.php";
-require_once "../controller/categoriaController.php";
-
-
-//$dsc = new dashboardController();
-
-// Obtém a seleção de categoria
-$selecao = 'todas';
-
-// Controladores
-$categoriaController = new categoriaController();
-$categorias = $categoriaController->listarController('nomes');
-
-$salaController = new salaController();
-$lista = $salaController->listarcontroller($selecao);
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="pt-PT">
 
+<?php
+$cor_base = "#602030";
+$cor_texto_base = "#fff";
+$cor_base_destaque = "#401A20";
+$cor_main = "#ffffff";
+$cor_texto_main = "#000000";
+?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
-    <!--
-    <link rel="stylesheet" href="./css/estilo.css">
-    <link rel="stylesheet" href="styles.css">
-    -->
-
     <style>
-        
-       body{ padding:0px; margin:0px;font-family: 'Open Sans', sans-serif; color:#4E4E4E; overflow:hidden; background-color:#FFFFFF; }
-        h3 { font-weight:300; }
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 8pt;
+        }
 
-        /* Menu-Esquerdo */
-.menu  {  background-color:#464646; font-size:14px; width:130px;  height:100%; float:left; padding-top:100px;  }
-.menu .user {color:#FFFFFF;padding-left:15px; padding-bottom: 20px;} 
-.menu hr {border: 0px solid #FFFFFF;}
-.menu ul{ padding:0px; margin:0px; }
-.menu li {  padding:15px; margin:0px; color:#FFFFFF;  list-style:none;  transition: background-color 0.7s ease, color 0.7s ease;  background-color:#575757; cursor:pointer; }
-.menu li:hover, .dropdown-btn:hover { background-color:#D4D4D4; }
-.menu a{ color:#FFFFFF; text-decoration:none; }
-.menu li:hover a{color:#3B3B3B; }
-.hamb { display:none;}
-        
-  
-        
-        
-        .corpo {width:100%-100px;float:left;margin: 0px 10px 10px};
-        .container_conteudo {width:100%;display:block;height:auto}
-        .container_top {width:100%;display:block;height:auto;padding: 0px 0px 30px; }      
+        .menu {
+            background-color: <?= $cor_base ?>;
+            color: <?= $cor_texto_base ?>;
+            width: 200px;
+            height: 100vh;
+            padding: 10px 0 0 0;
+            z-index: 1001;
+            float: left;
+            display: block;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow: hidden;
+            
+        }
 
-        .lista_comum {}
-        .tabela_comum {}
+        .menu-inner {
+            padding: 400px 0 0;
+        }
 
-        .form {}
-        .form_sel {width:100%;display:block;clear:both;height:auto}    
-        
-        table {}
-;
-        * {border: 1px solid black;};
-        .menu * {border: 0px;}
+
+        .menu .closebtn {
+            font-size: 30px;
+            cursor: pointer;
+            color: #fff;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            z-index: 1101;
+            display: none;
+        }
+        .menu ul {
+            padding: 0;
+            margin: 0;
+        }
+        .menu li {
+            padding: 15px;
+            margin: 0;
+            color: #FFFFFF;
+            list-style: none;
+            transition: background-color 0.7s, color 0.7s;
+            background-color: <?= $cor_base_destaque ?>;
+            cursor: pointer;
+        }
+        .menu li:hover {
+            background-color: #D4D4D4;
+            color: <?= $cor_base_destaque ?>;
+        }
+        .menu a {
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        .menu li:hover a {
+            color: <?= $cor_base_destaque ?>;
+        }
+
+        .corpo {
+            padding: 20px;
+            margin-left: 200px;
+            display: block;
+        }
+
+        .hamburger {
+            font-size: 30px;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+            color: #222;
+            background: #fff;
+            border-radius: 5px;
+            padding: 5px 10px;
+            transition: opacity 0.3s;
+            display: none;
+        }
+
+        .hamburger.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
+        @media (max-width: 900px) {
+            .menu {
+                position: fixed;
+                left: -220px;
+                top: 0;
+                height: 100vh;
+                width: 200px;
+                transition: left 0.3s;
+                float: none;
+            }
+            .menu.open {
+                left: 0;
+            }
+            .menu .closebtn {
+                display: block;
+            }
+            .hamburger {
+                display: block;
+            }
+            .corpo {
+                margin-left: 0;
+                padding-top: 60px; /* <-- Adicione esta linha */            
+            }
+        }
+
+        table { 
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid <?= $cor_base ?>;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: <?= $cor_base ?>;
+            color: <?= $cor_texto_base ?>;
+        }
+
+
+        .btn1 {
+            background-color: <?= $cor_base ?>;
+            color: <?= $cor_texto_base ?>;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            /* font-size: 14pt; */
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .btn1:hover {
+            background-color: <?= $cor_base_destaque ?>;
+            color: <?= $cor_texto_base ?>;            
+        }
+
     </style>
 
+
+    <script>
+        function openNav() {
+            var menu = document.getElementsByClassName("menu")[0];
+            var hamburger = document.getElementsByClassName("hamburger")[0];
+            menu.classList.add("open");
+            if (hamburger) hamburger.classList.add("hide");
+        }
+        function closeNav() {
+            var menu = document.getElementsByClassName("menu")[0];
+            var hamburger = document.getElementsByClassName("hamburger")[0];
+            menu.classList.remove("open");
+            if (hamburger) hamburger.classList.remove("hide");
+        }
+        window.onclick = function (event) {
+            var menu = document.getElementsByClassName("menu")[0];
+            var hamburger = document.getElementsByClassName("hamburger")[0];
+            if (window.innerWidth <= 900 && menu.classList.contains("open")) {
+                if (!menu.contains(event.target) && event.target !== hamburger) {
+                    closeNav();
+                }
+            }
+        }
+    </script>
 </head>
-
 <body>
-
-
-    <!-- Menu esquerdo -->
-    <?php include "menu_esquerdo.php"; ?>
-
-    <!-- Formulário -->
-    <div class="form"></div>
-
-    <!-- Conteúdo principal -->
-    <div class="corpo">
-        <h3>Cadastro de Salas</h3>
-
-        <div class="form_sel">
-            <form name="form1" method="post" target="_self">
-                <span style="float:left;">
-                    <input type="button" name="novo" value="Novo" class="btn1"
-                        onclick="abre('sala_form.php?categoria=<?= $selecao ?>')" />
-                </span>
-
-                <span style="float:right;">
-                    <label for="selecao"><b>Categorias</b></label>
-                    <select name="selecao" id="selecao" style="width:200px;" onchange="this.form.submit()">
-
-
-                        <option value="todas" <?= $selecao === 'todas' ? 'selected' : '' ?>>Todas</option>
-                        <?php foreach ($categorias as $cat): ?>
-                            <option value="<?= $cat['nome'] ?>" <?= $cat['nome'] === $selecao ? 'selected' : '' ?>>
-                                <?= $cat['nome'] ?>
-                            </option>
-                        <?php endforeach; ?>
-
-                    </select>                    
-                </span>
-
-            </form>
-            
+    <!-- Menu hamburger -->
+    <div class="hamburger" onclick="openNav()">&#9776;</div>
+    <div class="menu">
+        <span class="closebtn" onclick="closeNav()">&times;</span>
+        <div class="menu-inner">
+        <ul>
+            <li>Batatas</li>
+            <li>Batatas</li>
+            <li>Batatas</li>
+            <li>Batatas</li>
+        </ul>
         </div>
-
-        <div class="container_conteudo">
-            <table class="lista_comum" cellpadding="4" cellspacing="4">
+    </div>
+    <div class="corpo">
+        <h3>Conteúdo Principal</h3>
+        <div class="nav">
+            <input type="button" value="Novo" class="btn1" onclick="alert('Novo item')">
+        </div>
+        <div class="content">
+            <table class="table">
                 <thead>
                     <tr>
-                        <th width="150px">Categoria</th>
-                        <th width="150px">Nome</th>
-                        <th width="200px">Descrição</th>
-                        <th width="50px">Activa</th>
-                        <th width="50px">ID</th>
-                        <th> </th>
+                        <th>Coluna 1</th>
+                        <th>Coluna 2</th>
+                        <th>Coluna 3</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?= $lista ?>
+                    <tr>
+                        <td>Dados 1</td>
+                        <td>Dados 2</td>
+                        <td>Dados 3</td>
+                    </tr>
+                    <tr>
+                        <td>Dados 1</td>
+                        <td>Dados 2</td>
+                        <td>Dados 3</td>
+                    </tr>
+                    <tr>
+                        <td>Dados 1</td>
+                        <td>Dados 2</td>
+                        <td>Dados 3</td>
+                    </tr>
+                    <tr>
+                        <td>Dados 1</td>
+                        <td>Dados 2</td>
+                        <td>Dados 3</td>
+                    </tr>
+                    <tr>
+                        <td>Dados 1</td>
+                        <td>Dados 2</td>
+                        <td>Dados 3</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        <p>Este é o conteúdo principal da página.</p>
+        <style>
+            .blocos {
+                width: 30%; 
+                min-width: 200px;                 
+                background-color: #888;
+                float:left; 
+                margin-right: 10px;
+                margin-bottom: 10px; /* Espaçamento entre os blocos */
+                padding: 10px;
+                display: inline-block;
+                height: 400px;
+                overflow: hidden;
+            }
+            .blocos p {
+                font-size:30px;
+                font-weight: bold;
+                color: <?= $cor_texto_base ?>;
+                margin: 0;
+                padding: 0;
+                width: 200px;                
+            }
+        </style>
+        <div class="blocos">
+            <p>Este é um parágrafo dentro de uma div com 30% da largura da página.</p>
+        </div> 
+        <div class="blocos">
+            <p>Este é um parágrafo dentro de uma div com 30% da largura da página.</p>
+        </div>        
+        <div class="blocos">
+            <p>Este é um parágrafo dentro de uma div com 30% da largura da página.</p>
+        </div>     
+        <div style="clear: both;"></div>
+        <div  style="background-color: <?= $cor_base ?>; padding: 10px; margin-top: 10px; ">
+            E aqui retomamos
+        </div>
     </div>
 </body>
-
 </html>

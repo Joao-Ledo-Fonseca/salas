@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require "util.php";
 require "../model/periodo.php";
@@ -38,19 +38,17 @@ class dashboardController
 	// gerar o corpo da index
 	function gerarCorpoController($hoje)
 	{
-
 		$sl = new sala();
 		$per = new Periodo();
 		//$reserva = new Reserva();
 
-
 		$tabela_corpo = '';
-
 		$salas = $sl->listar();
 
 		// para cada sala
 		foreach ($salas as $sala) {
-			if ($sala['activa']) {
+			// if ($sala['activa']) {
+				
 				$tabela_corpo .= ' <tr><td> ' . $sala['nome'] . '</td> ';
 
 				// para cada periodo
@@ -85,8 +83,10 @@ class dashboardController
 						$css_ocupado = 'disponivel';
 					}
 
+
+					//TODO: Deve ser objecto de parametrização nas permissões
 					// Se for um usuario com nivel usuario, só pode alterar as reservas próprias
-					// Os restantes podem alterar todas as reservas				
+					// Os restantes podem alterar todas as reservas									
 					if ($_SESSION['user_nivel'] == 0) {
 						$accao = ((($_SESSION["user_id"] == $id_usuario) || ($id_usuario == "")) ? 'onClick="abreReserva(this)"' : '""');
 					} else {
@@ -98,16 +98,13 @@ class dashboardController
 					' . $disciplina_reserva . '&nbsp;<hr>&nbsp;' . $professores_reserva . ' </td>';
 
 				}
-			}
+			// }
 
 		}
 
 		$tabela_corpo .= ' </tr>';
 
-
 		return $tabela_corpo;
-
-
 	}
 
 	// Lista de todas as reservas 
@@ -195,15 +192,12 @@ class dashboardController
 
 		// $reserva = new Reserva();
 		return $this->reserva->prev($dia);
-
 	}
 
 	function nextController($dia)
 	{
-
 		// $reserva = new Reserva();
 		return $this->reserva->next($dia);
-
 	}
 
 }

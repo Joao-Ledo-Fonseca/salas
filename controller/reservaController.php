@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require "../model/reserva.php";
 require "util.php";

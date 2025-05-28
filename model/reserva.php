@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once "db_mysqli.php";
 
 class Reserva
@@ -11,6 +11,7 @@ class Reserva
 		$this->db = new Database();
 	}
 
+	
 	function abrir($id)	
 	{		
 		$sql = ' select 
@@ -70,13 +71,13 @@ class Reserva
 		return $resultado;
 	}
 
+
 	function excluir($id)
 	{
 		$sql = ' delete from reserva where id =' . $id;
 		$this->db->query_update($sql);
 
 		return 0;
-
 	}
 
 	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo, $usuario)

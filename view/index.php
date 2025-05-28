@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
 <?php
 
 require_once "seguranca.php";
@@ -50,9 +53,6 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 
 ?>
 
-<!DOCTYPE html
-	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
@@ -70,6 +70,10 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 
 	<script src="js/lib.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link rel="icon" href="../favicon.ico">
+
+	<title>Reserva de Salas</title>
 
 	<script>
 
@@ -109,43 +113,28 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 			window.location.href = "index.php?data=" + data_arg;
 		}
 
-
-		/* Set the width of the sidebar to 250px (show it) */
-		function openNav() {
-  			var x = document.getElementsByClassName("menu");
-			// x[0].style.width = "250px";
-			x[0].style.display = "inline-block";
-		}
-
-		/* Set the width of the sidebar to 0 (hide it) */
-		function closeNav() {
-  			document.getElementById("menu").style.width = "0";
-		}
+		
 
 	</script>
 
+	<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico">
+
 	<title>Reserva de Salas</title>
-	
-	
-    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="48x48" href="../favicon.ico">
-	<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-    <link rel="manifest" href="../site.webmanifest">   
-	
+
+
 </head>
 
 <body>
 
-
+	<!-- form -->
+	<div class="form"></div>
 
 	<!-- menu esquerdo -->
 	<?php include "menu_esquerdo.php"; ?>
 
 	<!-- conteudo -->
 	<div class="corpo">
-
-		<div class="hamb" style="font-size:40px; color: black; float:left" onclick="openNav()">&#9776;</div>
 
 		<div class="titulo_inicial" style="font-size:30pt;vertical-align:middle">
 
@@ -200,9 +189,6 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 		</div>
 
 	</div>
-
-	<!-- form -->
-	<div class="form"></div>
 
 </body>
 

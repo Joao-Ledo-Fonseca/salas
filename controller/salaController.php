@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once "util.php";
 require "../model/sala.php";
