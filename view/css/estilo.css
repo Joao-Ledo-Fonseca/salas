@@ -79,6 +79,7 @@ h3 { font-weight:300; }
 .container_top { padding: 20px; float: left; display:block; }
 .container_conteudo { padding: 20px; float: left; display:block;}
 .container_bottom { padding: 20px; float: left; display:block; }
+
 .form_sel {width:100%; /*float:right;*/ margin-block-end: 0; box-shadow: 0 0 9px rgba(191, 191, 191, 0.36); border-left:1px solid rgba(222, 227, 231, 0.56); background-color:#F7F7F7;  overflow:auto;}
 
 .form { top:0px; width:320px; position:fixed; left:calc(100% - 350px); padding:15px; box-shadow: 0 0 9px rgba(191, 191, 191, 0.36); border-left:1px solid rgba(222, 227, 231, 0.56); background-color:#F7F7F7; display:none; overflow:auto;}
@@ -86,15 +87,15 @@ h3 { font-weight:300; }
 /*
 input[type="text"], input[type="password"], input[type="email"]{ padding:10px; margin:0px; height:35px; width:100%; border:none; border-bottom:1px solid #E1E1E1;  }   
 */
-.input, input[type="text"], input[type="password"], input[type="email"] { padding:10px; margin:0px; height:35px; width:100%; border:none; border-bottom:1px solid #E1E1E1; }
+.input, input[type="text"], input[type="password"], input[type="email"] { padding:10px; margin:0px; height:30px; width:100%; border:none; border-bottom:1px solid #E1E1E1; }
+select { padding:0px; margin-top:10px; height:30px; width:100%; border:none; border:1px solid #E1E1E1; }
 input[type="button"], input[type="submit"] { width:100px; height:40px; padding:10px; margin:10px 0px; border:1px solid #969696; cursor:pointer;}
 button { padding:10px; margin:10px 0px; border:1px solid #969696; cursor:pointer;}
-select { padding:10px; margin-top:10px; height:40px; width:100%; border:none; border:1px solid #E1E1E1; }
-input[type="file"] {display: none;}
-.custom-file-upload {width:100px; height:35px; padding:5px 0px 0px; margin:10px 0px; border:1px solid #969696; text-align:center; font-size:13px; font-weight:normal ;cursor:pointer; display:inline-block }
 .btn1{ background-color:#ECECEC; width:100px; height:40px; border-radius: 2px; background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%) }
 .btn2{ background-color:#D4F7C4; width:100px; height:40px; }
 
+input[type="file"] {display: none;}
+.custom-file-upload {width:100px; height:35px; padding:5px 0px 0px; margin:10px 0px; border:1px solid #969696; text-align:center; font-size:13px; font-weight:normal ;cursor:pointer; display:inline-block }
 
 @media screen and (max-width: 900px) {
     input[type="button"], input[type="submit"] { width:80px; height:40px; padding:5px; margin:10px 0px; border:1px solid #969696; border-radius: 5px; cursor:pointer;}
