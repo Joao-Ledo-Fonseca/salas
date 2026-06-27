@@ -1,5 +1,6 @@
 <?php
 
+define('REQUIRED_PERMISSION', 'M_Reservas');
 require_once "seguranca.php";
 require_once '../controller/reservaController.php';
 require_once '../controller/periodoController.php';
@@ -15,9 +16,9 @@ $reserva->salvarController();
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
 	$reg_id = $_GET['id'];
-	$sala_id = $_GET['sala_id'];
-	$periodo_id = $_GET['periodo_id'];
-	$usuario_id =$_GET['usuario_id'];
+	$sala_id = isset($_GET['sala_id']) && is_numeric($_GET['sala_id']) ? $_GET['sala_id'] : 0;
+	$periodo_id = isset($_GET['periodo_id']) && is_numeric($_GET['periodo_id']) ? $_GET['periodo_id'] : 0;
+	$usuario_id = isset($_GET['usuario_id']) && is_numeric($_GET['usuario_id']) ? $_GET['usuario_id'] : 0;
 
 	if ($reg_id > 0) {
 		$row = $reserva->abrirController($reg_id);
@@ -26,17 +27,21 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		$status = 1; // reservado	
 
 		// sugerir data do calendario atual
-		if (isset($_GET['data']))
+		if (isset($_GET['data'])) {
 			$hoje = date_create_from_format('d/m/Y', $_GET['data']);
-		else
+			if ($hoje === false) {
+				$hoje = new DateTime();
+			}
+		} else {
 			$hoje = new DateTime();
+		}
 
 		$dia = $hoje->format("d/m/Y");
 		$professor_desc = '';
 		$disciplina_desc = '';
 		$observacao = '';
-		$periodo = $periodo->nomePeriodo($periodo_id);
-		$sala = $sala->nomeSala($sala_id);
+		$periodo = $periodo_id ? $periodo->nomePeriodo($periodo_id) : '';
+		$sala = $sala_id ? $sala->nomeSala($sala_id) : '';
 		$usuario = $_SESSION['user_nome'];		
 	}
 
@@ -67,9 +72,9 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 		<input type="text" name="sala" value="<?= $sala ?>" disabled />
 		<input type="text" name="periodo" value="<?= $periodo ?>" disabled />
 		<!-- eram hidden -->
-		<input type="text" placeholder="Professor" name="professor" id="professor" value="<?= $professor_desc ?>"><BR />
+		<input type="text" placeholder="Entidade" name="professor" id="professor" value="<?= $professor_desc ?>"><BR />
 
-		<input type="text" placeholder="Disciplina" name="disciplina" id="disciplina" value="<?= $disciplina_desc ?>"><BR />
+		<input type="text" placeholder="Uso" name="disciplina" id="disciplina" value="<?= $disciplina_desc ?>"><BR />
 
 		<input type="text" placeholder="Observação" name="observacao" id="observacao" value="<?= $observacao ?>"><BR />
 <br />

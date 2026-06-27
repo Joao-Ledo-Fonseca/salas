@@ -20,39 +20,33 @@ class Periodo
 	
 	function abrir($id)
 	{
-		
-		
-		
-		$sql = ' select * from periodo where id = '. $id; ;
-		return $this->db->query($sql);
+		$sql = 'select * from periodo where id = ?';
+		return $this->db->query($sql, array($id));
 	}
 	
 	function salvar($id, $nome, $seq)
 	{
-	
-		$seq= (int) $seq;
-		
-		
+		$seq = (int) $seq;
+
 		// inserir
 		if($id == 0)
 		{
-			$sql = 'insert into periodo ( nome, seq ) values ("'. $nome.'",'. $seq.')';
-			return $this->db->query_insert($sql);
+			$sql = 'insert into periodo (nome, seq) values (?, ?)';
+			return $this->db->query_insert($sql, array($nome, $seq));
 		}
 		else
 		{ 
 			// atualizar
-			$sql = ' update periodo set nome = "'.$nome.'", seq = ' . $seq. ' where id = ' .$id;
-			return $this->db->query_update($sql);
+			$sql = 'update periodo set nome = ?, seq = ? where id = ?';
+			return $this->db->query_update($sql, array($nome, $seq, $id));
 
 		}
 	}
 	
 	function excluir($id)
 	{
-		
-		$sql = 'delete from periodo where id = '.$id; 
-		return $this->db->query_update($sql);
+		$sql = 'delete from periodo where id = ?'; 
+		return $this->db->query_update($sql, array($id));
 	}
 	
 	

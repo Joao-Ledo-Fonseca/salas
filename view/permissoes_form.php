@@ -3,6 +3,7 @@
 
 <?php
 
+define('REQUIRED_PERMISSION', 'M_Permissoes');
 require_once "seguranca.php";
 require_once "../controller/permissoesController.php";
 

@@ -19,39 +19,34 @@ class categoria
 	}
 
 	function abrir($id)
-	{		
-
-		$sql = ' select * from categoria				 
-				 where categoria.id = ' . $id . ';';
-		return $this->db->query($sql);
+	{
+		$sql = 'select * from categoria where categoria.id = ?';
+		return $this->db->query($sql, array($id));
 	}
 
 	function salvar($id, $nome, $descricao, $imagem_id)
-	{			
+	{            
 
-		if ($imagem_id == '') {
-			$imagem_id = 'NULL';;
-		}			
+		if ($imagem_id === '') {
+			$imagem_id = null;
+		}            
 
 		if ($id == 0) {
-			// inserir			
-			$sql = ' insert into categoria ( nome, descricao, imagem_id ) 
-						values ("' . $nome . '","' . $descricao . '", ' . $imagem_id . ') ';
-			return $this->db->query_insert($sql);						 
+			// inserir            
+			$sql = 'insert into categoria (nome, descricao, imagem_id) values (?, ?, ?)';
+			return $this->db->query_insert($sql, array($nome, $descricao, $imagem_id));
 
 		} else {
-			// atualizar												  
-			$sql = ' update categoria set nome = "' . $nome . '", descricao = "' . $descricao . '", imagem_id = ' . $imagem_id . ' where id = ' . $id;			
-			
-			return $this->db->query_update($sql);;
+			// atualizar				  
+			$sql = 'update categoria set nome = ?, descricao = ?, imagem_id = ? where id = ?';
+			return $this->db->query_update($sql, array($nome, $descricao, $imagem_id, $id));
 		}
 	}
 
 	function excluir($id)
 	{
-
-		$sql = 'delete from categoria where id = ' . $id;
-		return $this->db->query_update($sql);
+		$sql = 'delete from categoria where id = ?';
+		return $this->db->query_update($sql, array($id));
 	}
 
 	function total()

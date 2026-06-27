@@ -3,6 +3,7 @@
 
 
 <?php
+define('REQUIRED_PERMISSION', 'M_Salas');
 require_once "seguranca.php";
 require_once "../controller/salaController.php";
 require_once "../controller/categoriaController.php";

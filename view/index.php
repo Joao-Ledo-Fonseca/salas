@@ -4,52 +4,38 @@
 <?php
 
 require_once "seguranca.php";
+require_once "config.php";
 require_once("../controller/dashboardController.php");
+require_once("../controller/util.php");
 
-
-if (isset($_GET['data'])) {
-	$hoje_pt = $_GET['data'];
-	$hoje = date_create_from_format('D d/m/Y', traduz_data($hoje_pt, 'en'));
-} else {
+$hoje = null;
+if ($param = filter_input(INPUT_GET, 'data', FILTER_UNSAFE_RAW)) {
+	$hoje = Util::parseDataPt($param);
+}
+if ($hoje === null) {
 	$hoje = new DateTime();
-	$hoje_pt = traduz_data($hoje->format('D d/m/Y'), 'pt');
 }
 
-function traduz_data($date, $lang = 'en')
-{
-	$meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
-	$meses_en = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Sun', 'Mon', 'Tue', 'Thu', 'Wed', 'Fri', 'Sat'];
-	if ($lang == 'en') {
-		return str_replace($meses_pt, $meses_en, $date);
-	} else {
-		return str_replace($meses_en, $meses_pt, $date);
-	}
-}
+$hoje_pt = Util::traduz_data($hoje->format('D d/m/Y'), 'pt');
 
 $dsc = new dashboardController();
+
+// obter categoria selecionada (padrão = 0 para todas)
+$categoria_id = filter_input(INPUT_GET, 'categoria', FILTER_VALIDATE_INT) ?? 0;
+
+// obter lista de categorias para filtro
+$categorias = $dsc->listarCategoriasController();
 
 // gera o topo da index
 $tabela_topo = $dsc->gerarTopoController();
 // gerar o corpo do relatorio
-$tabela_corpo = $dsc->gerarCorpoController($hoje);
-
+$tabela_corpo = $dsc->gerarCorpoController($hoje, $categoria_id);
 
 // configurar dias
-$dia_anterior = date_create_from_format('d/m/Y', $hoje->format("d/m/Y"));
-$dia_anterior->modify('-1 day');
-$dia_anterior = traduz_data($dia_anterior->format("D d/m/Y"), 'pt');
-
-$dia_posterior = date_create_from_format('d/m/Y', $hoje->format("d/m/Y"));
-$dia_posterior->modify('+1 day');
-$dia_posterior = traduz_data($dia_posterior->format("D d/m/Y"), 'pt');
-
-$dia_prev = date_create_from_format('d/m/Y', $hoje->format("d/m/Y"));
-$dia_prev = $dsc->prevController($dia_prev);
-$dia_prev = traduz_data($dia_prev->format("D d/m/Y"), 'pt');
-
-$dia_next = date_create_from_format('d/m/Y', $hoje->format('d/m/Y'));
-$dia_next = $dsc->nextController($dia_next);
-$dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
+$dia_anterior = Util::calcularDiaAdjacente($hoje, -1);
+$dia_posterior = Util::calcularDiaAdjacente($hoje, 1);
+$dia_prev = Util::calcularDiaController($hoje, array($dsc, 'prevController'), $categoria_id);
+$dia_next = Util::calcularDiaController($hoje, array($dsc, 'nextController'), $categoria_id);
 
 ?>
 
@@ -68,59 +54,67 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 	<link rel="stylesheet" type="text/css" href="css/estilo.css">
 	<link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.css">
 
+	<style>
+		:root {
+			--dashboard-reservado: <?= htmlspecialchars($cfg->dashboard_colors->reservado, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-confirmado: <?= htmlspecialchars($cfg->dashboard_colors->confirmado, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-cancelado: <?= htmlspecialchars($cfg->dashboard_colors->cancelado, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-disponivel: <?= htmlspecialchars($cfg->dashboard_colors->disponivel, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-disponivel-hover: <?= htmlspecialchars($cfg->dashboard_colors->disponivel_hover, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-selected: <?= htmlspecialchars($cfg->dashboard_colors->selected, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-cell-border: <?= htmlspecialchars($cfg->dashboard_colors->cell_border, ENT_QUOTES, 'UTF-8') ?>;
+			--dashboard-cell-text: <?= htmlspecialchars($cfg->dashboard_colors->cell_text, ENT_QUOTES, 'UTF-8') ?>;
+		}
+	</style>
+
 	<script src="js/lib.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	<link rel="icon" href="../favicon.ico">
-
+	<link rel="icon" href="../favicon.ico" type="image/x-icon">
 	<title>Reserva de Salas</title>
 
 	<script>
+		var data = <?= json_encode($hoje->format('d/m/Y')) ?>;
+		var data_pt = <?= json_encode($hoje_pt) ?>;
+		var dia_anterior = <?= json_encode($dia_anterior) ?>;
+		var dia_posterior = <?= json_encode($dia_posterior) ?>;
+		var dia_prev = <?= json_encode($dia_prev) ?>;
+		var dia_next = <?= json_encode($dia_next) ?>;
+		var categoria_id = <?= json_encode($categoria_id) ?>;
 
-		// variavel com a data
-
-		var data = '<?= $hoje->format("d/m/Y") ?>';
-		var data_pt = '<?= $hoje_pt ?>';
-		var dia_anterior = '<?= $dia_anterior; ?>';
-		var dia_posterior = '<?= $dia_posterior; ?>';
-		var dia_prev = '<?= $dia_prev; ?>';
-		var dia_next = '<?= $dia_next; ?>';
-
-
-
-		// configura o calendario
 		jQuery.datetimepicker.setLocale('pt');
-
-		// configura a area visivel do formulario
 		$(window).on('scroll resize load', getVisible);
-
-
-		$(window).load(function () {
+		$(window).on('load', function () {
 			$('#data').datetimepicker({
 				timepicker: false,
 				format: 'D d/m/Y'
 			});
-
 		});
 
+		function buildDashboardUrl(data_arg, categoria) {
+			var url = 'index.php?data=' + encodeURIComponent(data_arg);
+			if (categoria && categoria !== 0) {
+				url += '&categoria=' + encodeURIComponent(categoria);
+			}
+			return url;
+		}
 
 		function atualizaTela(o) {
-			// pegar os dados da data atual e atualizar a tela
-			window.location.href = "index.php?data=" + $(o).val();
+			var categoria = document.getElementById('categoria_filter') ? document.getElementById('categoria_filter').value : categoria_id;
+			window.location.href = buildDashboardUrl($(o).val(), categoria);
 		}
 
 		function alteraData(data_arg) {
-			window.location.href = "index.php?data=" + data_arg;
+			var categoria = document.getElementById('categoria_filter') ? document.getElementById('categoria_filter').value : categoria_id;
+			window.location.href = buildDashboardUrl(data_arg, categoria);
 		}
 
-		
-
+		function mudaCategoria(select) {
+			var categoria = select.value;
+			var data_atual = document.getElementById('data') ? document.getElementById('data').value : data;
+			window.location.href = buildDashboardUrl(data_atual, categoria);
+		}
 	</script>
-
-	<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-	<link rel="icon" href="/favicon.ico">
-
-	<title>Reserva de Salas</title>
 
 
 </head>
@@ -136,47 +130,51 @@ $dia_next = traduz_data($dia_next->format("D d/m/Y"), 'pt');
 	<!-- conteudo -->
 	<div class="corpo">
 
-		<div class="titulo_inicial" style="font-size:30pt;vertical-align:middle">
+		<div class="titulo_inicial">
 
-			<!--
-			<span class="left" style="font-size:30pt;padding-right:30px;vertical-align:middle" onclick="alteraData(dia_prev)">&#171;</span>
-			<span  class="left" style="font-size:30pt;padding-right:30px;vertical-align:middle" onclick="alteraData(dia_anterior)">&#8249;</span>
-			-->
-			<img src="img/double_arrow_left.png" class="left" width="30" height="30" alt="" <?= ($dia_prev == $hoje_pt) ? 'style="opacity: 0.3"' : ''; ?> onclick="alteraData(dia_prev)" />
-			<img src="img/chevron_left.png" class="left" width="30" height="30" alt=""
-				onclick="alteraData(dia_anterior)" />
+			<div class="toolbar-row">
+				<img src="img/double_arrow_left.png" width="30" height="30" alt="Reserva Anterior" Title="Reserva Anterior" class="nav-button<?= ($dia_prev == $hoje_pt ? ' disabled' : '') ?>" onclick="alteraData(dia_prev)" />
+				<img src="img/chevron_left.png" class="nav-button" width="30" height="30" alt="Dia anterior" Title="Dia anterior" onclick="alteraData(dia_anterior)" />
 
-			<div>
+				<div class="date-center">
 				<form method="get" action="index.php" target="_self" name="form1">
-					<input type="text" name="data" id="data" value="<?= $hoje_pt ?>" style="size:200px"
-						onchange="atualizaTela(this)" readonly />
+					<input type="text" name="data" id="data" value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" class="date-input" onchange="atualizaTela(this)" readonly />
 				</form>
 			</div>
 
-
-			<img src="img/chevron_right.png" class="right" width="30" height="30" alt=""
-				onclick="alteraData(dia_posterior)" />
-			<img src="img/double_arrow_right.png" class="right" width="30" height="30" alt="" <?= ($dia_next == $hoje_pt) ? 'style="opacity: 0.3"' : ''; ?> onclick="alteraData(dia_next)" />
-
-
-			<!--
-				<span class="left" style="font-size:30pt;padding-left:30px;vertical-align:middle" onclick="alteraData(dia_posterior)">&#8250; </span>   
-				<span class="left" style="font-size:30pt;padding-left:30px;vertical-align:middle" onclick="alteraData(dia_next)"> &#187;</span>
-			-->
+			<img src="img/chevron_right.png" class="nav-button" width="30" height="30" alt="Dia posterior" Title="Dia Seguinte" onclick="alteraData(dia_posterior)" />
+			<img src="img/double_arrow_right.png" width="30" height="30" alt="Reserva Seguinte" Title="Reserva Seguinte" class="nav-button<?= ($dia_next == $hoje_pt ? ' disabled' : '') ?>" onclick="alteraData(dia_next)" />
 		</div>
 
+		<div class="dashboard-legend">
 
-		<table style="border:0" cellpadding="4" cellspacing="0">
+			<span class="dashboard-legend-item"><span class="dashboard-legend-swatch" style="background: var(--dashboard-reservado);"></span><strong>Reservado</strong></span>
+			<span class="dashboard-legend-item"><span class="dashboard-legend-swatch" style="background: var(--dashboard-confirmado);"></span><strong>Confirmado</strong></span>
+			<span class="dashboard-legend-item"><span class="dashboard-legend-swatch" style="background: var(--dashboard-cancelado);"></span><strong>Cancelado</strong></span>
+			<span class="dashboard-legend-item"><span class="dashboard-legend-swatch" style="background: var(--dashboard-disponivel);"></span><strong>Disponível</strong></span>
 
-			<thead>
+			
+			<select id="categoria_filter" class="dashboard-category-select" onchange="mudaCategoria(this)">
+				<option value="0"<?= $categoria_id === 0 ? ' selected' : '' ?>>Todas</option>
+				<?php foreach ($categorias as $categoria): ?>
+					<option value="<?= htmlspecialchars($categoria['id'], ENT_QUOTES, 'UTF-8') ?>"<?= ($categoria['id'] == $categoria_id) ? ' selected' : '' ?>> 
+						<?= htmlspecialchars($categoria['nome'], ENT_QUOTES, 'UTF-8') ?></option>
+				<?php endforeach; ?>
+			</select>
 
-				<?= $tabela_topo ?>
+		</div>
+	</div>
 
-			</thead>
+	<table style="border:0" cellpadding="4" cellspacing="0">
+		<thead>
 
-		</table>
+			<?= $tabela_topo ?>
 
-		<div class="tabelarow">
+		</thead>
+
+	</table>
+
+	<div class="tabelarow">
 			<table style="border:0" cellpadding="4" cellspacing="0">
 
 				<tbody>

@@ -30,7 +30,13 @@ function abreReserva(o) {
 			url: "reserva_form.php",
 			method: "GET",
 			
-			data: "id=" + $(o).attr("id") + "&data=" + data + "&sala_id=" + $(o).attr("sala") + "&periodo_id=" + $(o).attr("periodo") + "&usuario_id=" + $(o).attr("usuario_id"),
+			data: {
+				id: $(o).attr("id"),
+				data: data,
+				sala_id: $(o).data("sala"),
+				periodo_id: $(o).data("periodo"),
+				usuario_id: $(o).data("usuario_id")
+			},
 			dataType: 'html',
 			success: function (response) {
 

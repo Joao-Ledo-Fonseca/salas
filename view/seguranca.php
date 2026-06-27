@@ -11,4 +11,12 @@ if(!isset($_SESSION['user_id'])){
 	require_once("config.php");
 }
 
+if (defined('REQUIRED_PERMISSION')) {
+    require_once "../controller/permissoesController.php";
+    $pc = new permissoesController();
+    if (!$pc->validaPermissao(REQUIRED_PERMISSION, $_SESSION['user_nivel'])) {
+        header("Location: index.php");
+        exit;
+    }
+}
 ?>

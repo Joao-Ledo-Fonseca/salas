@@ -131,12 +131,13 @@ class Reserva
 	}
 
 
-	function next($hoje)
-	{
-		//stuff to get data next reserva		
+	function next($hoje, $categoria)
+	{		
+
 		$sql = 'select Min(dia)	
 				   from reserva
-				   where dia >"' . $hoje->format("Y-m-d") . '"';
+				   inner join sala on reserva.sala_id = sala.id
+				   where dia >"' . $hoje->format("Y-m-d") . '" and (sala.categoria_id = ' . $categoria .' or ' . $categoria . ' = 0)';
 
 		$res = $this->db->query($sql);
 		$dia = $res[0]['Min(dia)'];
@@ -149,12 +150,14 @@ class Reserva
 		return $next;
 	}
 
-	function prev($hoje)
+
+	function prev($hoje, $categoria)
 	{		
 
 		$sql = 'select Max(dia)	
 				   from reserva
-				   where dia <"' . $hoje->format("Y-m-d") . '"';
+				   inner join sala on reserva.sala_id = sala.id
+				   where dia <"' . $hoje->format("Y-m-d") . '" and (sala.categoria_id = ' . $categoria .' or ' . $categoria . ' = 0)';
 
 		$res = $this->db->query($sql);
 		$dia = $res[0]['Max(dia)'];
@@ -206,6 +209,37 @@ class Reserva
 
 		return $reservas;
 
+	}
+
+
+	/**
+	 * Lista reservas num intervalo de datas inclusivo.
+	 * Recebe dois DateTime ($inicio, $fim) e devolve as linhas.
+	 */
+	function listaReservasPeriodo($inicio, $fim)
+	{
+		if (is_null($inicio) || is_null($fim)) return array();
+
+		$inicio_str = $inicio->format('Y-m-d');
+		$fim_str = $fim->format('Y-m-d');
+
+		$sql = ' SELECT dia, categoria.nome AS categoria, sala.nome AS sala, disciplina_desc, dia, periodo.nome AS periodo, status
+		    FROM reserva
+		    LEFT JOIN sala ON sala_id = sala.id
+		    LEFT JOIN periodo ON periodo_id = periodo.id
+		    LEFT JOIN categoria ON sala.categoria_id = categoria.id
+		    WHERE dia BETWEEN "' . $inicio_str . '" AND "' . $fim_str . '"
+		    ORDER BY dia, categoria, sala, periodo.seq';
+
+		$reservas = $this->db->query($sql);
+
+		$status_n = array('reservada','confirmada','cancelada');
+		foreach($reservas as $key=>$valor) {
+			$status_nome = $status_n[$valor['status']-1];
+			$reservas[$key]['status_nome'] = $status_nome;
+		}
+
+		return $reservas;
 	}
 
 

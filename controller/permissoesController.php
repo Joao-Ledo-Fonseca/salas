@@ -19,6 +19,7 @@ class permissoesController
         "M_Permissoes" => ['n', false, true, false, "Autoriza acesso ao Menu de Permissões"],
         "M_Estatisticas" => ['n', false, true, false, "Autoriza acesso ao Menu de Estatísticas"],
         "M_Relatorios" => ['n', false, true, false, "Autoriza acesso ao Menu de Relatórios"],
+        "M_Reservas" => ['n', true, true, true, "Autoriza acesso ao formulário de reservas e exclusão de reservas"],
         "A_RegNovoUtilizador" => ['s', true, null, null, "Activa o registo de novos utilizadores no ecrã de login. (não implementado)"],
         "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"]
     ];
@@ -71,11 +72,17 @@ class permissoesController
                 return $this->niveis[$nivel][2]; // nome do nivel
             }
             return $this->niveis[$nivel][3];
-        } else {
-            return "N/A";
         }
+        return "N/A";
     }
 
+    function requirePermission($permissao)
+    {
+        if (!isset($_SESSION['user_nivel']) || !$this->validaPermissao($permissao, $_SESSION['user_nivel'])) {
+            header("Location: index.php");
+            exit;
+        }
+    }
 
     function salvar()
     {
@@ -88,7 +95,7 @@ class permissoesController
 
                 $tipo = $value[0];
 
-                if ($value[0] = 'n') {
+                if ($value[0] == 'n') {
                     $lista[$nome] = array($tipo, false, false, false);
                 } else {
                     $lista[$nome] = array($tipo, false, null, null);
@@ -104,17 +111,17 @@ class permissoesController
                 if (array_key_exists($post_nome, $this->permissoes_defaults)) {
 
                     if ($post_value == 0) {        // 0 é o utilizador externo
-                        $lista[$post_nome][0] = true;
-                    } else if ($post_value == 1) { // 1 é o gestor
                         $lista[$post_nome][1] = true;
-                    } else if ($post_value == 2) { // 2 é o admin
+                    } else if ($post_value == 1) { // 1 é o gestor
                         $lista[$post_nome][2] = true;
+                    } else if ($post_value == 2) { // 2 é o admin
+                        $lista[$post_nome][3] = true;
                     }
                 }
             }
 
             foreach ($lista as $k => $l) {
-                $permissoes->update(null, $k, $l[0], $l[0], $l[1], $l[2], "Update");
+                $permissoes->update(null, $k, $l[0], $l[1], $l[2], $l[3], "Update");
             }
 
             header("Location: permissoes_form.php");

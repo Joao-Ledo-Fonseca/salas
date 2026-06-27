@@ -1,5 +1,6 @@
 <?php
 
+define('REQUIRED_PERMISSION', 'M_Categorias');
 require_once "seguranca.php";
 require_once "../controller/categoriaController.php";
 

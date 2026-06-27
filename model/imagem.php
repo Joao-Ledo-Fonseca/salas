@@ -23,12 +23,9 @@ class imagem
 	*/ 
 
 	function abrir($id)
-	{				
-		
-		$sql = ' select * from imagem where id = '. $id . ';'; 
-
-        return $this->db->query($sql);
-
+	{
+		$sql = 'select * from imagem where id = ?';
+		return $this->db->query($sql, array($id));
 	}
 	
 	function salvar($id, $nome_img, $tamanho_img, $tipo_img, $conteudo )
@@ -37,29 +34,23 @@ class imagem
 		if($id == 0)
 		{			
 			// inserir
-			$sql = ' insert into imagem ( nome_imagem, tamanho_imagem, tipo_imagem, imagem ) 
-			                     values ("'.$nome_img.'", "'.$tamanho_img.'", "'.$tipo_img.'", "'.$conteudo.'") ';									
-			return $this->db->query_insert($sql);			
+			$sql = 'insert into imagem (nome_imagem, tamanho_imagem, tipo_imagem, imagem) values (?, ?, ?, ?)';									
+			return $this->db->query_insert($sql, array($nome_img, $tamanho_img, $tipo_img, $conteudo));
 		}
 		else
 		{ 
 			// atualizar			
-			$sql = ' update imagem set nome_imagem = "'.$nome_img.'", 
-									   tamanho_imagem = "'.$tamanho_img.'", 
-										  tipo_imagem = "'.$tipo_img.'", 
-										  imagem = "'.$conteudo.'" 
-					                      where id = ' .$id;			
+			$sql = 'update imagem set nome_imagem = ?, tamanho_imagem = ?, tipo_imagem = ?, imagem = ? where id = ?';
+
 			
-			return $this->db->query_update($sql);
+			return $this->db->query_update($sql, array($nome_img, $tamanho_img, $tipo_img, $conteudo, $id));
 		}
 	}
 	
 	function excluir($id)
-	{		
-
-		$sql = 'delete from imagem where id = '.$id; 
-		return $this->db->query_update($sql);        
-        
+	{      
+		$sql = 'delete from imagem where id = ?'; 
+		return $this->db->query_update($sql, array($id));        
 	}
 	
 }

@@ -1,8 +1,8 @@
 <?php
 
-require "util.php";
-require "../model/usuario.php";
-require "../Controller/permissoesController.php";
+require_once "util.php";
+require_once "../model/usuario.php";
+require_once "../controller/permissoesController.php";
 
 class UsuarioController
 {
@@ -13,7 +13,7 @@ class UsuarioController
 
 			$nome = Util::clearparam($_POST['nome']);
 			$email = Util::clearparam($_POST['email']);
-			$senha = Util::clearparam($_POST['senha']);
+			$senha = isset($_POST['senha']) ? trim($_POST['senha']) : null;
 
 			$id = Util::clearparam($_POST['id']);
 
@@ -28,16 +28,15 @@ class UsuarioController
 				$nivel = 0;
 			}
 			
-			// se nao alterou a senha, nao salvar novamente pois está criptografada
-			if (strlen($senha) == 32) {
+			if ($senha === '') {
 				$senha = null;
 			}
 
 			$usuario = new Usuario();
 
-			$resultado = $usuario->autenticar($email, $senha);
-			if (isset($resultado[0]['id'])) {
-				return 0;  // não pode criar um usuário que já está criado
+			$resultado = $usuario->autenticar($email, null);
+			if (isset($resultado[0]['id']) && $resultado[0]['id'] != $id) {
+				return 0;  // não pode criar um usuário com email ou nome já existente
 			}
 
 			// O nome é obrigatório
@@ -127,18 +126,14 @@ class UsuarioController
 	function autenticarController()
 	{
 		if (isset($_POST['email_l']) && isset($_POST['senha_l'])) {
-			
 			if (!empty(trim($_POST['email_l']))) {
-
-				$senha = md5($_POST['senha_l']);
 				$email = Util::clearparam($_POST['email_l']);
-
+				$senha = $_POST['senha_l'];
 				$usuario = new Usuario();
 				$row = $usuario->autenticar($email, $senha);
 
 				// encontrou usuario
 				if (isset($row[0]['id'])) {
-
 					$this->startSession($row[0]);
 					header("Location: index.php"); // pagina inicial
 					exit();
@@ -148,7 +143,6 @@ class UsuarioController
 			} else {
 				return 0; // usuario não encontrado
 			}
-
 		} else {
 			return 1; // nada a fazer
 		}

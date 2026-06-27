@@ -3,6 +3,7 @@
 
 <?php
 
+define('REQUIRED_PERMISSION', 'M_Estatisticas');
 require_once "seguranca.php";
 require_once "../controller/dashboardController.php";
 $dsc = new dashboardController();

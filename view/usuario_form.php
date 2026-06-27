@@ -5,10 +5,18 @@
 
 require_once "seguranca.php";
 require_once "../controller/usuarioController.php";
+require_once "../controller/permissoesController.php";
 
 $usuarioController = new UsuarioController();
 $pc = new PermissoesController();
 
+$editId = isset($_GET['id']) ? (int) $_GET['id'] : (isset($_POST['id']) ? (int) $_POST['id'] : 0);
+if ($editId !== $_SESSION['user_id']) {
+    if (!$pc->validaPermissao('M_Utilizadores', $_SESSION['user_nivel'])) {
+        header('Location: index.php');
+        exit;
+    }
+}
 
 $usuario = $usuarioController->cancelar();
 $usuario = $usuarioController->excluir();
@@ -102,7 +110,7 @@ if (!isset($id)) {
                     </tr>
                     <tr>
                         <td width="100"> Senha </td>
-                        <td><input type="password" name="senha" value="<?= $senha ?>" /> </td>
+                        <td><input type="password" name="senha" value="" placeholder="Deixe em branco para manter a senha atual" /> </td>
                     </tr>
 
                     <tr>

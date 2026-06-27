@@ -3,6 +3,7 @@
 
 <?php
 
+define('REQUIRED_PERMISSION', 'M_Periodos');
 require_once "seguranca.php";
 require_once "../controller/periodoController.php";
 
