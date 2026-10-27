@@ -7,6 +7,7 @@ $permis_array = array();
 
 class permissoesController
     {
+	private Database $db;
 
     // valores default para as permissões da aplicação
     // a aplicação cria-os na BD     
@@ -37,20 +38,19 @@ class permissoesController
     ];
 
 
-    function __construct()
-        {
+    public function __construct(Database $db)
+    {
+        $this->db = $db;
         //carrega o array global das Permissões salvas na BD    
         global $permis_array;
 
-        $permissoes = new Permissoes();
+        $permissoes = new Permissoes($this->db);
         $linhas = $permissoes->listar();
 
         foreach ($linhas as $l) {
             $permis_array[$l["nome"]] = array($l[$this->niveis[0][0]], $l[$this->niveis[1][0]], $l[$this->niveis[2][0]]);
-
-
-            }
         }
+    }
 
     function validaPermissao($permissao, $nivel)
         {
@@ -98,7 +98,7 @@ class permissoesController
 
     function salvar()
         {
-        $permissoes = new Permissoes();
+        $permissoes = new Permissoes($this->db);
 
         if (isset($_POST['salvar'])) {
 
@@ -154,7 +154,7 @@ class permissoesController
     function validarTabelaPermissoes()
         {
 
-        $permissoes = new Permissoes();
+        $permissoes = new Permissoes($this->db);
         $linhas = $permissoes->listar();
 
         $ctrl_seq[''] = '0';
@@ -199,7 +199,7 @@ class permissoesController
 
         $this->validarTabelaPermissoes();
 
-        $permissoes = new Permissoes();
+        $permissoes = new Permissoes($this->db);
         $linhas = $permissoes->listar($tipo);
 
         $tabela = [];

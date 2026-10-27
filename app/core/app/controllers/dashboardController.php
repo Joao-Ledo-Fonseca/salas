@@ -8,24 +8,26 @@ require_once __DIR__ . "/../models/reserva.php";
 
 class dashboardController
 	{
+	private Database $db;
 
 	public $reserva;
 
-	function __construct()
+	function __construct(Database $db)
 		{
-		$this->reserva = new Reserva();
+		$this->db = $db;
+		$this->reserva = new Reserva($db);
 		}
 
 	function listarPeriodosDashboard()
 		{
-		$periodo = new Periodo();
+		$periodo = new Periodo($this->db);
 		return $periodo->listar();
 		}
 
 	function listarSalasDashboard($hoje, $categoria_id = 0)
 		{
-		$sl = new sala();
-		$per = new Periodo();
+		$sl = new sala($this->db);
+		$per = new Periodo($this->db);
 
 		$salas = $sl->listar($categoria_id);
 		$periodos = $per->listar();
@@ -101,7 +103,7 @@ class dashboardController
 	// relatorio de disciplina com mais reservas
 	function listarCategoriasController()
 		{
-		$categoria = new Categoria();
+		$categoria = new Categoria($this->db);
 		return $categoria->listar();
 		}
 
@@ -112,7 +114,7 @@ class dashboardController
 			$hoje = new DateTime();
 			}
 
-		$reserva = new Reserva();
+		$reserva = new Reserva($this->db);
 		
 		// Encaminha os parâmetros necessários para o modelo
 		$row1 = $reserva->disciplinaMaisReservas($hoje, $tipo, $fim);
@@ -123,8 +125,8 @@ class dashboardController
 	// 🎯 UNIFORMIZAÇÃO DOS HORÁRIOS: Ajusta o multiplicador baseado no intervalo real de dias
 	function totalHorariosController($tipo = 'm', $hoje = null, $fim = null)
 	{
-		$sala = new sala();
-		$periodo = new Periodo();
+		$sala = new sala($this->db);
+		$periodo = new Periodo($this->db);
 
 		$salas = $sala->total();
 		$periodos = $periodo->total();
@@ -153,7 +155,7 @@ class dashboardController
 			$hoje = new DateTime();
 		}
 
-		$reserva = new Reserva();
+		$reserva = new Reserva($this->db);
 		
 		// Usamos uma lógica centralizada no modelo para contar as reservas com base nos mesmos filtros
 		$rows = $reserva->listaReservasParaRelatorio($hoje, $tipo, $fim);

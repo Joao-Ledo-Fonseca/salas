@@ -5,11 +5,17 @@ require_once __DIR__ . '/util.php';
 
 class ReservaController
 	{
+	private Database $db;
+
+	public function __construct(Database $db)
+	{
+		$this->db = $db;
+	}
 
 
 	function abrirController($id)
 		{
-		$reserva = new Reserva();
+		$reserva = new Reserva($this->db);
 		return $reserva->abrir($id);
 		}
 
@@ -25,7 +31,7 @@ class ReservaController
 
 		$salaId = (int) Util::clearparam($post['sala_id'] ?? '0');
 		$periodoId = (int) Util::clearparam($post['periodo_id'] ?? '0');
-		$reserva = new Reserva();
+		$reserva = new Reserva($this->db);
 		if ($id === 0 && $reserva->verificar($data, $salaId, $periodoId)) {
 			return 'A data selecionada para essa sala nesse período já se encontra ocupada.';
 		}
@@ -77,7 +83,7 @@ class ReservaController
 	public function excluir(array $post): string
 	{
 		$id = (int) Util::clearparam($post['id'] ?? '0');
-		(new Reserva())->excluir($id);
+		(new Reserva($this->db))->excluir($id);
 		return (string) $id;
 	}
 

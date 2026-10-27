@@ -7,6 +7,9 @@ $appRoot = is_dir($projectRoot . DIRECTORY_SEPARATOR . 'app')
     ? $projectRoot
     : $projectRoot . DIRECTORY_SEPARATOR . 'core';
 
+require_once $appRoot . '/app/models/db_pdo.php';
+$database = new Database($appConfig);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
     }
@@ -38,14 +41,14 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
 if (isset($_GET['acao']) && $_GET['acao'] === 'logout') {
     // 🎯 CORREÇÃO: Chama o método diretamente do controlador unificado
     require_once $appRoot . '/app/controllers/usuarioController.php';
-    $usuarioController = new usuarioController();
+    $usuarioController = new usuarioController($database);
     $usuarioController->logout();
     exit;
     }
 
 if (isset($_GET['acao']) && $_GET['acao'] === 'login') {
     require_once $appRoot . '/app/controllers/LoginController.php';
-    $loginView = (new LoginController())->handle($_GET, $_POST);
+    $loginView = (new LoginController($database))->handle($_GET, $_POST);
     if ($loginView['redirect'] !== null) {
         header('Location: ' . $loginView['redirect']);
         exit;
@@ -62,7 +65,7 @@ if (isset($_GET['acao'])) {
 
     if (array_key_exists($pagina, $routes)) {
         require_once $appRoot . '/app/controllers/ApplicationPageController.php';
-        $page = (new ApplicationPageController())->dispatch($pagina, $_GET, $_POST);
+        $page = (new ApplicationPageController($database))->dispatch($pagina, $_GET, $_POST);
         if (array_key_exists('response', $page)) {
             header('Content-Type: text/plain; charset=UTF-8');
             echo $page['response'];
@@ -79,7 +82,7 @@ if (isset($_GET['acao'])) {
 
 // 3. Se nenhuma ação for passada na URL, carrega o Dashboard inicial padrão
 require_once $appRoot . '/app/controllers/ApplicationPageController.php';
-$viewData = (new ApplicationPageController())->dashboard($_GET);
+$viewData = (new ApplicationPageController($database))->dashboard($_GET);
 extract($viewData, EXTR_SKIP);
 require_once $appRoot . '/views/index.php';
 

@@ -7,6 +7,12 @@ require_once __DIR__ . '/../integration/SalasSessionAdapter.php';
 
 class UsuarioController
 	{
+	private Database $db;
+
+	public function __construct(Database $db)
+	{
+		$this->db = $db;
+	}
 
 	function salvar(?array $post = null)
 		{
@@ -35,7 +41,7 @@ class UsuarioController
 				$senha = null;
 				}
 
-			$usuario = new Usuario();
+			$usuario = new Usuario($this->db);
 
 			$resultado = $usuario->findByLoginIdentifier($email);
 			if (isset($resultado[0]['id']) && $resultado[0]['id'] != $id) {
@@ -69,7 +75,7 @@ class UsuarioController
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
 
-			$usuario = new Usuario();
+			$usuario = new Usuario($this->db);
 			
 			// CORREÇÃO 1: Try/Catch para capturar o erro fatal do PHP moderno
 			try {
@@ -105,7 +111,7 @@ class UsuarioController
 		{
 
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-			$usuario = new Usuario();
+			$usuario = new Usuario($this->db);
 			return $usuario->abrir($_GET['id']);
 			}
 
@@ -114,7 +120,7 @@ class UsuarioController
 	// listagem
 	function listarcontroller()
 		{
-		$usuario = new Usuario();
+		$usuario = new Usuario($this->db);
 		return $usuario->listar();
 		}
 

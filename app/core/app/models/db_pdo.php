@@ -2,29 +2,17 @@
 
 class Database
 {
-	private PDO $link;
+	private AppConfig $config;
+	private ?PDO $link = null;
 
-	function __construct()
+	public function __construct(AppConfig $config)
 	{
-		global $cfg;
-
-		$dsn = sprintf(
-			'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
-			$cfg->db_host,
-			$cfg->db_porta,
-			$cfg->db_banco
-		);
-
-		$this->link = new PDO($dsn, $cfg->db_user, $cfg->db_senha, [
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-			PDO::ATTR_EMULATE_PREPARES => false,
-		]);
+		$this->config = $config;
 	}
 
 	private function execute(string $sql, array $params = []): PDOStatement
 	{
-		$stmt = $this->link->prepare($sql);
+		$stmt = $this->connection()->prepare($sql);
 		$stmt->execute($params);
 
 		return $stmt;
@@ -39,12 +27,32 @@ class Database
 	{
 		$this->execute($sql, $params);
 
-		return (int) $this->link->lastInsertId();
+		return (int) $this->connection()->lastInsertId();
 	}
 
 	function query_update($sql, $params = array())
 	{
 		return $this->execute($sql, $params)->rowCount();
+	}
+
+	private function connection(): PDO
+	{
+		if ($this->link === null) {
+			$dsn = sprintf(
+				'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
+				$this->config->dbHost(),
+				$this->config->dbPort(),
+				$this->config->dbName()
+			);
+
+			$this->link = new PDO($dsn, $this->config->dbUser(), $this->config->dbPassword(), [
+				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+				PDO::ATTR_EMULATE_PREPARES => false,
+			]);
+		}
+
+		return $this->link;
 	}
 }
 ?>

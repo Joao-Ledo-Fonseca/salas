@@ -6,9 +6,9 @@ class categoria
 
 	private $db = null;
 
-	function __construct()
+	function __construct(Database $db)
 	{
-		$this->db = new Database();
+		$this->db = $db;
 	}
 
 	function listar()

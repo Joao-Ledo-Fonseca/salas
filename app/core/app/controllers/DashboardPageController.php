@@ -7,9 +7,9 @@ class DashboardPageController
 {
 	private dashboardController $dashboard;
 
-	public function __construct(?dashboardController $dashboard = null)
+	public function __construct(Database $db, ?dashboardController $dashboard = null)
 	{
-		$this->dashboard = $dashboard ?? new dashboardController();
+		$this->dashboard = $dashboard ?? new dashboardController($db);
 	}
 
 	public function index(array $query): array

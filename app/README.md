@@ -49,6 +49,8 @@ A integração específica com o sistema de reservas está em `app/core/app/inte
 
 Esta separação não inclui a manutenção de perfis nem as permissões por níveis: continuam a pertencer à aplicação. O esquema da base de dados não muda.
 
+A configuração da aplicação é carregada uma vez por pedido por `AppConfig`; o front controller cria um `Database` partilhado e injeta-o nos controllers e modelos. O wrapper PDO abre a ligação de forma preguiçosa na primeira consulta e reutiliza-a durante o pedido. Os modelos não leem credenciais globais nem criam ligações próprias.
+
 ## Controllers, vistas e apresentação
 
 O front controller mantém as rotas e URLs atuais e invoca `ApplicationPageController` antes de incluir a vista correspondente. Este controller verifica a sessão e a permissão da rota, coordena as operações e prepara os dados de apresentação. As vistas recebem esses dados e limitam-se a construir o HTML e escapar os valores apresentados; não instanciam nem chamam controllers.

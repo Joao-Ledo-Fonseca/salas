@@ -6,22 +6,10 @@ class imagem
 
 	private $db = null;
 
-	function __construct()
+	function __construct(Database $db)
 	{
-		$this->db = new Database();
+		$this->db = $db;
 	}
-
-
-    /*
-	function listar()
-	{		
-		$db = new Database();
-		
-		$sql = ' select id, nome, descricao from categoria order by nome;' ;
-		return $this->db->query($sql);
-	}
-	*/ 
-
 	function abrir($id)
 	{
 		$sql = 'select * from imagem where id = ?';

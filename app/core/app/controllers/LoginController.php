@@ -9,6 +9,13 @@ require_once __DIR__ . '/usuarioController.php';
 
 class LoginController
 {
+	private Database $db;
+
+	public function __construct(Database $db)
+	{
+		$this->db = $db;
+	}
+
 	public function handle(array $query, array $post): array
 	{
 		$errormsg = '';
@@ -23,7 +30,7 @@ class LoginController
 				$errormsg = 'E-mail ou senha inválidos';
 			}
 		} elseif (isset($post['validar'])) {
-			$usuarioController = new UsuarioController();
+			$usuarioController = new UsuarioController($this->db);
 			$result = $usuarioController->salvar($post);
 			$errormsg = is_numeric($result)
 				? 'Utilizador criado com sucesso!'
@@ -51,7 +58,7 @@ class LoginController
 			return 'invalid';
 		}
 
-		$usuario = new Usuario();
+		$usuario = new Usuario($this->db);
 		$authenticator = new \Salas\Auth\Authenticator(
 			new \Salas\Integration\SalasCredentialRepository($usuario)
 		);

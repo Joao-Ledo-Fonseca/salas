@@ -5,6 +5,12 @@ require_once __DIR__ . "/../models/sala.php";
 
 class salaController
 	{
+	private Database $db;
+
+	public function __construct(Database $db)
+	{
+		$this->db = $db;
+	}
 
 	function salvar($categoria_filtro, $activas_filtro)
 		{
@@ -24,7 +30,7 @@ class salaController
 			$imagem_lida = Util::imagemUpload($img_file);
 
 			if (is_array($imagem_lida)) {
-				$imagem = new imagem();
+				$imagem = new imagem($this->db);
 
 				// Se já existe imagem, exclui
 				if ($imagem_id != 0 && $imagem_id != '') {
@@ -38,7 +44,7 @@ class salaController
 				}
 
 			if (strlen($nome) > 0) {
-				$sala = new sala();
+				$sala = new sala($this->db);
 				$sala->salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id);
 				}
 
@@ -53,7 +59,7 @@ class salaController
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
 
-			$sala = new sala();
+			$sala = new sala($this->db);
 
 			// 🎯 ADICIONE O TRY/CATCH AQUI para capturar o erro do PHP moderno
 			try {
@@ -89,7 +95,7 @@ class salaController
 
 	function nomeSala($sala_id)
 		{
-		$sala = new sala();
+		$sala = new sala($this->db);
 		$sal = $sala->abrir($sala_id);
 		return $sal[0]['nome'];
 		}
@@ -98,13 +104,13 @@ class salaController
 		{
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
-			$sala = new sala();
+			$sala = new sala($this->db);
 			$sal = $sala->abrir($_GET['id']);
 
 			$imagem_id = $sal[0]['imagem_id'];
 
 			if ($imagem_id != NULL) {
-				$imagem = new imagem();
+				$imagem = new imagem($this->db);
 				$img = $imagem->abrir($imagem_id);
 				}
 			if (!isset($img[0])) {
@@ -119,7 +125,7 @@ class salaController
 	function listarController($filtro_categoria_id = 0, $filtro_activas = 'activas')
 		{
 
-		$sala = new sala();
+		$sala = new sala($this->db);
 		return $sala->listar($filtro_categoria_id, $filtro_activas);
 
 		}

@@ -5,6 +5,12 @@ require_once __DIR__. "/../models/periodo.php";
 
 class periodoController
 {
+	private Database $db;
+
+	public function __construct(Database $db)
+	{
+		$this->db = $db;
+	}
 
 	function salvar()
 	{
@@ -15,7 +21,7 @@ class periodoController
 
 
 			if (strlen($nome) > 0) {
-				$periodo = new Periodo();
+				$periodo = new Periodo($this->db);
 				$periodo->salvar($id, $nome, $seq);
 			}
             
@@ -43,7 +49,7 @@ class periodoController
 		if (isset($_POST['excluir'])) {
 			$id = Util::clearparam($_POST['id']);
 
-			$periodo = new Periodo();
+			$periodo = new Periodo($this->db);
             
             // 🎯 CORREÇÃO 3: Try/Catch contra erro fatal se houver reservas no período
             try {
@@ -63,7 +69,7 @@ class periodoController
 
 	function nomePeriodo($periodo_id)
 	{
-		$periodo = new Periodo();
+		$periodo = new Periodo($this->db);
 		$per = $periodo->abrir($periodo_id);		
 		return $per[0]['nome'];
 	}
@@ -73,7 +79,7 @@ class periodoController
 		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
 			$id = Util::clearparam($_GET['id']);
-			$periodo = new Periodo();
+			$periodo = new Periodo($this->db);
 			return $periodo->abrir($id);
 		}
 	}
@@ -81,7 +87,7 @@ class periodoController
 	// listagem
 	function listarcontroller()
 	{
-		$periodo = new Periodo();
+		$periodo = new Periodo($this->db);
 		return $periodo->listar();
 	}
 }

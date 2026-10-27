@@ -13,6 +13,13 @@ require_once __DIR__ . '/../integration/SalasSessionAdapter.php';
 
 class ApplicationPageController
 {
+	private Database $db;
+
+	public function __construct(Database $db)
+	{
+		$this->db = $db;
+	}
+
 	private const PAGE_PERMISSIONS = [
 		'categoria_list' => 'M_Categorias',
 		'categoria_form' => 'M_Categorias',
@@ -32,23 +39,23 @@ class ApplicationPageController
 	{
 		$this->authorize($action, $query, $post);
 		if ($action === 'reserva_form' && isset($post['submeter_excluir'])) {
-			return ['response' => (new ReservaController())->excluir($post)];
+			return ['response' => (new ReservaController($this->db))->excluir($post)];
 		}
 		if ($action === 'reserva_form' && isset($post['submeter_salvar'])) {
-			return ['response' => (new ReservaController())->guardar($post)];
+			return ['response' => (new ReservaController($this->db))->guardar($post)];
 		}
 
 		$data = ['menuData' => $this->menuData()];
 
 		switch ($action) {
 			case 'categoria_list':
-				$data['lista'] = (new categoriaController())->listarController();
+				$data['lista'] = (new categoriaController($this->db))->listarController();
 				break;
 			case 'categoria_form':
 				$data += $this->categoriaForm($query);
 				break;
 			case 'periodo_list':
-				$data['lista'] = (new periodoController())->listarcontroller();
+				$data['lista'] = (new periodoController($this->db))->listarcontroller();
 				break;
 			case 'periodo_form':
 				$data += $this->periodoForm($query);
@@ -60,8 +67,8 @@ class ApplicationPageController
 				$data += $this->salaForm($query, $post);
 				break;
 			case 'usuario_list':
-				$data['lista'] = (new UsuarioController())->listarcontroller();
-				$permissionController = new PermissoesController();
+				$data['lista'] = (new UsuarioController($this->db))->listarcontroller();
+				$permissionController = new PermissoesController($this->db);
 				foreach ($data['lista'] as &$user) {
 					$user['nivel_nome'] = $permissionController->nomeNivel((int) $user['nivel'], 2);
 				}
@@ -97,7 +104,7 @@ class ApplicationPageController
 	{
 		$this->authorize('dashboard', $query, []);
 		return [
-			'dashboardView' => (new DashboardPageController())->index($query),
+			'dashboardView' => (new DashboardPageController($this->db))->index($query),
 			'menuData' => $this->menuData(),
 		];
 	}
@@ -129,7 +136,7 @@ class ApplicationPageController
 			return;
 		}
 
-		if ($permission !== null && !(new PermissoesController())->validaPermissao($permission, $level)) {
+		if ($permission !== null && !(new PermissoesController($this->db))->validaPermissao($permission, $level)) {
 			$isAjax = strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
 			if ($isAjax) {
 				http_response_code(403);
@@ -142,7 +149,7 @@ class ApplicationPageController
 
 	private function menuData(): array
 	{
-		$permissions = new PermissoesController();
+		$permissions = new PermissoesController($this->db);
 		$level = (int) $_SESSION['user_nivel'];
 		$items = [
 			['permission' => 'M_Categorias', 'label' => 'Categorias', 'url' => '?acao=categoria_list'],
@@ -170,7 +177,7 @@ class ApplicationPageController
 
 	private function categoriaForm(array $query): array
 	{
-		$controller = new categoriaController();
+		$controller = new categoriaController($this->db);
 		$controller->cancelar();
 		$controller->excluir();
 		$controller->salvar();
@@ -184,7 +191,7 @@ class ApplicationPageController
 
 	private function periodoForm(array $query): array
 	{
-		$controller = new periodoController();
+		$controller = new periodoController($this->db);
 		$controller->cancelar();
 		$controller->excluir();
 		$controller->salvar();
@@ -199,8 +206,8 @@ class ApplicationPageController
 		return [
 			'categoria_id' => $categoryId,
 			'activas' => $activeFilter,
-			'categorias' => (new categoriaController())->listarOpcoesController(),
-			'lista' => (new salaController())->listarcontroller($categoryId, $activeFilter),
+			'categorias' => (new categoriaController($this->db))->listarOpcoesController(),
+			'lista' => (new salaController($this->db))->listarcontroller($categoryId, $activeFilter),
 		];
 	}
 
@@ -208,7 +215,7 @@ class ApplicationPageController
 	{
 		$categoryFilter = Util::clearparam($query['categoria_filtro'] ?? $post['categoria_filtro'] ?? 0);
 		$activeFilter = (string) Util::clearparam($query['activas'] ?? $post['activas'] ?? 'activas');
-		$controller = new salaController();
+		$controller = new salaController($this->db);
 		$controller->cancelar($categoryFilter, $activeFilter);
 		$controller->excluir($categoryFilter, $activeFilter);
 		$controller->salvar($categoryFilter, $activeFilter);
@@ -220,13 +227,13 @@ class ApplicationPageController
 			'categoria_filtro' => $categoryFilter, 'activas_filtro' => $activeFilter,
 			'errormsg' => (string) ($query['errormsg'] ?? ''),
 		], is_array($record) ? $record : [], [
-			'categorias' => (new categoriaController())->listarOpcoesController(),
+			'categorias' => (new categoriaController($this->db))->listarOpcoesController(),
 		]);
 	}
 
 	private function usuarioForm(array $query, array $post): array
 	{
-		$controller = new UsuarioController();
+		$controller = new UsuarioController($this->db);
 		$controller->cancelar();
 		$isSelf = (int) ($post['id'] ?? $query['id'] ?? 0) === (int) ($_SESSION['user_id'] ?? 0);
 		$deleteResult = $isSelf ? false : $controller->excluir();
@@ -256,7 +263,7 @@ class ApplicationPageController
 			];
 		}
 
-		$permissionController = new PermissoesController();
+		$permissionController = new PermissoesController($this->db);
 		$maxLevel = min(count($permissionController->niveis) - 1, (int) ($_SESSION['user_nivel'] ?? 0));
 		$levelOptions = [];
 		for ($level = 0; $level <= $maxLevel; $level++) {
@@ -277,7 +284,7 @@ class ApplicationPageController
 
 	private function permissoesForm(): array
 	{
-		$controller = new permissoesController();
+		$controller = new permissoesController($this->db);
 		$controller->cancelar();
 		$controller->salvar();
 		return [
@@ -317,7 +324,7 @@ class ApplicationPageController
 	private function reportSummary(array $query): array
 	{
 		$data = $this->reportDates($query);
-		$dashboard = new dashboardController();
+		$dashboard = new dashboardController($this->db);
 		$end = $data['tipo'] === 'p' ? $data['fim'] : null;
 		$bookings = $dashboard->disciplinaMaisReservasController($data['hoje'], $data['tipo'], $end);
 		$totalBookings = $dashboard->totalReservasController($data['hoje'], $data['tipo'], $end);
@@ -338,7 +345,7 @@ class ApplicationPageController
 	private function reportReservations(array $query): array
 	{
 		$data = $this->reportDates($query);
-		$dashboard = new dashboardController();
+		$dashboard = new dashboardController($this->db);
 		$data['reservas'] = $dashboard->listaReservasController(
 			$data['hoje'],
 			$data['tipo'],
@@ -349,7 +356,7 @@ class ApplicationPageController
 
 	private function reservaForm(array $query): array
 	{
-		$controller = new ReservaController();
+		$controller = new ReservaController($this->db);
 		$id = filter_var($query['id'] ?? null, FILTER_VALIDATE_INT);
 		$id = $id === false || $id === null ? 0 : $id;
 		$roomId = filter_var($query['sala_id'] ?? null, FILTER_VALIDATE_INT) ?: 0;
@@ -359,8 +366,8 @@ class ApplicationPageController
 			? DateTime::createFromFormat('!d/m/Y', $query['data'])
 			: false;
 		$date = $date ?: new DateTime();
-		$period = new periodoController();
-		$room = new salaController();
+		$period = new periodoController($this->db);
+		$room = new salaController($this->db);
 		$record = array_merge([
 			'id' => $id, 'sala_id' => $roomId, 'periodo_id' => $periodId,
 			'dia' => $date->format('d/m/Y'), 'professor_desc' => '', 'disciplina_desc' => '',
