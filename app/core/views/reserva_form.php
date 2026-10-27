@@ -78,7 +78,11 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
 		<input type="text" placeholder="Observação" name="observacao" id="observacao" value="<?= $observacao ?>"><BR />
 <br />
-		<select name="status" id="status"><?= $options_status; ?></select><BR>
+		<select name="status" id="status">
+			<?php foreach ($options_status as $option): ?>
+				<option value="<?= (int) $option['value'] ?>" <?= $option['selected'] ? 'selected' : '' ?>><?= htmlspecialchars($option['nome'], ENT_QUOTES, 'UTF-8') ?></option>
+			<?php endforeach; ?>
+		</select><BR>
 		
 
 		<h3> Repetir semanalmente até</h3>

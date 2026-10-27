@@ -11,13 +11,13 @@ require_once __DIR__. "/../app/controllers/salaController.php";
 require_once __DIR__. "/../app/controllers/categoriaController.php";
 
 // Obtém a seleção de categoria e activas
-$categoria_id = (isset($_POST['categoria_id']) ? (int) Util::clearparam($_POST['categoria_id']) : 0 );
-$activas = (isset($_POST['activas']) ? Util::clearparam($_POST['activas']) : 'activas') ;   
+$categoria_id = (int) Util::clearparam($_POST['categoria_id'] ?? $_GET['categoria_id'] ?? 0);
+$activas = Util::clearparam($_POST['activas'] ?? $_GET['activas'] ?? 'activas');
 
 
 // Controladores
 $categoriaController = new categoriaController();
-$categorias = $categoriaController->optionsCategoria(true, $categoria_id );
+$categorias = $categoriaController->listarOpcoesController();
 
 $salaController = new salaController();
 $lista = $salaController->listarcontroller($categoria_id, $activas);
@@ -65,7 +65,10 @@ $lista = $salaController->listarcontroller($categoria_id, $activas);
                     <label for="categoria"><b>Categorias</b></label>
                     <select id="categoria" style="width:200px;" name="categoria_id" onchange="this.form.submit()">                                            
                         
-                        <?= $categorias ?>
+                        <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas</option>
+                        <?php foreach ($categorias as $categoria): ?>
+                            <option value="<?= (int) $categoria['id'] ?>" <?= ((int) $categoria['id'] === $categoria_id ? 'selected' : '') ?>><?= htmlspecialchars((string) $categoria['nome'], ENT_QUOTES, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
                         
                     </select>
                     
@@ -131,7 +134,19 @@ $lista = $salaController->listarcontroller($categoria_id, $activas);
                 </thead>
                 <tbody>
 
-                    <?= $lista ?>
+                    <?php $categoriaAnterior = null; ?>
+                    <?php foreach ($lista as $sala): ?>
+                        <?php $categoriaAtual = (string) $sala['categoria']; ?>
+                        <tr>
+                            <td style="border:none"><?= $categoriaAtual === $categoriaAnterior ? '' : htmlspecialchars($categoriaAtual, ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><a href="<?= htmlspecialchars(app_url('?acao=sala_form&id=' . (int) $sala['id'] . '&categoria_filtro=' . rawurlencode((string) $categoria_id) . '&activas=' . rawurlencode((string) $activas)), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $sala['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                            <td><?= htmlspecialchars((string) $sala['descricao'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= !empty($sala['activa']) ? '&#10003;' : '-' ?></td>
+                            <td><?= (int) $sala['id'] ?></td>
+                            <td></td>
+                        </tr>
+                        <?php $categoriaAnterior = $categoriaAtual; ?>
+                    <?php endforeach; ?>
 
                 </tbody>
             </table>

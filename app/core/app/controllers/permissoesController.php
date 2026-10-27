@@ -202,30 +202,20 @@ class permissoesController
         $permissoes = new Permissoes();
         $linhas = $permissoes->listar($tipo);
 
-        $tabela = '';
+        $tabela = [];
 
 
         foreach ($linhas as $linha) {
             $nome = $linha['nome']; // nome da permissão
 
             if ($tipo == 'n') {
-                $tabela .= '<tr class="show">';
-                $tabela .= '<td style="display:none"></td>';
-                $tabela .= '<td>' . $nome . '</td>';
-                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '0" id="' . $nome . '2" value=0 ' . ($linha['uexterno'] ? "checked" : "") . '></td> ';
-                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '1" id="' . $nome . '3" value=1 ' . ($linha['uinterno'] ? "checked" : "") . '></td> ';
-                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '2" id="' . $nome . '4" value=2 ' . ($linha['admin'] ? "checked" : "") . '></td> ';
-                $tabela .= '<td><input type="checkbox"                         name="' . $nome . '3" id="' . $nome . '5" value=3 ' . 'checked' . ' disabled  ></td> ';
-                $tabela .= '<td class="hidden"> ' . $this->permissoes_defaults[$linha['nome']][4] . '</td>';
-                $tabela .= '<td></td></tr>';
+
+                $linha['descricao'] = $this->permissoes_defaults[$linha['nome']][4];
+                $tabela[] = $linha;
                 }
             else if ($tipo == 's') {
-                $tabela .= '<tr class="show">';
-                $tabela .= '<td style="display:none"></td>';
-                $tabela .= '<td>' . $nome . '  </td>';
-                $tabela .= '<td><input type="checkbox" onclick="show_salvar()" name="' . $nome . '0" id="' . $nome . '0" value=0 ' . ($linha['uexterno'] ? "checked" : "") . '></td> ';
-                $tabela .= '<td class="hidden"> ' . $this->permissoes_defaults[$linha['nome']][4] . '</td>';
-                $tabela .= '<td></td></tr>';
+                $linha['descricao'] = $this->permissoes_defaults[$linha['nome']][4];
+                $tabela[] = $linha;
                 }
             }
 

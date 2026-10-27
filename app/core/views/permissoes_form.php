@@ -71,7 +71,19 @@ $tabela_s = $permissoesController->listar('s'); // Configurações simples
                             </tr>
                         </thead>
                         <tbody>
-                            <?= $tabela_n ?>
+                            <?php foreach ($tabela_n as $permissao): ?>
+                                <?php $nomePermissao = (string) $permissao['nome']; ?>
+                                <tr class="show">
+                                    <td style="display:none"></td>
+                                    <td><?= htmlspecialchars($nomePermissao, ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><input type="checkbox" onclick="show_salvar()" name="<?= htmlspecialchars($nomePermissao . '0', ENT_QUOTES, 'UTF-8') ?>" id="<?= htmlspecialchars($nomePermissao . '2', ENT_QUOTES, 'UTF-8') ?>" value="0" <?= !empty($permissao['uexterno']) ? 'checked' : '' ?>></td>
+                                    <td><input type="checkbox" onclick="show_salvar()" name="<?= htmlspecialchars($nomePermissao . '1', ENT_QUOTES, 'UTF-8') ?>" id="<?= htmlspecialchars($nomePermissao . '3', ENT_QUOTES, 'UTF-8') ?>" value="1" <?= !empty($permissao['uinterno']) ? 'checked' : '' ?>></td>
+                                    <td><input type="checkbox" onclick="show_salvar()" name="<?= htmlspecialchars($nomePermissao . '2', ENT_QUOTES, 'UTF-8') ?>" id="<?= htmlspecialchars($nomePermissao . '4', ENT_QUOTES, 'UTF-8') ?>" value="2" <?= !empty($permissao['admin']) ? 'checked' : '' ?>></td>
+                                    <td><input type="checkbox" name="<?= htmlspecialchars($nomePermissao . '3', ENT_QUOTES, 'UTF-8') ?>" id="<?= htmlspecialchars($nomePermissao . '5', ENT_QUOTES, 'UTF-8') ?>" value="3" checked disabled></td>
+                                    <td class="hidden"><?= htmlspecialchars((string) $permissao['descricao'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td></td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
 
@@ -87,7 +99,16 @@ $tabela_s = $permissoesController->listar('s'); // Configurações simples
                             </tr>
                         </thead>
                         <tbody>
-                            <?= $tabela_s ?>
+                            <?php foreach ($tabela_s as $permissao): ?>
+                                <?php $nomePermissao = (string) $permissao['nome']; ?>
+                                <tr class="show">
+                                    <td style="display:none"></td>
+                                    <td><?= htmlspecialchars($nomePermissao, ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><input type="checkbox" onclick="show_salvar()" name="<?= htmlspecialchars($nomePermissao . '0', ENT_QUOTES, 'UTF-8') ?>" id="<?= htmlspecialchars($nomePermissao . '0', ENT_QUOTES, 'UTF-8') ?>" value="0" <?= !empty($permissao['uexterno']) ? 'checked' : '' ?>></td>
+                                    <td class="hidden"><?= htmlspecialchars((string) $permissao['descricao'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td></td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div> <!-- Fecha a lista_comum das tabelas -->

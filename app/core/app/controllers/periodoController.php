@@ -82,18 +82,7 @@ class periodoController
 	function listarcontroller()
 	{
 		$periodo = new Periodo();
-		$linhas = $periodo->listar();
-
-		$tabela = '';
-		foreach ($linhas as $linha) {
-			// 🎯 CORREÇÃO 4: Atualizar o link da tabela para a rota central
-			$tabela .= '<tr><td><a href="' . htmlspecialchars(app_url('?acao=periodo_form&id=' . (int) $linha['id']), ENT_QUOTES, 'UTF-8') . '">' . $linha['nome'] . '</a></td>
-							<td>' . $linha['seq'] . '</td>							
-							<td>' . $linha['id'] . '</td>
-							<td></td></tr>';
-		}
-
-		return $tabela;
+		return $periodo->listar();
 	}
 }
 ?>

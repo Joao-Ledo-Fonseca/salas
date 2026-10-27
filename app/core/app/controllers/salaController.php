@@ -42,12 +42,7 @@ class salaController
 				$sala->salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id);
 				}
 
-			$param["categoria_id"] = $categoria_filtro;
-			$param["activas"] = $activas_filtro;
-
-			Util::redirect_POST("sala_list.php", $param);
-
-			//header("Location: sala_list.php?categoria_id=".$categoria_filtro);
+			header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
 			exit();
 			}
 		return false;
@@ -76,13 +71,7 @@ class salaController
 				exit();
 				}
 
-			$post_data = array("categoria_id" => $categoria_filtro);
-			$post_data["activas"] = $activas_filtro;
-
-			// 🎯 NOTA: Garanta que usa o redirect_POST que corrigimos na classe Util
-			$url = "sala_list.php";
-			Util::redirect_POST($url, $post_data);
-
+			header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
 			exit();
 			}
 		return false;
@@ -92,12 +81,7 @@ class salaController
 		{
 		if (isset($_POST['cancelar'])) {
 
-			$post_data["categoria_id"] = $categoria_filtro;
-			$post_data["activas"] = $activas_filtro;
-			$url = "sala_list.php";
-
-			Util::redirect_POST($url, $post_data);
-			// header("Location: sala_list.php?categoria_id=" . $categoria_filtro);
+			header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
 			exit();
 			}
 		return false;
@@ -136,29 +120,7 @@ class salaController
 		{
 
 		$sala = new sala();
-		$linhas = $sala->listar($filtro_categoria_id, $filtro_activas);
-
-		$tabela = '';
-		$cat_label = '';
-		foreach ($linhas as $linha) {
-			$categoria_display = ($cat_label == $linha['categoria'] ? '' : $linha['categoria']);
-			$cat_label = $linha['categoria'];
-
-			$tabela .= '<tr>
-			<td style="border:none">' . $categoria_display . '</td>
-			<td><a href="' . htmlspecialchars(app_url('?acao=sala_form&id=' . (int) $linha['id'] . '&categoria_filtro=' . rawurlencode((string) $filtro_categoria_id) . '&activas=' . rawurlencode((string) $filtro_activas)), ENT_QUOTES, 'UTF-8') . '"  >' . $linha['nome'] . '</a></td>
-			<td>' . $linha['descricao'] . '</td>
-			<td>' . ($linha['activa'] ? '&#10003;' : '-') . '</td> 
-			<td>' . $linha['id'] . '</td>			
-			<td></td>
-		</tr>';
-			// &#10003;
-			// &#10005;
-			}
-
-
-
-		return $tabela;
+		return $sala->listar($filtro_categoria_id, $filtro_activas);
 
 		}
 

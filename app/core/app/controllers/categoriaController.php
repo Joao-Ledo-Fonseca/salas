@@ -118,52 +118,16 @@ class categoriaController
 	}
 
 	// listagem
-	function listarController($tipo = 'tabela')
+	function listarController()
 	{
-
 		$categoria = new categoria();
-		$linhas = $categoria->listar();
-
-		switch ($tipo) {
-			case 'tabela':
-				$categorias = '';
-				foreach ($linhas as $linha) {
-
-					$categorias .= '<tr>								
-								<td><a href="' . htmlspecialchars(app_url('?acao=categoria_form&id=' . (int) $linha['id']), ENT_QUOTES, 'UTF-8') . '">' . $linha['nome'] . '</a></td>
-								<td>' . $linha['descricao'] . '</td>
-								<td>' . $linha['id'] . '</td>
-								<td></td>
-							</tr>';
-				};
-				break;
-			default:
-				$categorias = $linhas;
-		}
-
-		return $categorias;
+		return $categoria->listar();
 	}
 
-	function optionsCategoria($todas = false, $selected_id = '')
+	function listarOpcoesController()
 	{
 		$categoria = new categoria();
-		$linhas = $categoria->listar();
-
-		$options = '';
-
-		// Adiciona a opção "Todas" se necessário
-		if ($todas) {
-			$options .= '<option value=0 ' . ($selected_id === 0 ? " selected" : "") . '>Todas</option>';
-		}
-
-		// Gera as opções com base nas categorias
-		foreach ($linhas as $linha) {
-			$selected = ($linha['id'] == $selected_id ? ' selected' : '');			
-
-			$options .= '<option value="' . $linha['id'] . '"' . $selected . '>' . $linha['nome'] . '</option>';
-		}
-
-		return $options;
+		return $categoria->listar();
 	}
 
 }

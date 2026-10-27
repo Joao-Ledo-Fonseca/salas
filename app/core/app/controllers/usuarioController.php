@@ -114,24 +114,8 @@ class UsuarioController
 	// listagem
 	function listarcontroller()
 		{
-		$permissoes = new PermissoesController();
 		$usuario = new Usuario();
-
-
-		$linhas = $usuario->listar();
-
-		$tabela = '';
-		foreach ($linhas as $linha) {
-			$tabela .= '<tr>														
-							<td><a href="' . htmlspecialchars(app_url('?acao=usuario_form&id=' . (int) $linha['id']), ENT_QUOTES, 'UTF-8') . '">' . $linha['nome'] . '</a></td>
-							<td>' . $linha['email'] . '</td>
-							<td>' . $permissoes->nomeNivel($linha['nivel'], 2) . '</td>
-							<td>' . $linha['id'] . '</td>
-							<td></td>
-						</tr>';
-
-			}
-		return $tabela;
+		return $usuario->listar();
 		}
 
 	function startSession(array $r)

@@ -60,7 +60,14 @@ $lista = $periodoController->listarcontroller();
                     </tr>
                 </thead>
                 <tbody>
-                    <?= $lista ?>
+                    <?php foreach ($lista as $periodo): ?>
+                        <tr>
+                            <td><a href="<?= htmlspecialchars(app_url('?acao=periodo_form&id=' . (int) $periodo['id']), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $periodo['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                            <td><?= (int) $periodo['seq'] ?></td>
+                            <td><?= (int) $periodo['id'] ?></td>
+                            <td></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 

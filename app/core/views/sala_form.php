@@ -35,7 +35,7 @@ $sala = $salaController->abrir();
 
 // Para o "<Select>" de Categorias
 $categoriaController = new categoriaController();
-// $categorias = $categoriaController->listarController('id_nomes');
+$categorias = $categoriaController->listarOpcoesController();
 
 if (isset($sala['id'])) {
     extract($sala);
@@ -122,7 +122,9 @@ if (isset($_GET['errormsg'])) {
                             <td width="100px"> Categoria </td>
                             <td>
                                 <select name="categoria_id" style="width:180px" id="selecao">
-                                    <?= $categoriaController->optionsCategoria(false, $categoria_id); ?>;
+                                    <?php foreach ($categorias as $categoria): ?>
+                                        <option value="<?= (int) $categoria['id'] ?>" <?= ((int) $categoria['id'] === (int) $categoria_id ? 'selected' : '') ?>><?= htmlspecialchars((string) $categoria['nome'], ENT_QUOTES, 'UTF-8') ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </td>                            
                         </tr>

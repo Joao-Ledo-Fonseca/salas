@@ -137,11 +137,13 @@ class ReservaController
 
 	function options_status($select)
 		{
-
-		$options_status = '';
+		$options_status = [];
 		for ($i = 1; $i <= count($this->a_nomes_status); $i++) {
-			$selected = (($i == $select) ? ' selected ' : ' ');
-			$options_status .= "<option value=\"$i\" $selected > " . $this->nome_status($i) . "</option>";
+			$options_status[] = [
+				'value' => $i,
+				'nome' => $this->nome_status($i),
+				'selected' => ($i == $select),
+			];
 			}
 		return $options_status;
 		}

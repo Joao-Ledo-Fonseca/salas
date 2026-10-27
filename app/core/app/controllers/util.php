@@ -115,28 +115,6 @@ class Util
 
 	}
 
-public static function redirect_POST($url, $post_data)
-{
-    // Converte nomes de vistas antigos em ações do router público.
-    if (str_ends_with($url, '.php')) {
-        $acao = str_replace('.php', '', $url);
-        $action_destino = app_url('?acao=' . $acao);
-    } else {
-        $action_destino = $url;
-    }
-
-    // O restante código permanece igual, apenas mudamos o action do form
-    echo '<form id="postForm" action="' . htmlspecialchars($action_destino) . '" method="post">';
-    foreach ($post_data as $key => $value) {
-        echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
-    }
-    echo '</form>';
-    echo '<script>document.getElementById("postForm").submit();</script>';
-    exit;
-}
-
-
-
 	public static function url_POST($url, $post_data)
 	{
 		/* Ex de uso:

@@ -5,7 +5,7 @@ require_once "seguranca.php";
 require_once __DIR__. "/../app/controllers/categoriaController.php";
 
 $categoriaController = new categoriaController();
-$lista = $categoriaController->listarcontroller();
+$lista = $categoriaController->listarController();
 
 ?>
 <!DOCTYPE html>   
@@ -60,7 +60,14 @@ $lista = $categoriaController->listarcontroller();
                </tr>
             </thead>
             <tbody>
-               <?= $lista ?>
+               <?php foreach ($lista as $categoria): ?>
+                  <tr>
+                     <td><a href="<?= htmlspecialchars(app_url('?acao=categoria_form&id=' . (int) $categoria['id']), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $categoria['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                     <td><?= htmlspecialchars((string) $categoria['descricao'], ENT_QUOTES, 'UTF-8') ?></td>
+                     <td><?= (int) $categoria['id'] ?></td>
+                     <td></td>
+                  </tr>
+               <?php endforeach; ?>
             </tbody>
          </table>
 
