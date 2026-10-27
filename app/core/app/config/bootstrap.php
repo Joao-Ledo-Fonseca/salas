@@ -1,8 +1,8 @@
 <?php
 
-$configPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config.json';
-if (!is_file($configPath) || !is_readable($configPath)) {
-    throw new RuntimeException('O ficheiro de configuração da aplicação não existe ou não pode ser lido.');
+$configPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'config.json';
+if (!is_file($configPath)) {
+    throw new RuntimeException('O ficheiro de configuração da aplicação não existe.');
 }
 
 $configJson = file_get_contents($configPath);
