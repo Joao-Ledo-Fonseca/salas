@@ -1,0 +1,8 @@
+{
+  "db_host": "127.0.0.1",
+  "db_user": "sgreserva",
+  "db_senha": "substituir-por-uma-palavra-passe-forte",
+  "db_banco": "sgreserva",
+  "db_porta": 3306,
+  "url_base_path": "auto"
+}
