@@ -4,24 +4,6 @@
 
 <?php
 
-define('REQUIRED_PERMISSION', 'M_Salas');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/util.php";
-require_once __DIR__. "/../app/controllers/salaController.php";
-require_once __DIR__. "/../app/controllers/categoriaController.php";
-
-// Obtém a seleção de categoria e activas
-$categoria_id = (int) Util::clearparam($_POST['categoria_id'] ?? $_GET['categoria_id'] ?? 0);
-$activas = Util::clearparam($_POST['activas'] ?? $_GET['activas'] ?? 'activas');
-
-
-// Controladores
-$categoriaController = new categoriaController();
-$categorias = $categoriaController->listarOpcoesController();
-
-$salaController = new salaController();
-$lista = $salaController->listarcontroller($categoria_id, $activas);
-
 ?>
 
 <head>
@@ -98,7 +80,10 @@ $lista = $salaController->listarcontroller($categoria_id, $activas);
                 <span style="float:right; margin-left: 15px;">
                     <!-- 🎯 CORREÇÃO: Removido o label "Categorias", adicionada a classe do Funil e alargado para 160px livres para o texto respirar ao lado do ícone -->
                     <select id="categoria" class="dashboard-category-select" style="width:160px;" name="categoria_id" onchange="this.form.submit()">                                            
-                        <?= $categorias ?>
+                        <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas</option>
+                        <?php foreach ($categorias as $categoria): ?>
+                            <option value="<?= (int) $categoria['id'] ?>" <?= ((int) $categoria['id'] === $categoria_id ? 'selected' : '') ?>><?= htmlspecialchars((string) $categoria['nome'], ENT_QUOTES, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </span>
 

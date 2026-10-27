@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../core/views/config.php';
+require_once __DIR__ . '/../core/app/config/bootstrap.php';
 
 $projectRoot = dirname(__DIR__);
 $appRoot = is_dir($projectRoot . DIRECTORY_SEPARATOR . 'app')
@@ -61,7 +61,15 @@ if (isset($_GET['acao'])) {
     $routes = include $appRoot . '/app/config/routes.php';
 
     if (array_key_exists($pagina, $routes)) {
-        require_once $appRoot . '/views/' . $routes[$pagina];
+        require_once $appRoot . '/app/controllers/ApplicationPageController.php';
+        $page = (new ApplicationPageController())->dispatch($pagina, $_GET, $_POST);
+        if (array_key_exists('response', $page)) {
+            header('Content-Type: text/plain; charset=UTF-8');
+            echo $page['response'];
+            exit;
+        }
+        extract($page['data'], EXTR_SKIP);
+        require_once $appRoot . '/views/' . $page['view'];
         exit;
     }
 
@@ -70,9 +78,9 @@ if (isset($_GET['acao'])) {
 }
 
 // 3. Se nenhuma ação for passada na URL, carrega o Dashboard inicial padrão
-require_once $appRoot . '/views/seguranca.php';
-require_once $appRoot . '/app/controllers/DashboardPageController.php';
-$dashboardView = (new DashboardPageController())->index($_GET);
+require_once $appRoot . '/app/controllers/ApplicationPageController.php';
+$viewData = (new ApplicationPageController())->dashboard($_GET);
+extract($viewData, EXTR_SKIP);
 require_once $appRoot . '/views/index.php';
 
 ?>

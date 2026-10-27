@@ -3,24 +3,6 @@
 
 <?php
 
-define('REQUIRED_PERMISSION', 'M_Periodos');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/periodoController.php";
-
-$periodoController = new periodoController();
-$periodo = $periodoController->cancelar();
-$periodo = $periodoController->excluir();
-$periodo = $periodoController->salvar();
-$periodo = $periodoController->abrir();
-if (isset($periodo[0]))
-    extract($periodo[0]);
-
-if (!isset($id)) {
-    $seq = 0;
-    $nome = '';
-    $id = 0;
-}
-
 ?>
 
 

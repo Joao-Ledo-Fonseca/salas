@@ -1,13 +1,3 @@
-<?php
-
-require_once __DIR__. "/../app/controllers/permissoesController.php";
-$pc = new permissoesController();
-
-$u_n = $_SESSION['user_nivel'];
-$id_u = $_SESSION['user_nome'] . ' (' . $pc->nomeNivel($u_n, 1) . ')';
-$id_u_link = '<a href="' . app_url('?acao=usuario_form&id=' . (int) $_SESSION['user_id']) . '">' . $id_u . '</a>';
-?>
-
 <!-- Menu hamburger -->
 <div class="hamburger" onclick="openNav()">☰</div>
 
@@ -16,33 +6,26 @@ $id_u_link = '<a href="' . app_url('?acao=usuario_form&id=' . (int) $_SESSION['u
    <div class="menu-inner">
       <div class="user">
          <img src="<?= app_url('/img/do-utilizador-branco.png') ?>" width="20" height="20" alt="" />
-         <p><?= $id_u_link ?></p>
+         <p><a href="<?= htmlspecialchars($menuData['profileUrl'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($menuData['userName'] . ' (' . $menuData['userLevel'] . ')', ENT_QUOTES, 'UTF-8') ?></a></p>
       </div>
       <ul>
          <a href="<?= app_url() ?>"><li>Home</li></a>
          
-         <?php if ($pc->validaPermissao("M_Estatisticas", $u_n)): ?>
+         <?php if ($menuData['showStatistics']): ?>
             <a href="<?= app_url('?acao=relatorios') ?>"><li>Estatisticas</li></a>
          <?php endif; ?>
-         <?php if ($pc->validaPermissao("M_Relatorios", $u_n)): ?>
+         <?php if ($menuData['showReports']): ?>
             <a href="<?= app_url('?acao=relatorios2') ?>"><li>Relatorios</li></a>
          <?php endif; ?>
 
-         <?php
-         $adminItems = [];
-         if ($pc->validaPermissao("M_Categorias", $u_n))    $adminItems[] = '<a href="' . app_url('?acao=categoria_list') . '"><li>Categorias</li></a>';
-         if ($pc->validaPermissao("M_Salas", $u_n))         $adminItems[] = '<a href="' . app_url('?acao=sala_list') . '"><li>Salas</li></a>';
-         if ($pc->validaPermissao("M_Periodos", $u_n))      $adminItems[] = '<a href="' . app_url('?acao=periodo_list') . '"><li>Períodos</li></a>';
-         if ($pc->validaPermissao("M_Utilizadores", $u_n))  $adminItems[] = '<a href="' . app_url('?acao=usuario_list') . '"><li>Utilizadores</li></a>';
-         if ($pc->validaPermissao("M_Permissoes", $u_n))    $adminItems[] = '<a href="' . app_url('?acao=permissoes_form') . '"><li>Permissões</li></a>';
-         ?>
-
-         <?php if (count($adminItems) > 0): ?>            
+         <?php if (count($menuData['adminItems']) > 0): ?>
                <a class="dropdown-btn" href="#">
                   <li class="admin-li">Admin ▼</li>
                </a>
                <ul class="dropdown-container">
-                  <?= implode('', $adminItems) ?>                  
+                  <?php foreach ($menuData['adminItems'] as $item): ?>
+                     <a href="<?= htmlspecialchars(app_url($item['url']), ENT_QUOTES, 'UTF-8') ?>"><li><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></li></a>
+                  <?php endforeach; ?>
                </ul>
                            
          <?php endif; ?>

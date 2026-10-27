@@ -1,10 +1,10 @@
 <?php
 
-require "util.php";
-require __DIR__ . "/../models/categoria.php";
-require __DIR__ . "/../models/periodo.php";
-require __DIR__ . "/../models/sala.php";
-require __DIR__ . "/../models/reserva.php";
+require_once __DIR__ . '/util.php';
+require_once __DIR__ . "/../models/categoria.php";
+require_once __DIR__ . "/../models/periodo.php";
+require_once __DIR__ . "/../models/sala.php";
+require_once __DIR__ . "/../models/reserva.php";
 
 class dashboardController
 	{

@@ -1,37 +1,5 @@
 <?php
 
-define('REQUIRED_PERMISSION', 'M_Categorias');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/categoriaController.php";
-
-$categoriaController = new categoriaController();
-
-$categoria = $categoriaController->cancelar();
-$categoria = $categoriaController->excluir();
-$categoria = $categoriaController->salvar();
-$categoria = $categoriaController->abrir();
-
-if (isset($categoria['id']))
-    extract($categoria);
-
-if (!isset($id)) {
-    $id = 0;
-    $nome = '';
-    $descricao = '';
-    $imagem_id = '';
-
-    $nome_img = '';
-    $tamanho_img = '';
-    $tipo_img = '';
-    $imagem = '';
-}
-
-if (isset($_GET['errormsg'])) {
-    $errormsg = $_GET['errormsg'];
-} else {
-    $errormsg = '';
-}
-
 ?>
 <!DOCTYPE html>   
 <html lang="pt-PT">

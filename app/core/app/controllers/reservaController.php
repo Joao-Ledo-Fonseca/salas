@@ -1,7 +1,7 @@
 <?php
 
-require __DIR__ . "/../models/reserva.php";
-require "util.php";
+require_once __DIR__ . "/../models/reserva.php";
+require_once __DIR__ . '/util.php';
 
 class ReservaController
 	{
@@ -13,117 +13,73 @@ class ReservaController
 		return $reserva->abrir($id);
 		}
 
-	function excluirController()
-		{
-		if (isset($_POST['id'])) {
-			// excluir	
-			$id = Util::clearparam($_POST['id']);
-			$reserva = new Reserva();
-			echo $reserva->excluir($id);
-
-			}
+	public function guardar(array $post): string
+	{
+		$id = (int) Util::clearparam($post['id'] ?? '0');
+		$dia = Util::clearparam($post['dia'] ?? '');
+		$data = DateTime::createFromFormat('!d/m/Y', $dia);
+		$dateErrors = DateTime::getLastErrors();
+		if ($data === false || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))) {
+			return 'Data inválida.';
 		}
 
-	function salvarController()
-		{
-		// 🎯 1. GATILHO DE EXCLUSÃO (Adicionado para unificar o sistema)
-		if (isset($_POST['submeter_excluir'])) {
-			$id = Util::clearparam($_POST['id']);
+		$salaId = (int) Util::clearparam($post['sala_id'] ?? '0');
+		$periodoId = (int) Util::clearparam($post['periodo_id'] ?? '0');
+		$reserva = new Reserva();
+		if ($id === 0 && $reserva->verificar($data, $salaId, $periodoId)) {
+			return 'A data selecionada para essa sala nesse período já se encontra ocupada.';
+		}
 
-			$reserva = new Reserva();
-			$reserva->excluir($id); // Executa a eliminação na base de dados
+		$userId = (int) ($_SESSION['user_id'] ?? 0);
+		$id = (int) $reserva->salvar(
+			$id,
+			$dia,
+			Util::clearparam($post['professor'] ?? ''),
+			Util::clearparam($post['disciplina'] ?? ''),
+			$data,
+			Util::clearparam($post['observacao'] ?? ''),
+			(int) Util::clearparam($post['status'] ?? '1'),
+			$salaId,
+			$periodoId,
+			$userId
+		);
 
-			echo $id; // Javascript espera este ID numérico para validar o sucesso
-			exit();
-			}
-
-		// 🎯 2. O SEU CÓDIGO ORIGINAL DE GRAVAÇÃO (Mantido intacto, apenas isolado)
-		// Garante que só roda se o gatilho for de salvar
-		if (isset($_POST['id']) && !isset($_POST['submeter_excluir'])) {
-
-			// receber dados			
-			$id = Util::clearparam($_POST['id']);
-			$dia = Util::clearparam($_POST['dia']);
-			$professor = Util::clearparam($_POST['professor']);
-			$disciplina = Util::clearparam($_POST['disciplina']);
-			$observacao = Util::clearparam($_POST['observacao']);
-			$status = Util::clearparam($_POST['status']);
-
-			$sala_id = Util::clearparam($_POST['sala_id']);
-			$periodo_id = Util::clearparam($_POST['periodo_id']);
-
-			$data = new DateTime();
-			$data = date_create_from_format('d/m/Y', $dia);
-
-			$usuario_id = $_SESSION['user_id'];
-
-			$reserva = new Reserva();
-
-			// verificar se data já não está ocupada para um novo registro
-			if ($id == 0) {
-				$id_existente = $reserva->verificar($data, $sala_id, $periodo_id);
-				if (isset($id_existente['id'])) {
-					echo "A data selecionada para essa sala nesse período já se encontra ocupada.";
-					return false;
-					}
-				}
-
-			$id = $reserva->salvar(
-				$id,
-				$dia,
-				$professor,
-				$disciplina,
-				$data,
-				$observacao,
-				$status,
-				$sala_id,
-				$periodo_id,
-				$usuario_id
-			);
-
-			echo $id; // javascript espera esse id para saber se registro inserido está ok
-
-
-			// verificar repetições:
-			$data_final = Util::clearparam($_POST['data_final']);
-
-			if ($data_final != "") {
-				$data_final = date_create_from_format('d/m/Y', $data_final);
-
-				// lloping +7 dias . Se data limite ultrapassada, sair.
-				$data->modify('+7 day');
-				$diff = Util::ndate_diff($data->format("Y-m-d"), $data_final->format("Y-m-d"));
-
-				while ($diff > 0 || $data->format("Y-m-d") == $data_final->format("Y-m-d")) {
-
-					$id_existente = $reserva->verificar($data, $sala_id, $periodo_id);
-
-					if (!isset($id_existente[0]['id'])) {
-						// duplicar reserva para a data selecionada.
-						$id = 0;
+		$repeatUntil = trim((string) ($post['data_final'] ?? ''));
+		if ($repeatUntil !== '') {
+			$endDate = DateTime::createFromFormat('!d/m/Y', Util::clearparam($repeatUntil));
+			$dateErrors = DateTime::getLastErrors();
+			if ($endDate !== false && ($dateErrors === false || ($dateErrors['warning_count'] === 0 && $dateErrors['error_count'] === 0))) {
+				$repeatDate = clone $data;
+				$repeatDate->modify('+7 days');
+				while ($repeatDate <= $endDate) {
+					if (!$reserva->verificar($repeatDate, $salaId, $periodoId)) {
 						$reserva->salvar(
-							$id,
-							$dia,
-							$professor,
-							$disciplina,
-							$data,
-							$observacao,
-							$status,
-							$sala_id,
-							$periodo_id,
-							$usuario_id
+							0,
+							$repeatDate->format('d/m/Y'),
+							Util::clearparam($post['professor'] ?? ''),
+							Util::clearparam($post['disciplina'] ?? ''),
+							$repeatDate,
+							Util::clearparam($post['observacao'] ?? ''),
+							(int) Util::clearparam($post['status'] ?? '1'),
+							$salaId,
+							$periodoId,
+							$userId
 						);
-						}
-
-					$data->modify('+7 day');
-					$diff = Util::ndate_diff($data->format("Y-m-d"), $data_final->format("Y-m-d"));
 					}
+					$repeatDate->modify('+7 days');
 				}
-
-			// Termina a execução do AJAX de gravação de forma segura
-			exit();
 			}
 		}
+
+		return (string) $id;
+	}
+
+	public function excluir(array $post): string
+	{
+		$id = (int) Util::clearparam($post['id'] ?? '0');
+		(new Reserva())->excluir($id);
+		return (string) $id;
+	}
 
 
 	public $a_nomes_status = array("Reservado", "Confirmado", "Cancelado");

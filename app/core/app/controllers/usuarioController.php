@@ -1,6 +1,6 @@
 <?php
 
-require_once "util.php";
+require_once __DIR__ . '/util.php';
 require_once __DIR__ . "/../models/usuario.php";
 require_once __DIR__ . '/permissoesController.php';
 require_once __DIR__ . '/../integration/SalasSessionAdapter.php';

@@ -1,71 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 
-<?php
-
-require_once "seguranca.php";
-require_once __DIR__ . "/../app/controllers/usuarioController.php";
-require_once __DIR__ . "/../app/controllers/permissoesController.php";
-
-$usuarioController = new UsuarioController();
-$pc = new PermissoesController();
-
-// Lê o POST primeiro:
-$editId = isset($_POST['id']) ? (int) $_POST['id'] : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
-
-if ($editId !== $_SESSION['user_id']) {
-    if (!$pc->validaPermissao('M_Utilizadores', $_SESSION['user_nivel'])) {
-        header('Location: ' . app_url());
-        exit;
-        }
-    }
-
-$usuario = $usuarioController->cancelar();
-$usuario = $usuarioController->excluir();
-
-$errormsg = '';
-if (isset($_POST['excluir']) && is_string($usuario)) {
-    $errormsg = 'Utilizador não pode ser excluído. Existem reservas em seu nome.';
-}
-
-// 🎯 1. Executa o salvar primeiro
-$resultado_salvar = $usuarioController->salvar();
-
-// Se o salvar retornou 0, significa que o e-mail ou nome já existem!
-if ($resultado_salvar === 0) {
-    $errormsg = 'Não é possível criar/editar: Nome ou E-mail já existentes no sistema!';
-}
-
-// 2. O 'abrir' SÓ deve ser chamado se NÃO for uma submissão de formulário
-// Isto impede que o ID e os dados digitados sejam apagados ao dar erro de validação
-if (!isset($_POST['salvar'])) {
-    $usuario_dados = $usuarioController->abrir();
-    if (isset($usuario_dados[0])) {
-        extract($usuario_dados[0]);
-    }
-} else {
-    // Se falhou ao salvar, recupera o que o utilizador digitou no ecrã para não perder o texto
-    $nome = Util::clearparam($_POST['nome']);
-    $email = Util::clearparam($_POST['email']);
-    $telefone = isset($_POST['telefone']) ? Util::clearparam($_POST['telefone']) : '';
-    $NIF = isset($_POST['NIF']) ? Util::clearparam($_POST['NIF']) : '';
-    $nivel = isset($_POST['nivel']) ? (int)$_POST['nivel'] : 0;
-    $id = (int)$_POST['id'];
-}
-
-// 3. Define os valores padrão para um Utilizador Novo se a variável $id não existir
-if (!isset($id)) {
-    $nome = '';
-    $email = '';
-    $senha = '';
-    $telefone = '';
-    $NIF = '';
-    $nivel = 0;
-    $id = 0;
-}
-?>
-
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -80,10 +15,10 @@ if (!isset($id)) {
     <script src="<?= app_url('/js/lib.js') ?>"></script>
 
     <script>
-        nomeSessao = "<?= $_SESSION['user_nome'] ?>";
-        nivelSessao = <?= (int) $_SESSION['user_nivel'] ?>;
-        nomeEditar = "<?= $nome ?>";
-        nivelEditar = "<?= $nivel ?>";
+        nomeSessao = <?= json_encode($sessionUserName) ?>;
+        nivelSessao = <?= $sessionUserLevel ?>;
+        nomeEditar = <?= json_encode((string) $nome) ?>;
+        nivelEditar = <?= (int) $nivel ?>;
 
         // controlo de permissões para usuario_form.php
         function user_self_edit(uSessao, nSessao, uEditar, nEditar) {
@@ -151,20 +86,9 @@ if (!isset($id)) {
                         <td>
 
                             <select style="width:150px" name="nivel" id="nivel">
-                                <?php
-                                $numNiveis = count($pc->niveis) - 1;
-                                $highNivel = min($numNiveis, $_SESSION['user_nivel']);
-
-                                for ($i = 0; $i <= $highNivel; $i++) { // para um utilizador só aparecem niveis iguais ou inferiores ao seu nivel
-                                    if ($nivel == $i) {
-                                        echo "<option value='$i' selected>" . $pc->nomeNivel($i, 2) . " (" . $pc->nomeNivel($i, 1) . ")" . "</option>";
-                                        }
-                                    else {
-                                        echo "<option value='$i'>" . $pc->nomeNivel($i, 2) . " (" . $pc->nomeNivel($i, 1) . ")" . "</option>";
-                                        }
-                                    }
-                                ;
-                                ?>
+                                <?php foreach ($levelOptions as $option): ?>
+                                    <option value="<?= (int) $option['value'] ?>" <?= ((int) $nivel === (int) $option['value'] ? 'selected' : '') ?>><?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </td>
                     </tr>

@@ -1,12 +1,5 @@
 <?php
 
-define('REQUIRED_PERMISSION', 'M_Categorias');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/categoriaController.php";
-
-$categoriaController = new categoriaController();
-$lista = $categoriaController->listarController();
-
 ?>
 <!DOCTYPE html>   
 <html lang="pt-PT">

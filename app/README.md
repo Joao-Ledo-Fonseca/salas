@@ -23,8 +23,8 @@ C:\wamp64\dev\salas\
     config.json            # configuração local, ignorada pelo Git
     sgreserva.sql          # dump para instalação inicial
     core\                  # código privado da aplicação; não publicar como DocumentRoot
-      app\                 # configuração de rotas, controladores, modelos e utilitários
-      views\               # páginas e configuração da aplicação
+      app\                 # configuração de rotas, arranque, controladores, modelos e utilitários
+      views\               # páginas e componentes de apresentação
       .htaccess            # impede acesso web direto ao core
     public\                # único diretório que deve ser servido pelo Apache
       index.php            # front controller
@@ -49,15 +49,17 @@ A integração específica com o sistema de reservas está em `app/core/app/inte
 
 Esta separação não inclui a manutenção de perfis nem as permissões por níveis: continuam a pertencer à aplicação. O esquema da base de dados não muda.
 
-## Separação inicial entre controller e view
+## Controllers, vistas e apresentação
 
-O fluxo da ação existente `?acao=login` é coordenado por `LoginController`: recebe os dados de pedido do front controller, executa login ou registo e prepara o estado de apresentação. A view `login.php` limita-se a renderizar esse estado. A rota, os campos dos formulários, as mensagens e os redirecionamentos existentes mantêm-se.
+O front controller mantém as rotas e URLs atuais e invoca `ApplicationPageController` antes de incluir a vista correspondente. Este controller verifica a sessão e a permissão da rota, coordena as operações e prepara os dados de apresentação. As vistas recebem esses dados e limitam-se a construir o HTML e escapar os valores apresentados; não instanciam nem chamam controllers.
 
-Esta é uma intervenção incremental. As restantes páginas ainda têm diferentes graus de lógica de pedido e apresentação misturados; podem ser separadas por fluxos, mantendo inicialmente o router e as URLs atuais.
+O fluxo `?acao=login` é coordenado por `LoginController`, que trata autenticação ou registo e prepara o estado consumido pela vista `login.php`. A página inicial passa por `DashboardPageController`, que interpreta os filtros e prepara categorias, períodos, salas, reservas e datas para `index.php`; o `dashboardController` fornece dados estruturados para o mapa.
 
-## Separação da vista principal do dashboard
+Os relatórios seguem a mesma separação: `dashboardController` devolve arrays de reservas e totais; `relatorios.php` e `relatorios2.php` renderizam tabelas e mensagens. A listagem de categorias, períodos, salas e utilizadores também recebe arrays dos controllers e constrói as linhas nas respetivas vistas. A vista de permissões cria as caixas de seleção a partir dos dados devolvidos pelo controller. O controller de reservas devolve os estados como dados para `reserva_form.php` gerar as opções do formulário.
 
-O front controller mantém o encaminhamento atual para a página inicial, mas agora executa `DashboardPageController` antes de incluir `views/index.php`. O controller interpreta os filtros de data e categoria e prepara um modelo de apresentação com categorias, períodos, salas, reservas e datas de navegação. A view principal limita-se a renderizar esses dados e a escapar os valores apresentados. O `dashboardController` fornece os dados estruturados do mapa de reservas, sem construir HTML para esta página.
+Os redirecionamentos da lista de salas preservam os filtros na query string. A gravação e eliminação de reservas passam pelo controller e devolvem ao front controller o texto esperado pelo AJAX; o controller não escreve HTML nem termina a execução do PHP.
+
+As vistas não leem parâmetros do pedido nem chamam controllers: recebem dados já preparados, apresentam formulários e geram HTML. O `ApplicationPageController` coordena o encaminhamento e os controllers de domínio executam as operações; os modelos concentram o acesso à base de dados. A autenticação, autorização e resposta AJAX também são resolvidas antes de incluir qualquer vista.
 
 ## Deployment de uma atualização
 
@@ -99,7 +101,7 @@ O front controller mantém o encaminhamento atual para a página inicial, mas ag
    }
    ```
 
-   `url_base_path: "auto"` deteta automaticamente o prefixo do pedido: vazio na raiz de um VirtualHost e `/salas` quando a aplicação é servida por Alias. Também é possível fixar o valor como `""` ou `"/salas"`, respetivamente. O Apache precisa de permissão de leitura no ficheiro. Mantenha-o fora do DocumentRoot, limite as permissões de leitura à conta do serviço e não o publique nem o inclua em pacotes ou backups acessíveis pela web. Guarde cópias de segurança das credenciais apenas em armazenamento protegido. Não use a conta `root` em produção. `core/views/config.php` lê esse JSON e lança um erro explícito se faltar, estiver inválido ou tiver campos incorretos.
+   `url_base_path: "auto"` deteta automaticamente o prefixo do pedido: vazio na raiz de um VirtualHost e `/salas` quando a aplicação é servida por Alias. Também é possível fixar o valor como `""` ou `"/salas"`, respetivamente. O Apache precisa de permissão de leitura no ficheiro. Mantenha-o fora do DocumentRoot, limite as permissões de leitura à conta do serviço e não o publique nem o inclua em pacotes ou backups acessíveis pela web. Guarde cópias de segurança das credenciais apenas em armazenamento protegido. Não use a conta `root` em produção. `core/app/config/bootstrap.php` lê esse JSON e lança um erro explícito se faltar, estiver inválido ou tiver campos incorretos.
 5. Configure o modo de acesso pretendido abaixo, valide a configuração, reinicie ou recarregue o Apache e abra o endereço correspondente no navegador. É possível manter os dois modos ativos em simultâneo.
 
 ## Opção A — produção com VirtualHost (recomendada)

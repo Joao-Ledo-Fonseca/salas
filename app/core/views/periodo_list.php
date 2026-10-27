@@ -4,13 +4,6 @@
 
 <?php
 
-define('REQUIRED_PERMISSION', 'M_Periodos');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/periodoController.php";
-
-$periodoController = new periodoController();
-$lista = $periodoController->listarcontroller();
-
 ?>
 
 

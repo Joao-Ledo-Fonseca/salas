@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . "/../models/permissoes.php";
+require_once __DIR__ . "/../models/permissoes.php";
 
 // array global com o conjunto de permissoes activas
 $permis_array = array();

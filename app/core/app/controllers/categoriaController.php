@@ -1,8 +1,8 @@
 <?php
 
-require_once "util.php";
-require __DIR__. "/../models/categoria.php";
-require __DIR__. "/../models/imagem.php";
+require_once __DIR__ . '/util.php';
+require_once __DIR__. "/../models/categoria.php";
+require_once __DIR__. "/../models/imagem.php";
 
 class categoriaController
 {

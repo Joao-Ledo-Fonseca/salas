@@ -3,15 +3,6 @@
     
 <?php
 
-define('REQUIRED_PERMISSION', 'M_Utilizadores');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/usuarioController.php";
-require_once __DIR__. "/../app/controllers/permissoesController.php";
-
-$usuarioController = new UsuarioController();
-$lista = $usuarioController->listarcontroller();
-$permissoes = new PermissoesController();
-
 ?>
 
 <head>
@@ -73,7 +64,7 @@ $permissoes = new PermissoesController();
                         <tr>
                             <td><a href="<?= htmlspecialchars(app_url('?acao=usuario_form&id=' . (int) $usuario['id']), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $usuario['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
                             <td><?= htmlspecialchars((string) $usuario['email'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars($permissoes->nomeNivel((int) $usuario['nivel'], 2), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars((string) $usuario['nivel_nome'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= (int) $usuario['id'] ?></td>
                             <td></td>
                         </tr>

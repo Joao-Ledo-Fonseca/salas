@@ -1,7 +1,7 @@
 <?php
 
-require_once "util.php";
-require __DIR__. "/../models/periodo.php";
+require_once __DIR__ . '/util.php';
+require_once __DIR__. "/../models/periodo.php";
 
 class periodoController
 {

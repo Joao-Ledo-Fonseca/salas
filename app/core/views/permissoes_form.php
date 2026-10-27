@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 
-<?php
-
-define('REQUIRED_PERMISSION', 'M_Permissoes');
-require_once "seguranca.php";
-require_once __DIR__ . "/../app/controllers/permissoesController.php";
-
-$permissoesController = new permissoesController();
-$permissoesController->cancelar();
-$permissoes = $permissoesController->salvar();
-$tabela_n = $permissoesController->listar('n'); // Permissoes por nivel
-$tabela_s = $permissoesController->listar('s'); // Configurações simples
-
-
-?>
-
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -62,10 +46,10 @@ $tabela_s = $permissoesController->listar('s'); // Configurações simples
                             <tr>
                                 <th style="display:none"></th>
                                 <th style="width:200px;">Nome</th>
-                                <th style="width:60px;"><?= $permissoesController->nomeNivel(0, 2) ?></th>
-                                <th style="width:60px;"><?= $permissoesController->nomeNivel(1, 2) ?></th>
-                                <th style="width:60px;"><?= $permissoesController->nomeNivel(2, 2) ?></th>
-                                <th style="width:100px;"><?= $permissoesController->nomeNivel(3, 2) ?></th>
+                                <th style="width:60px;"><?= htmlspecialchars($nivelLabels[0], ENT_QUOTES, 'UTF-8') ?></th>
+                                <th style="width:60px;"><?= htmlspecialchars($nivelLabels[1], ENT_QUOTES, 'UTF-8') ?></th>
+                                <th style="width:60px;"><?= htmlspecialchars($nivelLabels[2], ENT_QUOTES, 'UTF-8') ?></th>
+                                <th style="width:100px;"><?= htmlspecialchars($nivelLabels[3], ENT_QUOTES, 'UTF-8') ?></th>
                                 <th></th>
                                 <th></th>
                             </tr>

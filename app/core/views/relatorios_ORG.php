@@ -1,24 +1,5 @@
-<!DOCTYPE html>   
+<!DOCTYPE html>
 <html lang="pt-PT">
-
-<?php
-
-define('REQUIRED_PERMISSION', 'M_Estatisticas');
-require_once "seguranca.php";
-require_once __DIR__. "/../app/controllers/dashboardController.php";
-$dsc = new dashboardController();
-
-
-// Disciplina que mais reserva
-$resumo_reservas = $dsc->disciplinaMaisReservasController();
-
-
-// calculo da taxa de ocupação
-$total_horarios = $dsc->totalHorariosController();
-
-$total_reservas = $dsc->totalReservasController();
-
-?>
 
 
 <head>
