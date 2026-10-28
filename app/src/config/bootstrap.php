@@ -3,7 +3,7 @@
 require_once __DIR__ . '/AppConfig.php';
 
 $appConfig = AppConfig::fromFile(
-	dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'config.json',
+	dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config.json',
 	(string) ($_SERVER['SCRIPT_NAME'] ?? '/')
 );
 

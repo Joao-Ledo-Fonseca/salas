@@ -1,20 +1,19 @@
 <?php
 
-require_once __DIR__ . '/../core/app/config/bootstrap.php';
+
+require_once __DIR__ . '/../src/config/bootstrap.php';
 
 $projectRoot = dirname(__DIR__);
-$appRoot = is_dir($projectRoot . DIRECTORY_SEPARATOR . 'app')
-    ? $projectRoot
-    : $projectRoot . DIRECTORY_SEPARATOR . 'core';
+$appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 
-require_once $appRoot . '/app/models/db_pdo.php';
+require_once $appRoot . '/models/db_pdo.php';
 $database = new Database($appConfig);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
     }
 
-$sessionAdapterPath = $appRoot . '/app/integration/SalasSessionAdapter.php';
+$sessionAdapterPath = $appRoot . '/integration/SalasSessionAdapter.php';
 require_once $sessionAdapterPath;
 $sessionAdapter = new \Salas\Integration\SalasSessionAdapter();
 $sessionAdapter->start();
@@ -40,14 +39,14 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
 // 1. Intersetar Logout e Login
 if (isset($_GET['acao']) && $_GET['acao'] === 'logout') {
     // 🎯 CORREÇÃO: Chama o método diretamente do controlador unificado
-    require_once $appRoot . '/app/controllers/usuarioController.php';
+    require_once $appRoot . '/controllers/usuarioController.php';
     $usuarioController = new usuarioController($database);
     $usuarioController->logout();
     exit;
     }
 
 if (isset($_GET['acao']) && $_GET['acao'] === 'login') {
-    require_once $appRoot . '/app/controllers/LoginController.php';
+    require_once $appRoot . '/controllers/LoginController.php';
     $loginView = (new LoginController($database))->handle($_GET, $_POST);
     if ($loginView['redirect'] !== null) {
         header('Location: ' . $loginView['redirect']);
@@ -61,10 +60,10 @@ if (isset($_GET['acao']) && $_GET['acao'] === 'login') {
 // 2. Sistema de distribuição de páginas baseado no Menu
 if (isset($_GET['acao'])) {
     $pagina = $_GET['acao'];
-    $routes = include $appRoot . '/app/config/routes.php';
+    $routes = include $appRoot . '/config/routes.php';
 
     if (array_key_exists($pagina, $routes)) {
-        require_once $appRoot . '/app/controllers/ApplicationPageController.php';
+        require_once $appRoot . '/controllers/ApplicationPageController.php';
         $page = (new ApplicationPageController($database))->dispatch($pagina, $_GET, $_POST);
         if (array_key_exists('response', $page)) {
             header('Content-Type: text/plain; charset=UTF-8');
@@ -81,7 +80,7 @@ if (isset($_GET['acao'])) {
 }
 
 // 3. Se nenhuma ação for passada na URL, carrega o Dashboard inicial padrão
-require_once $appRoot . '/app/controllers/ApplicationPageController.php';
+require_once $appRoot . '/controllers/ApplicationPageController.php';
 $viewData = (new ApplicationPageController($database))->dashboard($_GET);
 extract($viewData, EXTR_SKIP);
 require_once $appRoot . '/views/index.php';
