@@ -1,11 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../models/usuario.php';
-require_once __DIR__ . '/../auth/Authenticator.php';
-require_once __DIR__ . '/../integration/SalasCredentialRepository.php';
-require_once __DIR__ . '/../integration/SalasSessionAdapter.php';
-require_once __DIR__ . '/util.php';
-require_once __DIR__ . '/usuarioController.php';
+require_once __DIR__ . '/../models/Usuario.php';
+require_once __DIR__ . '/../application/Services/AuthService.php';
+require_once __DIR__ . '/../infrastructure/Auth/SalasSessionAdapter.php';
+require_once __DIR__ . '/../infrastructure/Support/Util.php';
+require_once __DIR__ . '/UsuarioController.php';
 
 class LoginController
 {
@@ -30,8 +29,8 @@ class LoginController
 				$errormsg = 'E-mail ou senha inválidos';
 			}
 		} elseif (isset($post['validar'])) {
-			$usuarioController = new UsuarioController($this->db);
-			$result = $usuarioController->salvar($post);
+			$UsuarioController = new UsuarioController($this->db);
+			$result = $UsuarioController->salvar($post);
 			$errormsg = is_numeric($result)
 				? 'Utilizador criado com sucesso!'
 				: 'Nome ou email inválidos ou já existentes!';
@@ -58,20 +57,14 @@ class LoginController
 			return 'invalid';
 		}
 
-		$usuario = new Usuario($this->db);
-		$authenticator = new \Salas\Auth\Authenticator(
-			new \Salas\Integration\SalasCredentialRepository($usuario)
-		);
-		$identity = $authenticator->authenticate(
-			Util::clearparam($post['email_l']),
-			$post['senha_l']
-		);
+		$authService = new AuthService($this->db);
+		$identity = $authService->authenticate($post['email_l'], $post['senha_l']);
 
 		if ($identity === null) {
 			return 'invalid';
 		}
 
-		(new \Salas\Integration\SalasSessionAdapter())->login($identity);
+		$authService->login($identity);
 
 		return 'authenticated';
 	}

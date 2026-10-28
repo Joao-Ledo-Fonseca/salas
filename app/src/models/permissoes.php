@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/db_pdo.php";
+require_once __DIR__ . "/../infrastructure/Persistence/Database.php";
 
 class Permissoes
 {

@@ -42,7 +42,7 @@
                     <br />
                     versão <strong>1.3</strong>&nbsp;<br />
                 </div>
-                <!-- <span style="color:#900"><?php echo $errormsg; ?></span><br /> -->
+                <!-- <span style="color:#900"><?php echo $loginView['errormsg'] ?? ''; ?></span><br /> -->
 
                 <div id="direito_log">
 
@@ -59,7 +59,7 @@
                         <!--
                         <<span class="tooltip">
                         <input type="submit" id="entrar" name="entrar" value="Entrar" class="btn1" />
-                        <?= ((strlen($errormsg) > 0) ? '<span class="tooltiptext">Use um Email e Senha válidos!</span>' : ""); ?>
+                        <?= ((strlen($loginView['errormsg']) > 0) ? '<span class="tooltiptext">Use um Email e Senha válidos!</span>' : ""); ?>
                         </span>
                         -->
 

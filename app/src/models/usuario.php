@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/db_pdo.php";
+require_once __DIR__ . "/../infrastructure/Persistence/Database.php";
 
 class Usuario 
 {
@@ -8,20 +8,6 @@ class Usuario
 	function __construct(Database $db)
 	{
 		$this->db = $db;
-		$this->ensureDefaultSuperAdmin();
-	}
-
-	private function ensureDefaultSuperAdmin()
-	{
-		$sql = 'select count(*) as total from usuario';
-		$result = $this->db->query($sql);
-		$total = isset($result[0]['total']) ? (int) $result[0]['total'] : 0;
-
-		if ($total === 0) {
-			$senhaHash = password_hash('sadmin', PASSWORD_DEFAULT);
-			$sql = 'insert into usuario (nome, email, senha, telefone, NIF, nivel) values (?, ?, ?, ?, ?, ?)';
-			$this->db->query_insert($sql, array('sadmin', 'sadmin', $senhaHash, '', '', 3));
-		}
 	}
 
 	function findByLoginIdentifier($identifier)
@@ -36,8 +22,8 @@ class Usuario
 			return $this->findByLoginIdentifier($identifier);
 		}
 
-		require_once __DIR__ . '/../auth/Authenticator.php';
-		require_once __DIR__ . '/../integration/SalasCredentialRepository.php';
+		require_once __DIR__ . '/../infrastructure/Auth/Authenticator.php';
+		require_once __DIR__ . '/../infrastructure/Auth/SalasCredentialRepository.php';
 
 		$authenticator = new \Salas\Auth\Authenticator(
 			new \Salas\Integration\SalasCredentialRepository($this)

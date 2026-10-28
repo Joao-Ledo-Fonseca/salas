@@ -98,7 +98,7 @@
 	<div class="form"></div>
 
 	<!-- menu esquerdo -->
-	<?php include "menu_esquerdo.php"; ?>
+	<?php include __DIR__ . "/MenuEsquerdo.php"; ?>
 
 	<!-- conteudo -->
 	<div class="corpo">

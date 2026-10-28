@@ -23,7 +23,7 @@
 <body>
 
   <!-- menu esquerdo -->
-  <?php include "menu_esquerdo.php"; ?>
+  <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
 
   <div class="corpo">
 

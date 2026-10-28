@@ -1,94 +1,81 @@
 <?php
 
-require_once __DIR__ . '/util.php';
-require_once __DIR__. "/../models/periodo.php";
+require_once __DIR__ . '/../infrastructure/Support/Util.php';
+require_once __DIR__ . '/../application/Services/PeriodoService.php';
+require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
 
-class periodoController
+class PeriodoController
 {
-	private Database $db;
+    private Database $db;
+    private PeriodoService $service;
 
-	public function __construct(Database $db)
-	{
-		$this->db = $db;
-	}
+    public function __construct(Database $db)
+    {
+        $this->db = $db;
+        $this->service = new PeriodoService($db);
+    }
 
-	function salvar()
-	{
-		if (isset($_POST['salvar'])) {
-			$id = Util::clearparam($_POST['id']);
-			$seq = Util::clearparam($_POST['seq']);
-			$nome = Util::clearparam($_POST['nome']);
+    public function salvar(): bool
+    {
+        if (!isset($_POST['salvar'])) {
+            return false;
+        }
 
+        $id = Validator::int($_POST['id'] ?? 0);
+        $seq = Validator::int($_POST['seq'] ?? 0);
+        $nome = Validator::string($_POST['nome'] ?? '');
 
-			if (strlen($nome) > 0) {
-				$periodo = new Periodo($this->db);
-				$periodo->salvar($id, $nome, $seq);
-			}
-            
-            // 🎯 CORREÇÃO 1: Redirecionar para a nova rota pública
-			header('Location: ' . app_url('?acao=periodo_list'));
-			exit();
-		}
-		return false;
-	}
+        $this->service->save($id, $nome, $seq);
 
-	function cancelar()
-	{
-		if (isset($_POST['cancelar'])) {
+        header('Location: ' . app_url('?acao=periodo_list'));
+        exit();
+    }
 
-            // 🎯 CORREÇÃO 2: Redirecionar para a nova rota pública
-			header('Location: ' . app_url('?acao=periodo_list'));
-			exit();
-		}
-		return false;
-	}
+    public function cancelar(): bool
+    {
+        if (isset($_POST['cancelar'])) {
+            header('Location: ' . app_url('?acao=periodo_list'));
+            exit();
+        }
 
+        return false;
+    }
 
-	function excluir()
-	{
-		if (isset($_POST['excluir'])) {
-			$id = Util::clearparam($_POST['id']);
+    public function excluir(): bool
+    {
+        if (!isset($_POST['excluir'])) {
+            return false;
+        }
 
-			$periodo = new Periodo($this->db);
-            
-            // 🎯 CORREÇÃO 3: Try/Catch contra erro fatal se houver reservas no período
-            try {
-                $periodo->excluir($id);
-            } catch (PDOException $e) {
-                $errormsg = 'Erro ao excluir o período! Existem reservas associadas.';
-                header('Location: ' . app_url('?acao=periodo_form&id=' . $id . '&errormsg=' . urlencode($errormsg)));
-                exit();
-            }
+        $id = Validator::int($_POST['id'] ?? 0);
+        $success = $this->service->delete($id);
+        if (!$success) {
+            $errormsg = 'Erro ao excluir o período! Existem reservas associadas.';
+            header('Location: ' . app_url('?acao=periodo_form&id=' . $id . '&errormsg=' . urlencode($errormsg)));
+            exit();
+        }
 
-            // Se correr bem, volta para a lista pública
-			header('Location: ' . app_url('?acao=periodo_list'));
-			exit();
-		}
-		return false;
-	}
+        header('Location: ' . app_url('?acao=periodo_list'));
+        exit();
+    }
 
-	function nomePeriodo($periodo_id)
-	{
-		$periodo = new Periodo($this->db);
-		$per = $periodo->abrir($periodo_id);		
-		return $per[0]['nome'];
-	}
+    public function nomePeriodo($periodo_id): string
+    {
+        return $this->service->name((int) $periodo_id);
+    }
 
-	function abrir()
-	{
-		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    public function abrir(): array
+    {
+        if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+            $id = Validator::int($_GET['id']);
+            return $this->service->open($id);
+        }
 
-			$id = Util::clearparam($_GET['id']);
-			$periodo = new Periodo($this->db);
-			return $periodo->abrir($id);
-		}
-	}
+        return [];
+    }
 
-	// listagem
-	function listarcontroller()
-	{
-		$periodo = new Periodo($this->db);
-		return $periodo->listar();
-	}
+    public function listarController(): array
+    {
+        return $this->service->list();
+    }
 }
-?>

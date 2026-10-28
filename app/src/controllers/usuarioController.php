@@ -1,9 +1,12 @@
 <?php
+require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
 
-require_once __DIR__ . '/util.php';
-require_once __DIR__ . "/../models/usuario.php";
-require_once __DIR__ . '/permissoesController.php';
-require_once __DIR__ . '/../integration/SalasSessionAdapter.php';
+
+require_once __DIR__ . '/../infrastructure/Support/Util.php';
+require_once __DIR__ . "/../models/Usuario.php";
+require_once __DIR__ . '/PermissoesController.php';
+require_once __DIR__ . '/../infrastructure/Auth/AuthContext.php';
+require_once __DIR__ . '/../infrastructure/Auth/SalasSessionAdapter.php';
 
 class UsuarioController
 	{
@@ -19,17 +22,17 @@ class UsuarioController
 		$post = $post ?? $_POST;
 		if (isset($post['salvar']) || isset($post['validar'])) {
 
-			$nome = Util::clearparam($post['nome']);
-			$email = Util::clearparam($post['email']);
+			$nome = Validator::string($post['nome']);
+			$email = Validator::string($post['email']);
 			$senha = isset($post['senha']) ? trim($post['senha']) : null;
 
-			$id = Util::clearparam($post['id']);
+			$id = Validator::string($post['id']);
 
 
 			if (isset($post['salvar'])) {
-				$telefone = Util::clearparam(isset($post['telefone']) ? $post['telefone'] : '');
-				$NIF = Util::clearparam(isset($post['NIF']) ? $post['NIF'] : null);
-				$nivel = Util::clearparam((isset($post['nivel']) ? $post['nivel'] : ''));
+				$telefone = Validator::string(isset($post['telefone']) ? $post['telefone'] : '');
+				$NIF = Validator::string(isset($post['NIF']) ? $post['NIF'] : null);
+				$nivel = Validator::string((isset($post['nivel']) ? $post['nivel'] : ''));
 				}
 			else {
 				$telefone = '';
@@ -59,7 +62,7 @@ class UsuarioController
 				return $resultado;
 				}
 
-						if ($id == $_SESSION['user_id']) {
+						if ($id == (new AuthContext())->id()) {
 				// se alterou o nome do usuario logado, atualiza o nome na sessao
 				$this->startSession(array('id' => $id, 'nome' => $nome, 'nivel' => $nivel));
 				}
@@ -72,7 +75,7 @@ class UsuarioController
 		function excluir()
 	{
 		if (isset($_POST['excluir'])) {
-			$id = Util::clearparam($_POST['id']);
+			$id = Validator::string($_POST['id']);
 
 			$usuario = new Usuario($this->db);
 			

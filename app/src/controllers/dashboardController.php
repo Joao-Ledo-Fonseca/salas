@@ -1,12 +1,12 @@
 <?php
 
-require_once __DIR__ . '/util.php';
-require_once __DIR__ . "/../models/categoria.php";
-require_once __DIR__ . "/../models/periodo.php";
-require_once __DIR__ . "/../models/sala.php";
-require_once __DIR__ . "/../models/reserva.php";
+require_once __DIR__ . '/../infrastructure/Support/Util.php';
+require_once __DIR__ . "/../models/Categoria.php";
+require_once __DIR__ . "/../models/Periodo.php";
+require_once __DIR__ . "/../models/Sala.php";
+require_once __DIR__ . "/../models/Reserva.php";
 
-class dashboardController
+class DashboardController
 	{
 	private Database $db;
 
@@ -26,7 +26,7 @@ class dashboardController
 
 	function listarSalasDashboard($hoje, $categoria_id = 0)
 		{
-		$sl = new sala($this->db);
+		$sl = new Sala($this->db);
 		$per = new Periodo($this->db);
 
 		$salas = $sl->listar($categoria_id);
@@ -125,7 +125,7 @@ class dashboardController
 	// 🎯 UNIFORMIZAÇÃO DOS HORÁRIOS: Ajusta o multiplicador baseado no intervalo real de dias
 	function totalHorariosController($tipo = 'm', $hoje = null, $fim = null)
 	{
-		$sala = new sala($this->db);
+		$sala = new Sala($this->db);
 		$periodo = new Periodo($this->db);
 
 		$salas = $sala->total();

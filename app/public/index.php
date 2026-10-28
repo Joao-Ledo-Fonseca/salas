@@ -6,24 +6,36 @@ require_once __DIR__ . '/../src/config/bootstrap.php';
 $projectRoot = dirname(__DIR__);
 $appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 
-require_once $appRoot . '/models/db_pdo.php';
+require_once $appRoot . '/infrastructure/Persistence/Database.php';
 $database = new Database($appConfig);
+
+require_once $appRoot . '/application/Services/DefaultSuperAdminSeeder.php';
+(new DefaultSuperAdminSeeder($database))->seed();
+
+require_once $appRoot . '/infrastructure/Http/Request.php';
+require_once $appRoot . '/infrastructure/Http/Response.php';
+require_once $appRoot . '/infrastructure/Http/ErrorHandler.php';
+require_once $appRoot . '/infrastructure/Http/ViewRenderer.php';
+
+\Salas\Http\ErrorHandler::register();
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
     }
 
-$sessionAdapterPath = $appRoot . '/integration/SalasSessionAdapter.php';
+$sessionAdapterPath = $appRoot . '/infrastructure/Auth/SalasSessionAdapter.php';
 require_once $sessionAdapterPath;
 $sessionAdapter = new \Salas\Integration\SalasSessionAdapter();
 $sessionAdapter->start();
+
+$request = \Salas\Http\Request::fromGlobals();
 
 // 🎯 CONFIGURAÇÃO: Tempo limite de inatividade (ex: 1800s = 30 minutos)
 $tempo_limite = 600; 
 
 if ($sessionAdapter->expireIfInactive($tempo_limite)) {
         // 🎯 DETEÇÃO DE AJAX: Verifica se a requisição veio via JavaScript (AJAX)
-        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        $isAjax = $request->isAjax();
         
         if ($isAjax) {
             // Se for AJAX, envia o código HTTP correto de Não Autorizado e para aqui
@@ -31,47 +43,46 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
             exit;
         } else {
             // Se for um clique normal no navegador, faz o redirecionamento convencional
-            header("Location: " . app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")));
+            \Salas\Http\Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
             exit;
         }
 }
 
 // 1. Intersetar Logout e Login
-if (isset($_GET['acao']) && $_GET['acao'] === 'logout') {
+if ($request->action() === 'logout') {
     // 🎯 CORREÇÃO: Chama o método diretamente do controlador unificado
-    require_once $appRoot . '/controllers/usuarioController.php';
-    $usuarioController = new usuarioController($database);
-    $usuarioController->logout();
+    require_once $appRoot . '/controllers/UsuarioController.php';
+    $UsuarioController = new UsuarioController($database);
+    $UsuarioController->logout();
     exit;
     }
 
-if (isset($_GET['acao']) && $_GET['acao'] === 'login') {
+if ($request->action() === 'login') {
     require_once $appRoot . '/controllers/LoginController.php';
-    $loginView = (new LoginController($database))->handle($_GET, $_POST);
+    $loginView = (new LoginController($database))->handle($request->allQuery(), $request->allPost());
     if ($loginView['redirect'] !== null) {
-        header('Location: ' . $loginView['redirect']);
+        \Salas\Http\Response::redirect($loginView['redirect'])->send();
         exit;
     }
 
-    require_once $appRoot . '/views/login.php';
+    ViewRenderer::render('Login.php', ['loginView' => $loginView]);
     exit;
     }
 
 // 2. Sistema de distribuição de páginas baseado no Menu
-if (isset($_GET['acao'])) {
-    $pagina = $_GET['acao'];
+if ($request->action() !== null) {
+    $pagina = $request->query('acao');
     $routes = include $appRoot . '/config/routes.php';
 
     if (array_key_exists($pagina, $routes)) {
-        require_once $appRoot . '/controllers/ApplicationPageController.php';
-        $page = (new ApplicationPageController($database))->dispatch($pagina, $_GET, $_POST);
+        require_once $appRoot . '/application/Router.php';
+        $page = (new Router($database))->dispatch($pagina, $request->allQuery(), $request->allPost());
         if (array_key_exists('response', $page)) {
             header('Content-Type: text/plain; charset=UTF-8');
             echo $page['response'];
             exit;
         }
-        extract($page['data'], EXTR_SKIP);
-        require_once $appRoot . '/views/' . $page['view'];
+        ViewRenderer::render($page['view'], $page['data']);
         exit;
     }
 
@@ -80,9 +91,8 @@ if (isset($_GET['acao'])) {
 }
 
 // 3. Se nenhuma ação for passada na URL, carrega o Dashboard inicial padrão
-require_once $appRoot . '/controllers/ApplicationPageController.php';
-$viewData = (new ApplicationPageController($database))->dashboard($_GET);
-extract($viewData, EXTR_SKIP);
-require_once $appRoot . '/views/index.php';
+require_once $appRoot . '/application/Router.php';
+$viewData = (new Router($database))->dashboard($request->allQuery());
+ViewRenderer::render('Index.php', $viewData);
 
 ?>

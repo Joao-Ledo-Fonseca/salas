@@ -1,13 +1,13 @@
 <?php
 
-require_once __DIR__ . "/../models/permissoes.php";
+require_once __DIR__ . "/../models/Permissoes.php";
 
-// array global com o conjunto de permissoes activas
-$permis_array = array();
-
-class permissoesController
+class PermissoesController
     {
 	private Database $db;
+
+    // conjunto de permissoes ativas carregadas da BD
+    private array $permissions = [];
 
     // valores default para as permissões da aplicação
     // a aplicação cria-os na BD     
@@ -41,22 +41,18 @@ class permissoesController
     public function __construct(Database $db)
     {
         $this->db = $db;
-        //carrega o array global das Permissões salvas na BD    
-        global $permis_array;
-
+        //carrega as Permissões salvas na BD    
         $permissoes = new Permissoes($this->db);
         $linhas = $permissoes->listar();
 
         foreach ($linhas as $l) {
-            $permis_array[$l["nome"]] = array($l[$this->niveis[0][0]], $l[$this->niveis[1][0]], $l[$this->niveis[2][0]]);
+            $this->permissions[$l["nome"]] = array($l[$this->niveis[0][0]], $l[$this->niveis[1][0]], $l[$this->niveis[2][0]]);
         }
     }
 
     function validaPermissao($permissao, $nivel)
         {
-        global $permis_array;
-
-        $validade = ($this->niveis[$nivel][0] == "superadmin") || (array_key_exists($permissao, $permis_array) && $permis_array[$permissao][$nivel]);
+        $validade = ($this->niveis[$nivel][0] == "superadmin") || (array_key_exists($permissao, $this->permissions) && $this->permissions[$permissao][$nivel]);
 
         return $validade;
         }

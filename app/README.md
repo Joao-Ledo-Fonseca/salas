@@ -22,16 +22,21 @@ C:\wamp64\dev\salas\
     config.example.json    # modelo; copiar para config.json e configurar
     config.json            # configuração local, ignorada pelo Git
     sgreserva.sql          # dump para instalação inicial
-    core\                  # código privado da aplicação; não publicar como DocumentRoot
-      app\                 # configuração de rotas, arranque, controladores, modelos e utilitários
-      views\               # páginas e componentes de apresentação
-      .htaccess            # impede acesso web direto ao core
+    .htaccess            # impede acesso web direto a app/
+    src\                  # código privado da aplicação; não publicar como DocumentRoot
+      config\             # configuração, arranque e rotas
+      application\        # serviços, páginas e roteamento
+      infrastructure\      # auth, HTTP, validação, persistência e suporte
+      controllers\        # controladores MVC
+      models\             # modelos e acesso à base de dados
+      views\              # páginas e componentes de apresentação
     public\                # único diretório que deve ser servido pelo Apache
       index.php            # front controller
       css\
       datatables\
       img\
       js\
+    tests\               # smoke tests
   project\                 # ficheiros de desenvolvimento; não é necessário em produção
     .vscode\
     salas.code-workspace
@@ -39,13 +44,23 @@ C:\wamp64\dev\salas\
     ...
 ```
 
-O diretório `app/` é o pacote de distribuição: inclui o código e ficheiros necessários à execução, este README, a licença e o dump SQL. O ficheiro `config.json` contém credenciais específicas do ambiente e é ignorado pelo Git. A árvore inteira `C:\wamp64\dev\salas`, incluindo `app/config.json`, fica fora do `DocumentRoot` geral `C:\wamp64\www`; nos dois modos abaixo, o Apache só publica `app/public/`. Crie o `config.json` a partir de `config.example.json` em cada ambiente e nunca publique credenciais no repositório. Para deployment, copie o conteúdo de `app/` e forneça separadamente o `config.json` seguro do servidor. O repositório Git fica na raiz `C:\wamp64\dev\salas` e versiona `app/` e `project/`; faça as alterações ao código dentro de `app/`. O diretório `project/` contém ficheiros locais/de desenvolvimento e não é necessário em produção. Não coloque a raiz do repositório, `app/core/` nem `project/` sob um `DocumentRoot` público.
+## Descrição das pastas em `app/src/`
+
+- `config/` — configuração da aplicação (`AppConfig`), arranque (`bootstrap.php`) e rotas (`routes.php`).
+- `infrastructure/` — auth, HTTP, validação, persistência (Database, Repositories) e suporte.
+- `controllers/` — controladores HTTP/MVC que coordenam pedidos, autorização e preparação de dados.
+- `application/` — serviços, páginas e roteamento.
+- `models/` — modelos de domínio e acesso a dados (compatibilidade e consultas).
+- `views/` — vistas PHP responsáveis apenas pela apresentação.
+
+
+O diretório `app/` é o pacote de distribuição: inclui o código e ficheiros necessários à execução, este README, a licença e o dump SQL. O ficheiro `config.json` contém credenciais específicas do ambiente e é ignorado pelo Git. A árvore inteira `C:\wamp64\dev\salas`, incluindo `app/config.json`, fica fora do `DocumentRoot` geral `C:\wamp64\www`; nos dois modos abaixo, o Apache só publica `app/public/`. Crie o `config.json` a partir de `config.example.json` em cada ambiente e nunca publique credenciais no repositório. Para deployment, copie o conteúdo de `app/` e forneça separadamente o `config.json` seguro do servidor. O repositório Git fica na raiz `C:\wamp64\dev\salas` e versiona `app/` e `project/`; faça as alterações ao código dentro de `app/`. O diretório `project/` contém ficheiros locais/de desenvolvimento e não é necessário em produção. Não coloque a raiz do repositório, `app/src/` nem `project/` sob um `DocumentRoot` público.
 
 ## Autenticação e sessão
 
-O núcleo reutilizável da autenticação está em `app/core/app/auth/`: `Authenticator` valida credenciais através do contrato `CredentialRepository`, e `SessionManager` gere a identidade e o ciclo de vida da sessão PHP. Estes componentes não dependem do modelo de utilizador, da base de dados ou das páginas da aplicação.
+O núcleo reutilizável da autenticação está em `app/src/infrastructure/Auth/`: `Authenticator` valida credenciais através do contrato `CredentialRepository`, e `SessionManager` gere a identidade e o ciclo de vida da sessão PHP. Estes componentes não dependem do modelo de utilizador, da base de dados ou das páginas da aplicação.
 
-A integração específica com o sistema de reservas está em `app/core/app/integration/`. `SalasCredentialRepository` liga o contrato de credenciais ao modelo `Usuario`; `SalasSessionAdapter` mantém as chaves de sessão legadas (`user_id`, `user_nome`, `user_nivel` e `ultima_atividade`) para que as páginas, as permissões e as reservas existentes continuem a funcionar. Sessões já iniciadas antes desta separação são aceites e adotadas pelo novo gestor sem exigir novo login. O suporte a hashes MD5 legados e a sua migração após autenticação válida também foi mantido.
+A integração específica com o sistema de reservas está em `app/src/infrastructure/Auth/`. `SalasCredentialRepository` liga o contrato de credenciais ao modelo `Usuario`; `SalasSessionAdapter` mantém as chaves de sessão legadas (`user_id`, `user_nome`, `user_nivel` e `ultima_atividade`) para que as páginas, as permissões e as reservas existentes continuem a funcionar. Sessões já iniciadas antes desta separação são aceites e adotadas pelo novo gestor sem exigir novo login. O suporte a hashes MD5 legados e a sua migração após autenticação válida também foi mantido.
 
 Esta separação não inclui a manutenção de perfis nem as permissões por níveis: continuam a pertencer à aplicação. O esquema da base de dados não muda.
 
@@ -53,21 +68,21 @@ A configuração da aplicação é carregada uma vez por pedido por `AppConfig`;
 
 ## Controllers, vistas e apresentação
 
-O front controller mantém as rotas e URLs atuais e invoca `ApplicationPageController` antes de incluir a vista correspondente. Este controller verifica a sessão e a permissão da rota, coordena as operações e prepara os dados de apresentação. As vistas recebem esses dados e limitam-se a construir o HTML e escapar os valores apresentados; não instanciam nem chamam controllers.
+O front controller usa `Router` para encaminhar pedidos e `AuthorizationMiddleware` para autorização. `ApplicationPageController` coordena as operações e prepara os dados de apresentação. `ViewRenderer` centraliza a renderização das vistas. As vistas recebem esses dados e limitam-se a construir o HTML e escapar os valores apresentados; não instanciam nem chamam controllers.
 
-O fluxo `?acao=login` é coordenado por `LoginController`, que trata autenticação ou registo e prepara o estado consumido pela vista `login.php`. A página inicial passa por `DashboardPageController`, que interpreta os filtros e prepara categorias, períodos, salas, reservas e datas para `index.php`; o `dashboardController` fornece dados estruturados para o mapa.
+O fluxo `?acao=login` é coordenado por `LoginController`, que trata autenticação ou registo e prepara o estado consumido pela vista `login.php`. A página inicial passa por `DashboardPageController`, que interpreta os filtros e prepara categorias, períodos, salas, reservas e datas para `index.php`; o `DashboardController` fornece dados estruturados para o mapa.
 
-Os relatórios seguem a mesma separação: `dashboardController` devolve arrays de reservas e totais; `relatorios.php` e `relatorios2.php` renderizam tabelas e mensagens. A listagem de categorias, períodos, salas e utilizadores também recebe arrays dos controllers e constrói as linhas nas respetivas vistas. A vista de permissões cria as caixas de seleção a partir dos dados devolvidos pelo controller. O controller de reservas devolve os estados como dados para `reserva_form.php` gerar as opções do formulário.
+Os relatórios seguem a mesma separação: `DashboardController` devolve arrays de reservas e totais; `relatorios.php` e `relatorios2.php` renderizam tabelas e mensagens. A listagem de categorias, períodos, salas e utilizadores também recebe arrays dos controllers e constrói as linhas nas respetivas vistas. A vista de permissões cria as caixas de seleção a partir dos dados devolvidos pelo controller. O controller de reservas devolve os estados como dados para `reserva_form.php` gerar as opções do formulário.
 
 Os redirecionamentos da lista de salas preservam os filtros na query string. A gravação e eliminação de reservas passam pelo controller e devolvem ao front controller o texto esperado pelo AJAX; o controller não escreve HTML nem termina a execução do PHP.
 
-As vistas não leem parâmetros do pedido nem chamam controllers: recebem dados já preparados, apresentam formulários e geram HTML. O `ApplicationPageController` coordena o encaminhamento e os controllers de domínio executam as operações; os modelos concentram o acesso à base de dados. A autenticação, autorização e resposta AJAX também são resolvidas antes de incluir qualquer vista.
+As vistas não leem parâmetros do pedido nem chamam controllers: recebem dados já preparados, apresentam formulários e geram HTML. O `Router` encaminha os pedidos, o `AuthorizationMiddleware` valida acessos e o `ApplicationPageController` coordena as operações. Os controllers de domínio usam serviços e repositórios; os modelos e repositórios concentram o acesso à base de dados. A validação de entrada é feita por `Validator`, a autenticação e autorização são resolvidas antes de incluir qualquer vista, e a renderização é centralizada em `ViewRenderer`.
 
 ## Deployment de uma atualização
 
 1. Teste as alterações em `app/` no ambiente local e guarde-as no Git a partir de `C:\wamp64\dev\salas`.
 2. Faça cópia de segurança da versão de produção e do `config.json` de produção. Este ficheiro fica em `app/config.json`, fora do DocumentRoot; não o substitua pelas credenciais locais durante a atualização.
-3. Copie a pasta `app/` para o servidor, mantendo a estrutura `app/core/` e `app/public/`. Não copie `project/` nem `.git/`.
+3. Copie a pasta `app/` para o servidor, mantendo a estrutura `app/src/` e `app/public/`. Não copie `project/` nem `.git/`.
 4. Garanta que o `app/config.json` de produção existe e mantém as credenciais corretas. Se a cópia da aplicação o tiver substituído, restaure a cópia de segurança. Não substitua a base de dados de produção pelo dump; use `app/sgreserva.sql` apenas na instalação inicial, ou quando uma migração da base de dados for explicitamente necessária.
 5. Confirme que o VirtualHost aponta para `app/public/`, valide a configuração do Apache e reinicie/recarregue o serviço se necessário.
 6. Verifique o acesso, a ligação à base de dados e o carregamento dos recursos antes de dar a atualização por concluída.
@@ -151,7 +166,7 @@ Os caminhos do executável e da configuração variam conforme a versão e a ins
 
 ## Opção B — acesso por `http://localhost/salas/` com Alias
 
-Esta opção mantém `C:\wamp64\www` como `DocumentRoot` do servidor principal e não exige criar um VirtualHost para a aplicação. O Alias publica somente `app/public/`; a raiz do repositório, `app/core/`, `app/config.json` e `project/` permanecem fora do espaço HTTP. Com `url_base_path` em `auto`, os links, formulários e recursos são gerados sob `/salas/`.
+Esta opção mantém `C:\wamp64\www` como `DocumentRoot` do servidor principal e não exige criar um VirtualHost para a aplicação. O Alias publica somente `app/public/`; a raiz do repositório, `app/src/`, `app/config.json` e `project/` permanecem fora do espaço HTTP. Com `url_base_path` em `auto`, os links, formulários e recursos são gerados sob `/salas/`.
 
 No WampServer, acrescente estas diretivas ao VirtualHost predefinido de `localhost` em `conf/extra/httpd-vhosts.conf`, sem alterar o seu `DocumentRoot`:
 
@@ -175,12 +190,23 @@ Reinicie ou recarregue o Apache e aceda a `http://localhost/salas/`. O endereço
 
 Se o Apache não usar VirtualHosts, declare o mesmo `Alias /salas/` e o respetivo bloco `<Directory>` na configuração global. Use `Require all granted` apenas se o servidor tiver de aceitar ligações remotas; proteja-o com firewall e HTTPS.
 
+## Testes
+
+Executar os smoke tests:
+
+```powershell
+php app/tests/SmokeTest.php
+```
+
+Ver `app/tests/README.md` para mais detalhes.
+
+
 ## Verificação após a instalação
 
 - A página inicial abre em `http://salas/` ou `http://salas.test/` (VirtualHost) e em `http://localhost/salas/` (Alias).
 - Os estilos, imagens, scripts, formulários e rotas continuam sob o prefixo correto em ambos os modos.
 - A aplicação consegue ligar à base de dados `sgreserva`.
 - As páginas e operações que leem ou alteram dados funcionam com a conta MySQL da aplicação.
-- A raiz do repositório, `app/core/`, `app/config.json` e `project/` não são acessíveis diretamente através do navegador.
+- A raiz do repositório, `app/src/`, `app/config.json` e `project/` não são acessíveis diretamente através do navegador.
 
 O dump disponibiliza o utilizador inicial `teste` com a palavra-passe `teste`. Altere essa palavra-passe ou desative a conta inicial após a primeira entrada e antes de disponibilizar o sistema a utilizadores.

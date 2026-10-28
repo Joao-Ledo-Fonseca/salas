@@ -1,7 +1,9 @@
 <?php
+require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
 
-require_once __DIR__ . "/../models/reserva.php";
-require_once __DIR__ . '/util.php';
+
+require_once __DIR__ . "/../models/Reserva.php";
+require_once __DIR__ . '/../infrastructure/Support/Util.php';
 
 class ReservaController
 	{
@@ -21,16 +23,16 @@ class ReservaController
 
 	public function guardar(array $post): string
 	{
-		$id = (int) Util::clearparam($post['id'] ?? '0');
-		$dia = Util::clearparam($post['dia'] ?? '');
+		$id = (int) Validator::string($post['id'] ?? '0');
+		$dia = Validator::string($post['dia'] ?? '');
 		$data = DateTime::createFromFormat('!d/m/Y', $dia);
 		$dateErrors = DateTime::getLastErrors();
 		if ($data === false || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))) {
 			return 'Data inválida.';
 		}
 
-		$salaId = (int) Util::clearparam($post['sala_id'] ?? '0');
-		$periodoId = (int) Util::clearparam($post['periodo_id'] ?? '0');
+		$salaId = (int) Validator::string($post['sala_id'] ?? '0');
+		$periodoId = (int) Validator::string($post['periodo_id'] ?? '0');
 		$reserva = new Reserva($this->db);
 		if ($id === 0 && $reserva->verificar($data, $salaId, $periodoId)) {
 			return 'A data selecionada para essa sala nesse período já se encontra ocupada.';
@@ -40,11 +42,11 @@ class ReservaController
 		$id = (int) $reserva->salvar(
 			$id,
 			$dia,
-			Util::clearparam($post['professor'] ?? ''),
-			Util::clearparam($post['disciplina'] ?? ''),
+			Validator::string($post['professor'] ?? ''),
+			Validator::string($post['disciplina'] ?? ''),
 			$data,
-			Util::clearparam($post['observacao'] ?? ''),
-			(int) Util::clearparam($post['status'] ?? '1'),
+			Validator::string($post['observacao'] ?? ''),
+			(int) Validator::string($post['status'] ?? '1'),
 			$salaId,
 			$periodoId,
 			$userId
@@ -52,7 +54,7 @@ class ReservaController
 
 		$repeatUntil = trim((string) ($post['data_final'] ?? ''));
 		if ($repeatUntil !== '') {
-			$endDate = DateTime::createFromFormat('!d/m/Y', Util::clearparam($repeatUntil));
+			$endDate = DateTime::createFromFormat('!d/m/Y', Validator::string($repeatUntil));
 			$dateErrors = DateTime::getLastErrors();
 			if ($endDate !== false && ($dateErrors === false || ($dateErrors['warning_count'] === 0 && $dateErrors['error_count'] === 0))) {
 				$repeatDate = clone $data;
@@ -62,11 +64,11 @@ class ReservaController
 						$reserva->salvar(
 							0,
 							$repeatDate->format('d/m/Y'),
-							Util::clearparam($post['professor'] ?? ''),
-							Util::clearparam($post['disciplina'] ?? ''),
+							Validator::string($post['professor'] ?? ''),
+							Validator::string($post['disciplina'] ?? ''),
 							$repeatDate,
-							Util::clearparam($post['observacao'] ?? ''),
-							(int) Util::clearparam($post['status'] ?? '1'),
+							Validator::string($post['observacao'] ?? ''),
+							(int) Validator::string($post['status'] ?? '1'),
 							$salaId,
 							$periodoId,
 							$userId
@@ -82,7 +84,7 @@ class ReservaController
 
 	public function excluir(array $post): string
 	{
-		$id = (int) Util::clearparam($post['id'] ?? '0');
+		$id = (int) Validator::string($post['id'] ?? '0');
 		(new Reserva($this->db))->excluir($id);
 		return (string) $id;
 	}
