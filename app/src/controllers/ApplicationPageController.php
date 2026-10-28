@@ -183,8 +183,14 @@ class ApplicationPageController
 		$controller->salvar();
 		$record = $controller->abrir();
 		return array_merge([
-			'id' => 0, 'nome' => '', 'descricao' => '', 'imagem_id' => '',
-			'nome_img' => '', 'tamanho_img' => '', 'tipo_img' => '', 'imagem' => '',
+			'id' => 0,
+			'nome' => '',
+			'descricao' => '',
+			'imagem_id' => '',
+			'nome_img' => '',
+			'tamanho_img' => '',
+			'tipo_img' => '',
+			'imagem' => '',
 			'errormsg' => (string) ($query['errormsg'] ?? ''),
 		], is_array($record) ? $record : []);
 	}
@@ -221,10 +227,19 @@ class ApplicationPageController
 		$controller->salvar($categoryFilter, $activeFilter);
 		$record = $controller->abrir();
 		return array_merge([
-			'id' => 0, 'nome' => '', 'descricao' => '', 'categoria_id' => $categoryFilter,
-			'lugares' => 0, 'activa' => true, 'imagem_id' => '', 'nome_img' => '',
-			'tamanho_img' => '', 'tipo_img' => '', 'imagem' => '',
-			'categoria_filtro' => $categoryFilter, 'activas_filtro' => $activeFilter,
+			'id' => 0,
+			'nome' => '',
+			'descricao' => '',
+			'categoria_id' => $categoryFilter,
+			'lugares' => 0,
+			'activa' => true,
+			'imagem_id' => '',
+			'nome_img' => '',
+			'tamanho_img' => '',
+			'tipo_img' => '',
+			'imagem' => '',
+			'categoria_filtro' => $categoryFilter,
+			'activas_filtro' => $activeFilter,
 			'errormsg' => (string) ($query['errormsg'] ?? ''),
 		], is_array($record) ? $record : [], [
 			'categorias' => (new categoriaController($this->db))->listarOpcoesController(),
@@ -246,6 +261,9 @@ class ApplicationPageController
 		$saveResult = $controller->salvar($post);
 		if ($saveResult === 0) {
 			$error = 'Não é possível criar/editar: Nome ou E-mail já existentes no sistema!';
+		} elseif ($saveResult !== null && isset($post['salvar'])) {
+			header('Location: ' . app_url('?acao=usuario_list'));
+			exit;
 		}
 
 		$record = [];
@@ -274,8 +292,14 @@ class ApplicationPageController
 		}
 
 		return array_merge([
-			'id' => 0, 'nome' => '', 'email' => '', 'senha' => '', 'telefone' => '',
-			'NIF' => '', 'nivel' => 0, 'errormsg' => $error,
+			'id' => 0,
+			'nome' => '',
+			'email' => '',
+			'senha' => '',
+			'telefone' => '',
+			'NIF' => '',
+			'nivel' => 0,
+			'errormsg' => $error,
 			'levelOptions' => $levelOptions,
 			'sessionUserName' => (string) ($_SESSION['user_nome'] ?? ''),
 			'sessionUserLevel' => (int) ($_SESSION['user_nivel'] ?? 0),
@@ -291,8 +315,10 @@ class ApplicationPageController
 			'tabela_n' => $controller->listar('n'),
 			'tabela_s' => $controller->listar('s'),
 			'nivelLabels' => [
-				$controller->nomeNivel(0, 2), $controller->nomeNivel(1, 2),
-				$controller->nomeNivel(2, 2), $controller->nomeNivel(3, 2),
+				$controller->nomeNivel(0, 2),
+				$controller->nomeNivel(1, 2),
+				$controller->nomeNivel(2, 2),
+				$controller->nomeNivel(3, 2),
 			],
 		];
 	}
@@ -315,8 +341,13 @@ class ApplicationPageController
 			: $today->format('d/m/Y');
 
 		return [
-			'tipo' => $type, 'hoje' => $today, 'inicio' => $start, 'fim' => $end,
-			'hoje_pt' => $label, 'dia_anterior' => $previous, 'dia_posterior' => $next,
+			'tipo' => $type,
+			'hoje' => $today,
+			'inicio' => $start,
+			'fim' => $end,
+			'hoje_pt' => $label,
+			'dia_anterior' => $previous,
+			'dia_posterior' => $next,
 			'dateFormat' => $type === 'w' ? 'W - Y (M)' : ($type === 'p' ? 'd/m/Y' : 'M Y'),
 		];
 	}
@@ -369,9 +400,15 @@ class ApplicationPageController
 		$period = new periodoController($this->db);
 		$room = new salaController($this->db);
 		$record = array_merge([
-			'id' => $id, 'sala_id' => $roomId, 'periodo_id' => $periodId,
-			'dia' => $date->format('d/m/Y'), 'professor_desc' => '', 'disciplina_desc' => '',
-			'observacao' => '', 'status' => 1, 'usuario' => (string) ($_SESSION['user_nome'] ?? ''),
+			'id' => $id,
+			'sala_id' => $roomId,
+			'periodo_id' => $periodId,
+			'dia' => $date->format('d/m/Y'),
+			'professor_desc' => '',
+			'disciplina_desc' => '',
+			'observacao' => '',
+			'status' => 1,
+			'usuario' => (string) ($_SESSION['user_nome'] ?? ''),
 			'sala' => $roomId ? $room->nomeSala($roomId) : '',
 			'periodo' => $periodId ? $period->nomePeriodo($periodId) : '',
 		], $record);

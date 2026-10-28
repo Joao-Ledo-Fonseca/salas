@@ -59,13 +59,12 @@ class UsuarioController
 				return $resultado;
 				}
 
-			if ($id == $_SESSION['user_id']) {
+						if ($id == $_SESSION['user_id']) {
 				// se alterou o nome do usuario logado, atualiza o nome na sessao
 				$this->startSession(array('id' => $id, 'nome' => $nome, 'nivel' => $nivel));
 				}
 
-			header('Location: ' . app_url('?acao=usuario_list'));
-			exit();
+			return $resultado;
 
 			}
 		}
