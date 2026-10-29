@@ -26,7 +26,7 @@ C:\wamp64\dev\salas\
     src\                  # código privado da aplicação; não publicar como DocumentRoot
       config\             # configuração, arranque e rotas
       application\        # serviços, páginas e roteamento
-      infrastructure\      # auth, HTTP, validação, persistência e suporte
+      core\      # auth, HTTP, validação, persistência e suporte
       controllers\        # controladores MVC
       models\             # modelos e acesso à base de dados
       views\              # páginas e componentes de apresentação
@@ -47,7 +47,7 @@ C:\wamp64\dev\salas\
 ## Descrição das pastas em `app/src/`
 
 - `config/` — configuração da aplicação (`AppConfig`), arranque (`bootstrap.php`) e rotas (`routes.php`).
-- `infrastructure/` — auth, HTTP, validação, persistência (Database, Repositories) e suporte.
+- `core/` — auth, HTTP, validação, persistência (Database, Repositories) e suporte.
 - `controllers/` — controladores HTTP/MVC que coordenam pedidos, autorização e preparação de dados.
 - `application/` — serviços, páginas e roteamento.
 - `models/` — modelos de domínio e acesso a dados (compatibilidade e consultas).
@@ -58,9 +58,9 @@ O diretório `app/` é o pacote de distribuição: inclui o código e ficheiros 
 
 ## Autenticação e sessão
 
-O núcleo reutilizável da autenticação está em `app/src/infrastructure/Auth/`: `Authenticator` valida credenciais através do contrato `CredentialRepository`, e `SessionManager` gere a identidade e o ciclo de vida da sessão PHP. Estes componentes não dependem do modelo de utilizador, da base de dados ou das páginas da aplicação.
+O núcleo reutilizável da autenticação está em `app/src/core/Auth/`: `Authenticator` valida credenciais através do contrato `CredentialRepository`, e `SessionManager` gere a identidade e o ciclo de vida da sessão PHP. Estes componentes não dependem do modelo de utilizador, da base de dados ou das páginas da aplicação.
 
-A integração específica com o sistema de reservas está em `app/src/infrastructure/Auth/`. `SalasCredentialRepository` liga o contrato de credenciais ao modelo `Usuario`; `SalasSessionAdapter` mantém as chaves de sessão legadas (`user_id`, `user_nome`, `user_nivel` e `ultima_atividade`) para que as páginas, as permissões e as reservas existentes continuem a funcionar. Sessões já iniciadas antes desta separação são aceites e adotadas pelo novo gestor sem exigir novo login. O suporte a hashes MD5 legados e a sua migração após autenticação válida também foi mantido.
+A integração específica com o sistema de reservas está em `app/src/core/Auth/`. `SalasCredentialRepository` liga o contrato de credenciais ao modelo `Usuario`; `SalasSessionAdapter` mantém as chaves de sessão legadas (`user_id`, `user_nome`, `user_nivel` e `ultima_atividade`) para que as páginas, as permissões e as reservas existentes continuem a funcionar. Sessões já iniciadas antes desta separação são aceites e adotadas pelo novo gestor sem exigir novo login. O suporte a hashes MD5 legados e a sua migração após autenticação válida também foi mantido.
 
 Esta separação não inclui a manutenção de perfis nem as permissões por níveis: continuam a pertencer à aplicação. O esquema da base de dados não muda.
 
@@ -220,7 +220,7 @@ A aplicação usa PSR-4 autoloading via Composer. Após clonar, execute:
 composer install
 composer dump-autoload
 ```
-As classes estão nos namespaces `Salas\\Controllers`, `Salas\\Models`, `Salas\\Infrastructure\\*`, etc.
+As classes estão nos namespaces `Salas\\Controllers`, `Salas\\Models`, `Salas\\core\\*`, etc.
 
 ### Configuração unificada (.env + config.json)
 A aplicação suporta duas fontes de configuração, por ordem de prioridade:

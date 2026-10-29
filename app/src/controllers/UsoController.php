@@ -2,9 +2,9 @@
 namespace Salas\Controllers;
 
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Uso;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Validation\Validator;
 
 class UsoController
 {

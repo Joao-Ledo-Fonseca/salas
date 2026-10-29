@@ -3,7 +3,7 @@ namespace Salas\Controllers;
 
 
 use Salas\Models\Categoria;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Periodo;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;

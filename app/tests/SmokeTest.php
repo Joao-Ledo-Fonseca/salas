@@ -3,9 +3,9 @@
 PHP_SAPI === 'cli' or exit('CLI only');
 
 require_once __DIR__ . '/../src/config/bootstrap.php';
-require_once __DIR__ . '/../src/infrastructure/Persistence/Database.php';
+require_once __DIR__ . '/../src/core/Persistence/Database.php';
 
-$database = new \Salas\Infrastructure\Persistence\Database($appConfig);
+$database = new \Salas\Core\Persistence\Database($appConfig);
 
 $failures = [];
 
@@ -27,8 +27,8 @@ try {
 
 // Authorization service (now in infrastructure/Auth)
 try {
-    require_once __DIR__ . '/../src/infrastructure/Auth/AuthorizationService.php';
-    $authz = new \Salas\Infrastructure\Auth\AuthorizationService($database);
+    require_once __DIR__ . '/../src/core/Auth/AuthorizationService.php';
+    $authz = new \Salas\Core\Auth\AuthorizationService($database);
     assert_true($authz->nomeNivel(3, 2) === 'SuperAdmin', 'AuthorizationService level name failed');
     assert_true($authz->validaPermissao('M_Reservas', 3), 'SuperAdmin should have M_Reservas');
     assert_true(!$authz->validaPermissao('M_Permissoes', 0), 'External user should not have M_Permissoes');

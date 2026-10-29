@@ -1,5 +1,5 @@
 <?php
-use Salas\Infrastructure\Support\Csrf;
+use Salas\Core\Support\Csrf;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 use Salas\Models\Categoria;
@@ -13,8 +13,8 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Infrastructure\Support\Util;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Support\Util;
+use Salas\Core\Validation\Validator;
 use Salas\Application\Services\AuthorizationService;
 ?>
 

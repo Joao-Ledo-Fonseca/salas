@@ -1,5 +1,5 @@
 <?php
-namespace Salas\Infrastructure\Http;
+namespace Salas\Core\Http;
 
 class ViewRenderer
 {

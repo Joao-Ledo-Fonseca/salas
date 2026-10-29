@@ -2,9 +2,9 @@
 namespace Salas\Controllers;
 
 use Salas\Models\Categoria;
-use Salas\Infrastructure\Persistence\Database;
-use Salas\Infrastructure\Support\Util;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Persistence\Database;
+use Salas\Core\Support\Util;
+use Salas\Core\Validation\Validator;
 
 class CategoriaController
 {

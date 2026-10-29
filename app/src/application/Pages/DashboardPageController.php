@@ -2,11 +2,11 @@
 namespace Salas\Application\Pages;
 
 
-use Salas\Infrastructure\Auth\AuthorizationService;
+use Salas\Core\Auth\AuthorizationService;
 use Salas\Controllers\DashboardController;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
-use Salas\Infrastructure\Support\Util;
+use Salas\Core\Support\Util;
 
 class DashboardPageController
 {

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Validation\Validator;
 
 class ValidatorTest extends TestCase
 {

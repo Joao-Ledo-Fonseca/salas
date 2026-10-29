@@ -1,7 +1,7 @@
 <?php
 namespace Salas\Models;
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 
 class Reserva
 	{

@@ -1,9 +1,9 @@
 <?php
 namespace Salas\Controllers;
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Periodo;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Validation\Validator;
 
 class PeriodoController
 {

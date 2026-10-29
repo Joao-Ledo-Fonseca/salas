@@ -2,12 +2,12 @@
 namespace Salas\Application\Pages;
 
 
-use Salas\Infrastructure\Auth\AuthContext;
+use Salas\Core\Auth\AuthContext;
 use Salas\Application\AuthorizationMiddleware;
-use Salas\Infrastructure\Auth\AuthorizationService;
+use Salas\Core\Auth\AuthorizationService;
 use Salas\Controllers\CategoriaController;
-use Salas\Infrastructure\Support\Csrf;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Support\Csrf;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Imagem;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\PermissoesController;
@@ -18,7 +18,7 @@ use Salas\Models\Sala;
 use Salas\Controllers\SalaController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\UsuarioController;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Validation\Validator;
 
 require_once __DIR__ . '/DashboardPageController.php';
 

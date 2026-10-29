@@ -1,12 +1,12 @@
 <?php
 namespace Salas\Controllers;
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 use Salas\Models\Imagem;
-use Salas\Infrastructure\Support\Util;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Support\Util;
+use Salas\Core\Validation\Validator;
 
 class SalaController
 {

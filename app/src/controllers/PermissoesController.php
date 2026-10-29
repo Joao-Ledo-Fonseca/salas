@@ -2,7 +2,7 @@
 namespace Salas\Controllers;
 
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Permissoes;
 
 class PermissoesController

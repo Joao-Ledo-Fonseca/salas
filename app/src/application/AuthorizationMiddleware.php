@@ -1,9 +1,9 @@
 <?php
 namespace Salas\Application;
 
-use Salas\Infrastructure\Auth\AuthContext;
-use Salas\Infrastructure\Auth\AuthorizationService;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Auth\AuthContext;
+use Salas\Core\Auth\AuthorizationService;
+use Salas\Core\Persistence\Database;
 
 
 class AuthorizationMiddleware

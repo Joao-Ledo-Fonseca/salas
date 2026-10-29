@@ -1,12 +1,12 @@
 <?php
 namespace Salas\Controllers;
 
-use Salas\Infrastructure\Auth\AuthContext;
-use Salas\Infrastructure\Auth\Authenticator;
-use Salas\Infrastructure\Auth\SalasCredentialRepository;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Auth\AuthContext;
+use Salas\Core\Auth\Authenticator;
+use Salas\Core\Auth\SalasCredentialRepository;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Validation\Validator;
 
 class LoginController
 {

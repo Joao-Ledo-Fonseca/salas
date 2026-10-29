@@ -7,13 +7,13 @@ $appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 
 require_once $appRoot . '/../src/config/bootstrap.php';
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
-use Salas\Infrastructure\Http\Request;
-use Salas\Infrastructure\Http\Response;
-use Salas\Infrastructure\Http\ErrorHandler;
-use Salas\Infrastructure\Http\ViewRenderer;
-use Salas\Infrastructure\Auth\SalasSessionAdapter;
+use Salas\Core\Http\Request;
+use Salas\Core\Http\Response;
+use Salas\Core\Http\ErrorHandler;
+use Salas\Core\Http\ViewRenderer;
+use Salas\Core\Auth\SalasSessionAdapter;
 use Salas\Controllers\LoginController;
 use Salas\Controllers\UsuarioController;
 use Salas\Application\Router;
@@ -46,7 +46,7 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
             exit;
         } else {
             // Se for um clique normal no navegador, faz o redirecionamento convencional
-            \Salas\Infrastructure\Http\Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
+            \Salas\Core\Http\Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
             exit;
         }
 }
@@ -62,7 +62,7 @@ if ($request->action() === 'logout') {
 if ($request->action() === 'login') {
     $loginView = (new LoginController($database))->handle($request->allQuery(), $request->allPost());
     if ($loginView['redirect'] !== null) {
-        \Salas\Infrastructure\Http\Response::redirect($loginView['redirect'])->send();
+        \Salas\Core\Http\Response::redirect($loginView['redirect'])->send();
         exit;
     }
 

@@ -2,11 +2,11 @@
 namespace Salas\Controllers;
 
 
-use Salas\Infrastructure\Auth\AuthContext;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Auth\AuthContext;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Reserva;
 use Salas\Models\Usuario;
-use Salas\Infrastructure\Validation\Validator;
+use Salas\Core\Validation\Validator;
 
 
 class UsuarioController
@@ -143,9 +143,9 @@ class UsuarioController
 		exit;
 		}
 
-	private function sessionAdapter(): \Salas\Infrastructure\Auth\SalasSessionAdapter
+	private function sessionAdapter(): \Salas\Core\Auth\SalasSessionAdapter
 		{
-		return new \Salas\Infrastructure\Auth\SalasSessionAdapter();
+		return new \Salas\Core\Auth\SalasSessionAdapter();
 		}
 
 

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Salas\Infrastructure\Support\Csrf;
+use Salas\Core\Support\Csrf;
 
 class CsrfTest extends TestCase
 {

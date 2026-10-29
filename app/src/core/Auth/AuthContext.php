@@ -1,20 +1,20 @@
 <?php
-namespace Salas\Infrastructure\Auth;
+namespace Salas\Core\Auth;
 
 require_once __DIR__ . '/SessionManager.php';
 require_once __DIR__ . '/SalasSessionAdapter.php';
 
 class AuthContext
 {
-    private \Salas\Infrastructure\Auth\SessionManager $sessions;
-    private \Salas\Infrastructure\Auth\SalasSessionAdapter $adapter;
+    private \Salas\Core\Auth\SessionManager $sessions;
+    private \Salas\Core\Auth\SalasSessionAdapter $adapter;
 
     public function __construct(
-        ?\Salas\Infrastructure\Auth\SessionManager $sessions = null,
-        ?\Salas\Infrastructure\Auth\SalasSessionAdapter $adapter = null
+        ?\Salas\Core\Auth\SessionManager $sessions = null,
+        ?\Salas\Core\Auth\SalasSessionAdapter $adapter = null
     ) {
-        $this->sessions = $sessions ?? new \Salas\Infrastructure\Auth\SessionManager();
-        $this->adapter = $adapter ?? new \Salas\Infrastructure\Auth\SalasSessionAdapter($this->sessions);
+        $this->sessions = $sessions ?? new \Salas\Core\Auth\SessionManager();
+        $this->adapter = $adapter ?? new \Salas\Core\Auth\SalasSessionAdapter($this->sessions);
     }
 
     public function start(): void

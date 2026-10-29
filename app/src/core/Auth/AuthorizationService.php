@@ -1,8 +1,8 @@
 <?php
-namespace Salas\Infrastructure\Auth;
+namespace Salas\Core\Auth;
 
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 use Salas\Models\Permissoes;
 use Salas\Controllers\PermissoesController;
 

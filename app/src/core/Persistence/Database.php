@@ -1,5 +1,5 @@
 <?php
-namespace Salas\Infrastructure\Persistence;
+namespace Salas\Core\Persistence;
 
 use PDO;
 

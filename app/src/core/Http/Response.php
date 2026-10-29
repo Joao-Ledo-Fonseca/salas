@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Salas\Infrastructure\Http;
+namespace Salas\Core\Http;
 
 
 class Response

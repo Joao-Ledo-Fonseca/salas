@@ -1,6 +1,6 @@
 <?php
 
-namespace Salas\Infrastructure\Auth;
+namespace Salas\Core\Auth;
 
 
 interface CredentialRepository

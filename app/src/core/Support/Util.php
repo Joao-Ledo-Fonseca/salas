@@ -1,5 +1,5 @@
 <?php
-namespace Salas\Infrastructure\Support;
+namespace Salas\Core\Support;
 
 /* classe de funcionalidades gerais e uteis */
 class Util

@@ -1,7 +1,7 @@
 <?php
 namespace Salas\Models;
 
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 
 class Usuario 
 {
@@ -25,8 +25,8 @@ class Usuario
 		}
 
 
-		$authenticator = new \Salas\Infrastructure\Auth\Authenticator(
-			new \Salas\Infrastructure\Auth\SalasCredentialRepository($this)
+		$authenticator = new \Salas\Core\Auth\Authenticator(
+			new \Salas\Core\Auth\SalasCredentialRepository($this)
 		);
 		$identity = $authenticator->authenticate((string) $identifier, (string) $password);
 
@@ -80,7 +80,7 @@ class Usuario
 		return $this->db->query_update($sql, array($id));
 	}
 
-	public static function seedSuperAdmin(\Salas\Infrastructure\Persistence\Database $db): void
+	public static function seedSuperAdmin(\Salas\Core\Persistence\Database $db): void
 	{
 		$result = $db->query('select count(*) as total from usuario');
 		$total = isset($result[0]['total']) ? (int) $result[0]['total'] : 0;

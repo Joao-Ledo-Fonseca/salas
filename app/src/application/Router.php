@@ -2,7 +2,7 @@
 namespace Salas\Application;
 
 use Salas\Application\Pages\ApplicationPageController;
-use Salas\Infrastructure\Persistence\Database;
+use Salas\Core\Persistence\Database;
 
 
 class Router
