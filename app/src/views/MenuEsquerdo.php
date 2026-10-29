@@ -18,10 +18,10 @@
          <a href="<?= app_url() ?>"><li>Home</li></a>
          
          <?php if ($menuData['showStatistics']): ?>
-            <a href="<?= app_url('?acao=relatorios') ?>"><li>Estatisticas</li></a>
+            <a href="<?= app_url('?acao=estatisticas') ?>"><li>Estatisticas</li></a>
          <?php endif; ?>
          <?php if ($menuData['showReports']): ?>
-            <a href="<?= app_url('?acao=relatorios2') ?>"><li>Relatorios</li></a>
+            <a href="<?= app_url('?acao=relatorios') ?>"><li>Relatorios</li></a>
          <?php endif; ?>
 
          <?php if (count($menuData['adminItems']) > 0): ?>

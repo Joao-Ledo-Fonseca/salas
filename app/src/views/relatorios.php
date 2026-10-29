@@ -3,186 +3,201 @@
 
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title>Relatórios</title>
+    <!-- jQuery -->
+    <script src="<?= app_url('/js/jquery.js') ?>"></script>
 
-  <script src="<?= app_url('/js/jquery.js') ?>"></script>
-  <script src="<?= app_url('/js/jquery.datetimepicker.full.js') ?>"></script>
-  <script src="<?= app_url('/js/dateformat.js') ?>"></script>
+    <!-- DateTimePicker -->
+    <script src="<?= app_url('/js/jquery.datetimepicker.full.js') ?>"></script>
 
-  <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
-  <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
-  <script src="<?= app_url('/js/lib.js') ?>"></script>
+    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
 
+    <script src="<?= app_url('/js/lib.js') ?>"></script>
+
+
+    <!-- DataTables (compatible versions) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables date plugin -->
+    <script src="https://cdn.datatables.net/plug-ins/1.13.6/sorting/date-uk.js"></script>
+
+    <!-- DataTables Buttons (compatible) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">   
+
+    <title>Relatorios</title>
 
 </head>
 
 <body>
 
-  <!-- menu esquerdo -->
-  <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
+    <!-- menu esquerdo -->
+    <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
 
-  <div class="corpo">
+    <!-- conteudo -->
+    <div class="corpo" style="overflow: scroll; height: 98%;">
 
-    <!-- CABEÇALHO UNIFICADO COM FORMATO CONTAINER (Chevrons Ocultos no Modo Período) -->
-    <div class="container">
-      <div class="titulo_inicial">
-        <div class="toolbar-row">
+        <div>
 
-          <!-- Chevron Esquerdo: Só aparece se NÃO for período -->
-          <?php if ($tipo != 'p'): ?>
-            <img src="<?= app_url('/img/chevron_left.png') ?>" width="40" height="40" alt="Anterior" class="nav-button" onclick="alteraData(dia_anterior)" />
-          <?php endif; ?>
+            <div class="container">
+                <div class="titulo_inicial">
+                    <div class="toolbar-row">
 
-          <div class="date-center" style="<?= $tipo == 'p' ? 'margin-left: 0; padding-left: 0;' : '' ?>">
-            <form id="relatorios_form" method="get" action="<?= app_url() ?>" target="_self" name="form1" style="display:inline;vertical-align: top;">
-              <input type="hidden" name="acao" value="relatorios" />
-              <input type="hidden" name="tipo" id="tipo_input" value="<?= htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') ?>" />
+                        <!-- 🎯 Chevron Esquerdo: Oculto no Modo Período -->
+                        <?php if ($tipo != 'p'): ?>
+                            <img src="<?= app_url('/img/chevron_left.png') ?>" width="40" height="40" alt="Anterior" class="nav-button"
+                                onclick="alteraData(dia_anterior)" />
+                        <?php endif; ?>
 
-              <?php if ($tipo == 'p'):
-                $inicio_pt = isset($inicio) ? $inicio->format('d/m/Y') : date('d/m/Y');
-                $fim_pt = isset($fim) ? $fim->format('d/m/Y') : date('d/m/Y');
-                ?>
-                <span class="date-range">
-                  <input type="text" name="data_inicio_pt" id="data_inicio_pt" class="date-input date-range-input" value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                  <input type="text" name="data_fim_pt" id="data_fim_pt" class="date-input date-range-input" value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                </span>
-                <input type="hidden" name="data_inicio" id="data_inicio" value="<?= isset($inicio) ? $inicio->format('dmY') : date('dmY') ?>" />
-                <input type="hidden" name="data_fim" id="data_fim" value="<?= isset($fim) ? $fim->format('dmY') : date('dmY') ?>" />
-              <?php else: ?>
-                <input type="text" name="data_pt" id="data_pt" class="date-input" value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                <input type="hidden" name="data" id="data" value="<?= $hoje->format("dmY") ?>" />
-              <?php endif; ?>
-            </form>
-          </div>
+                        <div class="date-center" style="<?= $tipo == 'p' ? 'margin-left: 0; padding-left: 0;' : '' ?>">
+                            <form id="relatorios_form" method="get" action="<?= app_url() ?>" target="_self" name="form1"
+                                style="display:inline;vertical-align: top;">
 
-          <!-- Chevron Direito: Só aparece se NÃO for período -->
-          <?php if ($tipo != 'p'): ?>
-            <img src="<?= app_url('/img/chevron_right.png') ?>" width="40" height="40" class="nav-button" alt="Próximo" onclick="alteraData(dia_posterior)" />
-          <?php endif; ?>
+                                <!-- 🎯 Garante que o index.php sabe que deve recarregar a página relatorios2 -->
+                                <input type="hidden" name="acao" value="relatorios" />
 
-        </div>
+                                <input type="hidden" name="tipo" id="tipo_input"
+                                    value="<?= htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') ?>" />
 
-        <span style="float:right">
-          <button type="button" id="semanal" class="btn1" onclick="toogletipo('w')">Semanal</button>
-          <button type="button" id="mensal" class="btn1" onclick="toogletipo('m')">Mensal</button>
-          <button type="button" id="periodo" class="btn1" onclick="toogletipo('p')">Período</button>
-        </span>
-      </div>
-    </div>
+                                <?php if ($tipo == 'p'):
+                                    $inicio_pt = isset($inicio) ? $inicio->format('d/m/Y') : date('d/m/Y');
+                                    $fim_pt = isset($fim) ? $fim->format('d/m/Y') : date('d/m/Y');
+                                    ?>
+                                    <span class="date-range">
+                                        <input type="text" name="data_inicio_pt" id="data_inicio_pt"
+                                            class="date-input date-range-input"
+                                            value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>"
+                                            readonly="readonly">
+                                        <input type="text" name="data_fim_pt" id="data_fim_pt"
+                                            class="date-input date-range-input"
+                                            value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>"
+                                            readonly="readonly">
+                                    </span>
+                                    <input type="hidden" name="data_inicio" id="data_inicio"
+                                        value="<?= isset($inicio) ? $inicio->format('dmY') : date('dmY') ?>" />
+                                    <input type="hidden" name="data_fim" id="data_fim"
+                                        value="<?= isset($fim) ? $fim->format('dmY') : date('dmY') ?>" />
+                                <?php else: ?>
+                                    <input type="text" name="data_pt" id="data_pt" class="date-input"
+                                        value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
+                                    <input type="hidden" name="data" id="data" value="<?= $hoje->format("dmY") ?>" />
+                                <?php endif; ?>
+                            </form>
+                        </div>
 
-    <div id="mensagem"> </div>
+                        <!-- 🎯 Chevron Direito: Oculto no Modo Período -->
+                        <?php if ($tipo != 'p'): ?>
+                            <img src="<?= app_url('/img/chevron_right.png') ?>" width="40" height="40" class="nav-button" alt="Próximo"
+                                onclick="alteraData(dia_posterior)" />
+                        <?php endif; ?>
 
-    <!-- ESTRUTURA UNIFICADA: Apenas uma zona de scroll e um container -->
-    <div class="zona-scroll">
-      <div class="container">
+                    </div>
 
-        <!-- 1. Bloco de Cima: Listagem por Disciplina -->
-        <div class="apar">
-          <h3> Total de reservas por disciplina </h3>
-          <table class="lista_comum" cellpadding="4" cellspacing="4">
-            <tr>
-              <th></th>
-              <th width="300"> Nome </th>
-              <th> Total</th>
-            </tr>
-            <?php if (empty($resumo_reservas)): ?>
-              <tr><td></td><td colspan="2">Nenhum registo encontrado para este período.</td></tr>
-            <?php else: ?>
-              <?php foreach ($resumo_reservas as $resumo): ?>
-                <tr>
-                  <td></td>
-                  <td width="300"><?= htmlspecialchars((string) $resumo['disciplina_desc'], ENT_QUOTES, 'UTF-8') ?></td>
-                  <td><?= (int) $resumo['total'] ?></td>
-                </tr>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </table>
-        </div>
-
-        <!-- 2. Bloco de Baixo: Gráfico + Box de Informação Permanente (Isolado por Estilos Fixos) -->
-        <div class="apar" style="margin-top: 30px; text-align: left;">
-          <h3> Taxa de ocupação das salas </h3>
-          
-          <!-- Usamos uma tabela pura sem classes para o CSS global não interferir nas colunas -->
-          <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 900px; border: none; background: transparent; border-collapse: collapse;">
-            <tr>
-              <!-- Coluna Esquerda: Trancada milimetricamente para o Gráfico de 500px respirar -->
-              <td style="width: 520px; min-width: 520px; max-width: 520px; border: none; background: transparent; text-align: left; padding: 0; vertical-align: top;">
-                <div id="chart_div" style="width: 500px; height: 400px; overflow: hidden;"></div>
-              </td>
-              
-<!-- Coluna Direita: Alinha a Box verticalmente ao CENTRO do gráfico -->
-              <td style="border: none; background: transparent; padding: 0; vertical-align: middle; padding-left: 20px;">
-                <div class="info-box" style="width: 100%; max-width: 350px; padding: 15px; border: 1px solid #ccc; border-radius: 4px; background-color: #f5f5f5; font-family: inherit; font-size: 13px; color: #333; box-sizing: border-box; text-align: left; margin: 0;">
-                  <strong style="display: block; margin-bottom: 8px; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Informação do Período:</strong>
-                  <ul style="margin: 0; padding-left: 20px; line-height: 22px; list-style-type: square;">
-                    <li><strong>Filtro Ativo:</strong> <?= htmlspecialchars($tipo === 'w' ? 'Semanal' : ($tipo === 'p' ? 'Período' : 'Mensal'), ENT_QUOTES, 'UTF-8') ?></li>
-                    <li><strong>Data/Intervalo:</strong> <?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?></li>
-                    <li><strong>Total de Reservas:</strong> <?= (int)$total_reservas ?></li>
-                    <li><strong>Total de Horários Disponíveis:</strong> <?= (int)$total_horarios ?></li>
-                  </ul>
+                    <span style="float:right">
+                        <button type="button" id="semanal" class="btn1" onclick="toogletipo('w')">Semanal</button>
+                        <button type="button" id="mensal" class="btn1" onclick="toogletipo('m')">Mensal</button>
+                        <button type="button" id="periodo" class="btn1" onclick="toogletipo('p')">Período</button>
+                    </span>
                 </div>
-              </td>
-            </tr>
-          </table>
+            </div>
+
+            <div id="mensagem"> </div>
+
+            <div class="container">
+
+                <h3> Reservas </h3>
+
+                <table class="lista_comum compact" id="print" cellpadding="4" cellspacing="4">
+                    <thead>
+                        <tr>
+                            <th> Categoria </th>
+                            <th> Sala</th>
+                            <th> Nome </th>
+                            <th> Data</th>
+                            <th> Periodo </th>
+                            <th> Status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($reservas as $reserva): ?>
+                            <?php
+                            $diaReserva = date_create_from_format('Y-m-d', $reserva['dia']);
+                            $diaFormatado = $diaReserva ? $diaReserva->format('d/m/Y') : '';
+                            $dataLink = $diaFormatado !== '' ? rawurlencode($diaFormatado) : '';
+                            ?>
+                            <tr>
+                                <td><?= htmlspecialchars((string) $reserva['categoria'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td width="300"><?= htmlspecialchars((string) $reserva['disciplina_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><a href="<?= htmlspecialchars(app_url('?data=' . $dataLink), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($diaFormatado, ENT_QUOTES, 'UTF-8') ?></a></td>
+                                <td><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars((string) $reserva['status_nome'], ENT_QUOTES, 'UTF-8') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php if (empty($reservas)): ?>
+                    <div class="no-data-message">Sem reservas encontradas para o período selecionado.</div>
+                <?php endif; ?>
+            </div>
         </div>
-
-      </div> <!-- /container -->
-    </div> <!-- /zona-scroll -->
-
-    <!-- Biblioteca oficial e estável do Google Charts -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {
-        'packages': ['corechart'],
-        'callback': drawChart
-      });
-
-      function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['Ocupado', <?= (int) $total_reservas ?>],
-          ['Desocupado', <?= (int) $total_horarios ?>]
-        ]);
-
-        var options = {
-          'title': 'Taxa de ocupação da sala',
-          'width': 500,
-          'height': 400
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-    </script>
-  </div>
+    </div>
 
 </body>
 
+<?PHP
+
+switch ($tipo) {
+    case 'w':
+        $titulo = '"Reservas - Semana ' . $hoje->format("W/Y") . '"';
+        break;
+    case 'm':
+        $titulo = '"Reservas - ' . $hoje->format("M Y") . '"';
+        break;
+    case 'p':
+        $titulo = '"Reservas - ' . $inicio->format("d/m/Y") . ' - ' . $fim->format("d/m/Y") . '"';
+        break;
+    default:
+        $titulo = '"Reservas - ' . $hoje->format("d/m/Y") . '"';
+    }
+
+?>
 
 <script>
   var appBaseUrl = <?= json_encode(app_url()) ?>;
 
-  // Variáveis PHP passadas para o JavaScript
+  // 1. Definição das Variáveis Globais (Passadas do PHP)
   var data = '<?= $hoje->format("dmY"); ?>';
   var dia_anterior = '<?= $dia_anterior->format("dmY"); ?>';
   var dia_posterior = '<?= $dia_posterior->format("dmY"); ?>';
+  var format = '<?= $dateFormat; ?>';
   var tipo = '<?= $tipo; ?>';
 
   jQuery.datetimepicker.setLocale('pt');
 
-  // 🎯 CORREÇÃO: Como os Chevrons estão ocultos no período, a função apenas muda a data base semanal/mensal
+  // 2. Funções Globais de Navegação e Cliques
+  function atualizaTela(o) {
+    var dataVal = $(o).val();
+    window.location.href = appBaseUrl + "?acao=relatorios&data=" + dataVal + "&tipo=" + tipo;
+  }
+
   function alteraData(novaData) {
     window.location.href = appBaseUrl + "?acao=relatorios&data=" + novaData + "&tipo=" + tipo;
   }
 
-  // Função que alterna os botões Semanal/Mensal/Período
   function toogletipo(tipoBotao) {
     if (tipoBotao === 'p') {
       var url = appBaseUrl + '?acao=relatorios&tipo=p';
@@ -195,18 +210,14 @@
     }
   }
 
-  // 🎯 CORREÇÃO: Abre o bloco ready que estava em falta para que o código execute no momento certo
+  // 3. Inicialização Centralizada do DOM
   $(document).ready(function () {
-
-    // 🎯 OTIMIZAÇÃO: Limpa o estado ativo de todos e adiciona apenas ao filtro selecionado
+    
+    // 🎯 OTIMIZAÇÃO E UNIFORMIZAÇÃO: Gere o estado ativo dos botões
     $('#semanal, #mensal, #periodo').removeClass('active');
-
     if (tipo === 'w') $('#semanal').addClass('active');
     if (tipo === 'm') $('#mensal').addClass('active');
     if (tipo === 'p') $('#periodo').addClass('active');
-
-    // 🎯 INJEÇÃO DE MENSAGEM: Alerta o utilizador se não existirem reservas no período selecionado
-    var totalReservas = <?= (int) $total_reservas; ?>;
 
     // Inicialização do DateTimePicker para datas únicas (Semanal / Mensal)
     if ($('#data_pt').length) {
@@ -228,8 +239,8 @@
       });
     }
 
-    // Configuração para o DateTimePicker do modo período (Início)
-    if ($('#data_inicio_pt').length) {
+    // Inicialização dos DateTimePickers para o Modo Período (Início e Fim)
+    if ($('#data_inicio_pt').length && $('#data_fim_pt').length) {
       $('#data_inicio_pt').datetimepicker({
         timepicker: false,
         format: 'd/m/Y',
@@ -241,16 +252,13 @@
           if (parts.length === 3) {
             var dmY = parts.join('');
             $('#data_inicio').val(dmY);
-            var url = appBaseUrl + '?acao=relatorios&tipo=p&data_inicio=' + dmY;
-            if ($('#data_fim').val()) url += '&data_fim=' + $('#data_fim').val();
-            window.location.href = url;
+            setTimeout(function () {
+              $('#relatorios_form').submit();
+            }, 200);
           }
         }
       });
-    }
 
-    // Configuração para o DateTimePicker do modo período (Fim)
-    if ($('#data_fim_pt').length) {
       $('#data_fim_pt').datetimepicker({
         timepicker: false,
         format: 'd/m/Y',
@@ -262,15 +270,79 @@
           if (parts.length === 3) {
             var dmY = parts.join('');
             $('#data_fim').val(dmY);
-            var url = appBaseUrl + '?acao=relatorios&tipo=p';
-            if ($('#data_inicio').val()) url += '&data_inicio=' + $('#data_inicio').val();
-            url += '&data_fim=' + dmY;
-            window.location.href = url;
+            setTimeout(function () {
+              $('#relatorios_form').submit();
+            }, 200);
           }
         }
       });
     }
   });
+</script>
+
+
+<script>
+    titulo = <?= $titulo ?>;
+
+    $(document).ready(function () {
+        var table = $('#print').DataTable({
+            searching: true,
+            ordering: true,
+            order: [[3, 'desc']],
+            paging: true,
+            pageLength: 25,
+            lengthMenu: [10, 25, 50, 100, 200],
+            autoWidth: false,
+            deferRender: true,
+            dom: 'Bfrtip',
+            columnDefs: [
+                { targets: 0, width: '80px' },
+                { targets: 1, width: '80px' },
+                { targets: 2, width: '100px' },
+                { targets: 3, type: 'date-uk', width: '80px' },
+                { targets: 4, width: '50px' },
+                { targets: 5, width: '50px' }
+            ],
+            buttons: [
+                {
+                    extend: 'colvis',
+                    text: 'Colunas'
+                },
+                {
+                    extend: 'collection',
+                    text: 'Exporta',
+                    buttons: [
+                        'copy',
+                        {
+                            extend: 'csv',
+                            title: "Reserva de Salas",
+                            filename: "*"
+                        },
+                        {
+                            extend: 'excel',
+                            title: "Reserva de Salas",
+                            sheetName: "Reserva de Salas.xls"
+                        },
+                        {
+                            extend: 'print',
+                            title: titulo,
+                            header: false
+                        },
+                        {
+                            extend: 'pdf',
+                            title: "Reserva de Salas",
+                            filename: "*",
+                            header: false
+                        }
+                    ]
+                }
+            ],
+            language: {
+                url: '<?= app_url('/datatables/pt-PT.json') ?>'
+            }
+        });
+    });
+
 </script>
 
 </html>

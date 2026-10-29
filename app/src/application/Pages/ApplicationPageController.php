@@ -71,10 +71,10 @@ class ApplicationPageController
 			case 'permissoes_form':
 				$data += $this->permissoesForm($post);
 				break;
-			case 'relatorios':
+			case 'estatisticas':
 				$data += $this->reportSummary($query);
 				break;
-			case 'relatorios2':
+			case 'relatorios':
 				$data += $this->reportReservations($query);
 				break;
 			case 'reserva_form':

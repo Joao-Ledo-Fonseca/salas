@@ -15,8 +15,8 @@ class AuthorizationMiddleware
 		'periodo_form' => 'M_Periodos',
 		'usuario_list' => 'M_Utilizadores',
 		'permissoes_form' => 'M_Permissoes',
+		'estatisticas' => 'M_Estatisticas',
 		'relatorios' => 'M_Relatorios',
-		'relatorios2' => 'M_Relatorios',
 		'reserva_form' => 'M_Reservas',
 	];
 

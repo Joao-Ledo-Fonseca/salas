@@ -23,8 +23,8 @@ Gerado na Fase 0 da refatoração MVC.
 | `usuario_list` | `usuario_list.php` | `M_Utilizadores` |
 | `usuario_form` | `usuario_form.php` | próprio perfil ou `M_Utilizadores` |
 | `permissoes_form` | `permissoes_form.php` | `M_Permissoes` |
-| `relatorios` | `relatorios.php` | `M_Relatorios` |
-| `relatorios2` | `relatorios2.php` | `M_Relatorios` |
+| `estatisticas` | `Estatisticas.php` | `M_Estatisticas` |
+| `relatorios` | `Relatorios.php` | `M_Relatorios` |
 | `reserva_form` | `reserva_form.php` | `M_Reservas` |
 
 ## Operações AJAX
@@ -51,3 +51,5 @@ Gerado na Fase 0 da refatoração MVC.
 - [ ] Relatórios por mês, semana e período.
 - [ ] Acesso negado para utilizador sem permissão.
 - [ ] Menu visível conforme nível.
+
+

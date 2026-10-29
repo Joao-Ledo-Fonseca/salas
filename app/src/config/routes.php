@@ -2,8 +2,8 @@
 
 return [
     'usuario_form' => 'UsuarioForm.php',
+    'estatisticas' => 'Estatisticas.php',
     'relatorios' => 'Relatorios.php',
-    'relatorios2' => 'Relatorios2.php',
     'categoria_list' => 'CategoriaList.php',
     'categoria_form' => 'CategoriaForm.php',
     'sala_list' => 'SalaList.php',
