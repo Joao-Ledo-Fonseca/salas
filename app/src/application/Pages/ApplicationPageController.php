@@ -291,7 +291,6 @@ class ApplicationPageController
 			'podeEliminarReservas' => $podeEliminarReservas,
 			'return_to' => $returnTo,
 			'return_id' => $returnId,
-			'imagens' => (new SalaController($this->db))->listarImagensController(),
 		], is_array($record) ? $record : [], [
 			'categorias' => (new CategoriaController($this->db))->listarOpcoesController(),
 		]);

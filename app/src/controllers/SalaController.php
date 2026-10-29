@@ -138,4 +138,24 @@ class SalaController
         $image = new ImageRepository($this->db);
         return $image->listar();
     }
+
+    public function listarImagensJson(array $query): string
+    {
+        $page = isset($query['page']) ? max(1, (int) $query['page']) : 1;
+        $perPage = isset($query['per_page']) ? max(1, min(50, (int) $query['per_page'])) : 12;
+        $offset = ($page - 1) * $perPage;
+        $image = new ImageRepository($this->db);
+        $rows = $image->listarPaginado($offset, $perPage);
+        $total = $image->contar();
+        $images = [];
+        foreach ($rows as $row) {
+            $images[] = [
+                'id' => (int) $row['id'],
+                'nome' => (string) $row['nome_imagem'],
+                'base64' => base64_encode($row['imagem']),
+            ];
+        }
+        $hasMore = ($offset + count($rows)) < $total;
+        return json_encode(['images' => $images, 'hasMore' => $hasMore], JSON_UNESCAPED_UNICODE);
+    }
 }

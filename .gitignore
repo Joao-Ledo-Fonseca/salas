@@ -7,3 +7,4 @@ testes.php
 /vendor/
 /project/
 
+/.phpunit.result.cache

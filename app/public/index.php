@@ -70,6 +70,14 @@ if ($request->action() === 'login') {
     exit;
     }
 
+if ($request->action() === 'imagens_list') {
+    require_once $appRoot . '/../src/Controllers/SalaController.php';
+    $ctrl = new \Salas\Controllers\SalaController($database);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo $ctrl->listarImagensJson($request->allQuery());
+    exit;
+    }
+
 // 2. Sistema de distribuição de páginas baseado no Menu
 if ($request->action() !== null) {
     $pagina = $request->query('acao');

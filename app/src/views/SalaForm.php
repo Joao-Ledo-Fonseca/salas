@@ -100,14 +100,9 @@ $cancelUrl = (($return_to ?? '') !== '')
                 <button type="button" id="btnCarregar" class="btn1" onclick="carregarNovaImagem()" style="flex:1;">Carregar</button>
                 <button type="button" class="btn1" onclick="semImagem()" style="flex:1;">Sem Imagem</button>
             </div>
-            <div id="gridImagens" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;">
-                <?php foreach (($imagens ?? []) as $img): ?>
-                    <div class="img-thumb" data-id="<?= (int) $img['id'] ?>" data-base64="<?= base64_encode($img['imagem']) ?>" style="position:relative; cursor:pointer; border:1px solid #ccc; border-radius:4px; overflow:hidden; text-align:center;" onclick="selecionarImagem(this)">
-                        <img src="data:<?= htmlspecialchars($img['tipo_imagem'], ENT_QUOTES, 'UTF-8') ?>;base64,<?= base64_encode($img['imagem']) ?>" style="width:100%; height:60px; object-fit:cover;" />
-                        <div style="font-size:9px; padding:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($img['nome_imagem'], ENT_QUOTES, 'UTF-8') ?></div>
-                            <button type="button" style="position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; line-height:14px; padding:0; cursor:pointer; z-index:10;" title="Eliminar imagem" onclick="event.stopPropagation(); eliminarImagemOverlay(<?= (int) $img['id'] ?>); return false;">&times;</button>
-                    </div>
-                <?php endforeach; ?>
+            <div id="gridImagens" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;"></div>
+            <div style="margin-top:8px; text-align:center;">
+                <button type="button" id="btnCarregarMais" class="btn1" onclick="carregarMaisImagens()" style="display:none; width:100%;">Carregar mais</button>
             </div>
         </div>
     </div>
@@ -219,9 +214,56 @@ $cancelUrl = (($return_to ?? '') !== '')
         }
     })();
 
+    var imagensPage = 0;
+    var imagensHasMore = true;
+    var imagensLoading = false;
     function abrirOverlayImagens() {
         var overlay = document.getElementById('overlayImagens');
         overlay.style.display = 'block';
+        if (document.getElementById('gridImagens').children.length === 0) {
+            imagensPage = 0;
+            imagensHasMore = true;
+            carregarMaisImagens();
+        }
+    }
+    function carregarMaisImagens() {
+        if (imagensLoading || !imagensHasMore) return;
+        imagensLoading = true;
+        imagensPage++;
+        fetch('<?= htmlspecialchars(app_url('?acao=imagens_list'), ENT_QUOTES, 'UTF-8') ?>&page=' + imagensPage)
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+                var grid = document.getElementById('gridImagens');
+                (data.images || []).forEach(function(img){
+                    var div = document.createElement('div');
+                    div.className = 'img-thumb';
+                    div.setAttribute('data-id', img.id);
+                    div.setAttribute('data-base64', img.base64);
+                    div.style.cssText = 'position:relative; cursor:pointer; border:1px solid #ccc; border-radius:4px; overflow:hidden; text-align:center;';
+                    div.onclick = function(){ selecionarImagem(this); };
+                    var image = document.createElement('img');
+                    image.src = 'data:image/jpeg;base64,' + img.base64;
+                    image.style.cssText = 'width:100%; height:60px; object-fit:cover;';
+                    div.appendChild(image);
+                    var label = document.createElement('div');
+                    label.style.cssText = 'font-size:9px; padding:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+                    label.textContent = img.nome;
+                    div.appendChild(label);
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; line-height:14px; padding:0; cursor:pointer; z-index:10;';
+                    btn.title = 'Eliminar imagem';
+                    btn.innerHTML = '&times;';
+                    btn.onclick = function(e){ e.stopPropagation(); eliminarImagemOverlay(img.id); return false; };
+                    div.appendChild(btn);
+                    grid.appendChild(div);
+                });
+                imagensHasMore = !!data.hasMore;
+                var btnMais = document.getElementById('btnCarregarMais');
+                if (btnMais) btnMais.style.display = imagensHasMore ? 'block' : 'none';
+                imagensLoading = false;
+            })
+            .catch(function(){ imagensLoading = false; });
     }
 
     // Event delegation for overlay clicks (fallback if inline onclick fails)

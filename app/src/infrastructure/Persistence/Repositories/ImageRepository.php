@@ -41,4 +41,18 @@ class ImageRepository
         $sql = 'delete from imagem where id = ?';
         return $this->db->query_update($sql, [$id]);
     }
+
+    public function listarPaginado(int $offset, int $limit): array
+    {
+        $sql = 'select id, nome_imagem, tipo_imagem, imagem from imagem order by id desc limit ? offset ?';
+        return $this->db->query($sql, [$limit, $offset]);
+    }
+
+    public function contar(): int
+    {
+        $sql = 'select count(*) as total from imagem';
+        $rows = $this->db->query($sql);
+        return isset($rows[0]['total']) ? (int) $rows[0]['total'] : 0;
+    }
+
 }
