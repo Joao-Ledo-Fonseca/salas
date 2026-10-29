@@ -76,6 +76,36 @@ try {
     $failures[] = 'Usuario exception: ' . $e->getMessage();
 }
 
+
+// core/ Http Request
+try {
+    require_once __DIR__ . '/../src/core/Http/Request.php';
+    $req = new \Salas\Core\Http\Request(['acao' => 'sala_form']);
+    assert_true($req->action() === 'sala_form', 'Request::action failed');
+    assert_true($req->isAjax() === false, 'Request::isAjax default false failed');
+} catch (\Throwable $e) {
+    $failures[] = 'Request exception: ' . $e->getMessage();
+}
+
+// core/ Http Response
+try {
+    require_once __DIR__ . '/../src/core/Http/Response.php';
+    $res = \Salas\Core\Http\Response::redirect('?acao=login');
+    assert_true($res->getStatusCode() === 302, 'Response::redirect status failed');
+    assert_true($res->getHeaders()['Location'] === '?acao=login', 'Response::redirect Location failed');
+} catch (\Throwable $e) {
+    $failures[] = 'Response exception: ' . $e->getMessage();
+}
+
+// core/ Support Util
+try {
+    require_once __DIR__ . '/../src/core/Support/Util.php';
+    $d = \Salas\Core\Support\Util::parseDataPt('29/10/2026');
+    assert_true($d instanceof \DateTime, 'Util::parseDataPt failed');
+} catch (\Throwable $e) {
+    $failures[] = 'Util exception: ' . $e->getMessage();
+}
+
 if ($failures === []) {
     echo "Smoke tests passed.\n";
     exit(0);
