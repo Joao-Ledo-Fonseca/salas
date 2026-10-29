@@ -16,8 +16,8 @@ Aplicação web para gerir reservas de salas e laboratórios, desenvolvida em PH
 C:\wamp64\dev\salas\
   .git\                    # repositório Git, versiona app/ e project/
   .gitignore
+  README.md                # documentação do projeto
   app\                     # pacote completo para distribuição/deployment
-    README.md
     LICENSE
     config.example.json    # modelo; copiar para config.json e configurar
     config.json            # configuração local, ignorada pelo Git
@@ -227,7 +227,7 @@ Copiar o conteúdo de `app/` para o servidor, fornecendo separadamente o `config
 
 ## Contribuir
 
-Consulte o [guia de contribuição](../CONTRIBUTING.md) e o [diagrama ER](../docs/er-diagram.md).
+Consulte o [guia de contribuição](CONTRIBUTING.md) e o [diagrama ER](docs/er-diagram.md).
 
 ## Testes
 
