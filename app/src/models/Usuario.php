@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . "/../infrastructure/Persistence/Database.php";
+namespace Salas\Models;
+
+use Salas\Infrastructure\Persistence\Database;
 
 class Usuario 
 {
@@ -22,11 +24,9 @@ class Usuario
 			return $this->findByLoginIdentifier($identifier);
 		}
 
-		require_once __DIR__ . '/../infrastructure/Auth/Authenticator.php';
-		require_once __DIR__ . '/../infrastructure/Auth/SalasCredentialRepository.php';
 
-		$authenticator = new \Salas\Auth\Authenticator(
-			new \Salas\Integration\SalasCredentialRepository($this)
+		$authenticator = new \Salas\Infrastructure\Auth\Authenticator(
+			new \Salas\Infrastructure\Auth\SalasCredentialRepository($this)
 		);
 		$identity = $authenticator->authenticate((string) $identifier, (string) $password);
 

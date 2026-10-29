@@ -1,7 +1,10 @@
 <?php
+namespace Salas\Application\Services;
 
-require_once __DIR__ . '/../../infrastructure/Persistence/Repositories/SalaRepository.php';
-require_once __DIR__ . '/../../infrastructure/Persistence/Repositories/ImageRepository.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Infrastructure\Persistence\Repositories\ImageRepository;
+use Salas\Infrastructure\Persistence\Repositories\SalaRepository;
 
 class SalaService
 {

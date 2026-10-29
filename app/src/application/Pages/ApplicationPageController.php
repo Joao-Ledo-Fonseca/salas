@@ -1,24 +1,26 @@
 <?php
-require_once __DIR__ . '/../../infrastructure/Validation/Validator.php';
+namespace Salas\Application\Pages;
 
 
-require_once __DIR__ . '/../../infrastructure/Support/Util.php';
+use Salas\Infrastructure\Auth\AuthContext;
+use Salas\Application\AuthorizationMiddleware;
+use Salas\Application\Services\AuthorizationService;
+use Salas\Controllers\CategoriaController;
+use Salas\Infrastructure\Support\Csrf;
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Imagem;
+use Salas\Controllers\PeriodoController;
+use Salas\Controllers\PermissoesController;
+use Salas\Controllers\RelatorioController;
+use Salas\Models\Reserva;
+use Salas\Controllers\ReservaController;
+use Salas\Models\Sala;
+use Salas\Controllers\SalaController;
+use Salas\Controllers\UsoController;
+use Salas\Controllers\UsuarioController;
+use Salas\Infrastructure\Validation\Validator;
+
 require_once __DIR__ . '/DashboardPageController.php';
-require_once __DIR__ . '/../../controllers/DashboardController.php';
-require_once __DIR__ . '/../../controllers/RelatorioController.php';
-require_once __DIR__ . '/../../controllers/CategoriaController.php';
-require_once __DIR__ . '/../../controllers/UsoController.php';
-require_once __DIR__ . '/../../controllers/PeriodoController.php';
-require_once __DIR__ . '/../../controllers/SalaController.php';
-require_once __DIR__ . '/../../controllers/UsuarioController.php';
-require_once __DIR__ . '/../../controllers/PermissoesController.php';
-require_once __DIR__ . '/../../controllers/ReservaController.php';
-require_once __DIR__ . '/../../controllers/UsoController.php';
-require_once __DIR__ . '/../../models/Reserva.php';
-require_once __DIR__ . '/../../infrastructure/Auth/AuthContext.php';
-require_once __DIR__ . '/../../infrastructure/Auth/SalasSessionAdapter.php';
-require_once __DIR__ . '/../AuthorizationMiddleware.php';
-require_once __DIR__ . '/../Services/AuthorizationService.php';
 
 class ApplicationPageController
 {
@@ -421,9 +423,9 @@ class ApplicationPageController
 	private function reportDates(array $query): array
 	{
 		$type = in_array($query['tipo'] ?? 'm', ['m', 'w', 'p'], true) ? ($query['tipo'] ?? 'm') : 'm';
-		$today = $this->parseCompactDate($query['data'] ?? null) ?? new DateTime();
-		$start = $type === 'p' ? ($this->parseCompactDate($query['data_inicio'] ?? null) ?? new DateTime()) : $today;
-		$end = $type === 'p' ? ($this->parseCompactDate($query['data_fim'] ?? null) ?? new DateTime()) : null;
+		$today = $this->parseCompactDate($query['data'] ?? null) ?? new \DateTime();
+		$start = $type === 'p' ? ($this->parseCompactDate($query['data_inicio'] ?? null) ?? new \DateTime()) : $today;
+		$end = $type === 'p' ? ($this->parseCompactDate($query['data_fim'] ?? null) ?? new \DateTime()) : null;
 		if ($type === 'p') {
 			$today = $start;
 		}
@@ -492,9 +494,9 @@ class ApplicationPageController
 		$periodos = implode(',', $periodosArr);
 		$record = $id > 0 ? ($controller->abrirController($id)[0] ?? []) : [];
 		$date = isset($query['data']) && is_string($query['data'])
-			? DateTime::createFromFormat('!d/m/Y', $query['data'])
+			? \DateTime::createFromFormat('!d/m/Y', $query['data'])
 			: false;
-		$date = $date ?: new DateTime();
+		$date = $date ?: new \DateTime();
 		$period = new PeriodoController($this->db);
 		$room = new SalaController($this->db);
 		$record = array_merge([
@@ -517,13 +519,13 @@ class ApplicationPageController
 		return $record;
 	}
 
-	private function parseCompactDate($value): ?DateTime
+	private function parseCompactDate($value): ?\DateTime
 	{
 		if (!is_string($value) || !preg_match('/^\d{8}$/', $value)) {
 			return null;
 		}
-		$date = DateTime::createFromFormat('!dmY', $value);
-		$errors = DateTime::getLastErrors();
+		$date = \DateTime::createFromFormat('!dmY', $value);
+		$errors = \DateTime::getLastErrors();
 		return $date && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))
 			? $date
 			: null;

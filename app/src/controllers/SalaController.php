@@ -1,9 +1,14 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . '/../application/Services/SalaService.php';
-require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
-require_once __DIR__ . '/../infrastructure/Persistence/Repositories/ImageRepository.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Infrastructure\Persistence\Repositories\ImageRepository;
+use Salas\Models\Reserva;
+use Salas\Models\Sala;
+use Salas\Application\Services\SalaService;
+use Salas\Infrastructure\Support\Util;
+use Salas\Infrastructure\Validation\Validator;
 
 class SalaController
 {

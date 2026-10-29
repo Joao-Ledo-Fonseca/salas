@@ -1,16 +1,19 @@
 <?php
+namespace Salas\Infrastructure\Persistence;
+
+use Salas\Config\AppConfig;
 
 class Database
 {
 	private AppConfig $config;
-	private ?PDO $link = null;
+	private ?\PDO $link = null;
 
 	public function __construct(AppConfig $config)
 	{
 		$this->config = $config;
 	}
 
-	private function execute(string $sql, array $params = []): PDOStatement
+	private function execute(string $sql, array $params = []): \PDOStatement
 	{
 		$stmt = $this->connection()->prepare($sql);
 		$stmt->execute($params);
@@ -35,7 +38,7 @@ class Database
 		return $this->execute($sql, $params)->rowCount();
 	}
 
-	private function connection(): PDO
+	private function connection(): \PDO
 	{
 		if ($this->link === null) {
 			$dsn = sprintf(
@@ -45,10 +48,10 @@ class Database
 				$this->config->dbName()
 			);
 
-			$this->link = new PDO($dsn, $this->config->dbUser(), $this->config->dbPassword(), [
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-				PDO::ATTR_EMULATE_PREPARES => false,
+			$this->link = new \PDO($dsn, $this->config->dbUser(), $this->config->dbPassword(), [
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+				\PDO::ATTR_EMULATE_PREPARES => false,
 			]);
 		}
 

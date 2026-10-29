@@ -1,16 +1,13 @@
 <?php
 
-namespace Salas\Integration;
+namespace Salas\Infrastructure\Auth;
 
-use Salas\Auth\CredentialRepository;
-
-require_once __DIR__ . '/CredentialRepository.php';
 
 class SalasCredentialRepository implements CredentialRepository
 {
-	private \Usuario $usuario;
+	private \Salas\Models\Usuario $usuario;
 
-	public function __construct(\Usuario $usuario)
+	public function __construct(\Salas\Models\Usuario $usuario)
 	{
 		$this->usuario = $usuario;
 	}

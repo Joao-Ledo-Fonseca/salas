@@ -1,6 +1,9 @@
 <?php
 
-namespace Salas\Auth;
+namespace Salas\Infrastructure\Auth;
+
+use Salas\Infrastructure\Auth\Authenticator;
+use Salas\Infrastructure\Auth\CredentialRepository;
 
 class Authenticator
 {

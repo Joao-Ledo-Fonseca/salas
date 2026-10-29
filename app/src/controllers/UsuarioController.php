@@ -1,13 +1,13 @@
 <?php
-require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
+namespace Salas\Controllers;
 
 
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . "/../models/Usuario.php";
-require_once __DIR__ . "/../models/Reserva.php";
-require_once __DIR__ . '/PermissoesController.php';
-require_once __DIR__ . '/../infrastructure/Auth/AuthContext.php';
-require_once __DIR__ . '/../infrastructure/Auth/SalasSessionAdapter.php';
+use Salas\Infrastructure\Auth\AuthContext;
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Reserva;
+use Salas\Models\Usuario;
+use Salas\Infrastructure\Validation\Validator;
+
 
 class UsuarioController
 	{
@@ -143,9 +143,9 @@ class UsuarioController
 		exit;
 		}
 
-	private function sessionAdapter(): \Salas\Integration\SalasSessionAdapter
+	private function sessionAdapter(): \Salas\Infrastructure\Auth\SalasSessionAdapter
 		{
-		return new \Salas\Integration\SalasSessionAdapter();
+		return new \Salas\Infrastructure\Auth\SalasSessionAdapter();
 		}
 
 

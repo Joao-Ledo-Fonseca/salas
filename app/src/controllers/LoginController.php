@@ -1,10 +1,9 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../models/Usuario.php';
-require_once __DIR__ . '/../application/Services/AuthService.php';
-require_once __DIR__ . '/../infrastructure/Auth/SalasSessionAdapter.php';
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . '/UsuarioController.php';
+use Salas\Application\Services\AuthService;
+use Salas\Infrastructure\Persistence\Database;
+
 
 class LoginController
 {

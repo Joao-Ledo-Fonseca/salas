@@ -1,3 +1,23 @@
+<?php
+use Salas\Infrastructure\Support\Csrf;
+use Salas\Models\Reserva;
+use Salas\Models\Sala;
+use Salas\Models\Categoria;
+use Salas\Models\Usuario;
+use Salas\Models\Periodo;
+use Salas\Models\Uso;
+use Salas\Controllers\SalaController;
+use Salas\Controllers\CategoriaController;
+use Salas\Controllers\UsuarioController;
+use Salas\Controllers\ReservaController;
+use Salas\Controllers\PeriodoController;
+use Salas\Controllers\UsoController;
+use Salas\Controllers\PermissoesController;
+use Salas\Infrastructure\Support\Util;
+use Salas\Infrastructure\Validation\Validator;
+use Salas\Application\Services\AuthorizationService;
+?>
+
 <!DOCTYPE html>
 <html lang="pt-PT">
 
@@ -227,7 +247,7 @@ switch ($tipo) {
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChangeDateTime: function (dp, $input) {
+        onChange\DateTime: function (dp, $input) {
           var value = $input.val();
           var parts = value.split('/');
           if (parts.length === 3) {
@@ -247,7 +267,7 @@ switch ($tipo) {
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChangeDateTime: function (dp, $input) {
+        onChange\DateTime: function (dp, $input) {
           var parts = $input.val().split('/');
           if (parts.length === 3) {
             var dmY = parts.join('');
@@ -265,7 +285,7 @@ switch ($tipo) {
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChangeDateTime: function (dp, $input) {
+        onChange\DateTime: function (dp, $input) {
           var parts = $input.val().split('/');
           if (parts.length === 3) {
             var dmY = parts.join('');

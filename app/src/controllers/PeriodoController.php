@@ -1,8 +1,10 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . '/../application/Services/PeriodoService.php';
-require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Application\Services\PeriodoService;
+use Salas\Infrastructure\Validation\Validator;
 
 class PeriodoController
 {

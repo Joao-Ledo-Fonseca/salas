@@ -1,8 +1,10 @@
 <?php
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../models/Uso.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Uso;
+use Salas\Infrastructure\Validation\Validator;
 
 class UsoController
 {

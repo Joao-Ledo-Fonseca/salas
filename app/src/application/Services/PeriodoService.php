@@ -1,6 +1,9 @@
 <?php
+namespace Salas\Application\Services;
 
-require_once __DIR__ . '/../../infrastructure/Persistence/Repositories/PeriodoRepository.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Infrastructure\Persistence\Repositories\PeriodoRepository;
 
 class PeriodoService
 {

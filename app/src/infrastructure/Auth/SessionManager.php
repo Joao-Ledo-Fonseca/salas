@@ -1,6 +1,8 @@
 <?php
 
-namespace Salas\Auth;
+namespace Salas\Infrastructure\Auth;
+
+use Salas\Infrastructure\Auth\SessionManager;
 
 class SessionManager
 {

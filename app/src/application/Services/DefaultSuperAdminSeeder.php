@@ -1,4 +1,7 @@
 <?php
+namespace Salas\Application\Services;
+
+use Salas\Infrastructure\Persistence\Database;
 
 class DefaultSuperAdminSeeder
 {

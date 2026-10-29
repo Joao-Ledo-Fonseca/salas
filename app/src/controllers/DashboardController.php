@@ -1,10 +1,13 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . "/../models/Categoria.php";
-require_once __DIR__ . "/../models/Periodo.php";
-require_once __DIR__ . "/../models/Sala.php";
-require_once __DIR__ . "/../models/Reserva.php";
+
+use Salas\Models\Categoria;
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Periodo;
+use Salas\Models\Reserva;
+use Salas\Models\Sala;
+use Salas\Models\Uso;
 
 class DashboardController
 {
@@ -26,7 +29,7 @@ class DashboardController
 
     function listarSalasDashboard($hoje, $categoria_id = 0, $usuario_id = 0)
     {
-        $sl = new sala($this->db);
+        $sl = new Sala($this->db);
         $per = new Periodo($this->db);
 
         $salas = $sl->listar($categoria_id);

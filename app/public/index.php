@@ -1,34 +1,36 @@
 <?php
 
 
-require_once __DIR__ . '/../src/config/bootstrap.php';
 
 $projectRoot = dirname(__DIR__);
 $appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 
-require_once $appRoot . '/infrastructure/Persistence/Database.php';
+require_once $appRoot . '/../src/config/bootstrap.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Application\Services\DefaultSuperAdminSeeder;
+use Salas\Infrastructure\Http\Request;
+use Salas\Infrastructure\Http\Response;
+use Salas\Infrastructure\Http\ErrorHandler;
+use Salas\Infrastructure\Http\ViewRenderer;
+use Salas\Infrastructure\Auth\SalasSessionAdapter;
+use Salas\Controllers\LoginController;
+use Salas\Application\Router;
+
 $database = new Database($appConfig);
 
-require_once $appRoot . '/application/Services/DefaultSuperAdminSeeder.php';
 (new DefaultSuperAdminSeeder($database))->seed();
 
-require_once $appRoot . '/infrastructure/Http/Request.php';
-require_once $appRoot . '/infrastructure/Http/Response.php';
-require_once $appRoot . '/infrastructure/Http/ErrorHandler.php';
-require_once $appRoot . '/infrastructure/Http/ViewRenderer.php';
-
-\Salas\Http\ErrorHandler::register();
+ErrorHandler::register();
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
     }
 
-$sessionAdapterPath = $appRoot . '/infrastructure/Auth/SalasSessionAdapter.php';
-require_once $sessionAdapterPath;
-$sessionAdapter = new \Salas\Integration\SalasSessionAdapter();
+$sessionAdapter = new SalasSessionAdapter();
 $sessionAdapter->start();
 
-$request = \Salas\Http\Request::fromGlobals();
+$request = Request::fromGlobals();
 
 // 🎯 CONFIGURAÇÃO: Tempo limite de inatividade (ex: 1800s = 30 minutos)
 $tempo_limite = 600; 
@@ -43,7 +45,7 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
             exit;
         } else {
             // Se for um clique normal no navegador, faz o redirecionamento convencional
-            \Salas\Http\Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
+            \Salas\Infrastructure\Http\Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
             exit;
         }
 }
@@ -58,10 +60,9 @@ if ($request->action() === 'logout') {
     }
 
 if ($request->action() === 'login') {
-    require_once $appRoot . '/controllers/LoginController.php';
     $loginView = (new LoginController($database))->handle($request->allQuery(), $request->allPost());
     if ($loginView['redirect'] !== null) {
-        \Salas\Http\Response::redirect($loginView['redirect'])->send();
+        \Salas\Infrastructure\Http\Response::redirect($loginView['redirect'])->send();
         exit;
     }
 
@@ -75,7 +76,6 @@ if ($request->action() !== null) {
     $routes = include $appRoot . '/config/routes.php';
 
     if (array_key_exists($pagina, $routes)) {
-        require_once $appRoot . '/application/Router.php';
         $page = (new Router($database))->dispatch($pagina, $request->allQuery(), $request->allPost());
         if (array_key_exists('response', $page)) {
             header('Content-Type: text/plain; charset=UTF-8');
@@ -92,7 +92,6 @@ if ($request->action() !== null) {
 }
 
 // 3. Se nenhuma ação for passada na URL, carrega o Dashboard inicial padrão
-require_once $appRoot . '/application/Router.php';
 $viewData = (new Router($database))->dashboard($request->allQuery());
 ViewRenderer::render('Index.php', $viewData);
 

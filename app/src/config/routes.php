@@ -1,4 +1,5 @@
 <?php
+namespace Salas\Config;
 
 return [
     'usuario_form' => 'UsuarioForm.php',

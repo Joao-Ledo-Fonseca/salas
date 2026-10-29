@@ -1,6 +1,9 @@
 <?php
+namespace Salas\Application;
 
-require_once __DIR__ . '/Pages/ApplicationPageController.php';
+use Salas\Application\Pages\ApplicationPageController;
+use Salas\Infrastructure\Persistence\Database;
+
 
 class Router
 {

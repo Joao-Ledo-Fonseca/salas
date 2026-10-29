@@ -1,10 +1,12 @@
 <?php
-require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
+namespace Salas\Controllers;
 
 
-require_once __DIR__ . "/../models/Reserva.php";
-require_once __DIR__ . "/../models/Uso.php";
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Reserva;
+use Salas\Models\Uso;
+use Salas\Infrastructure\Validation\Validator;
 
 class ReservaController
 	{
@@ -36,8 +38,8 @@ class ReservaController
 			return 'Selecione um uso.';
 		}
 
-		$data = DateTime::createFromFormat('!d/m/Y', $dia);
-		$dateErrors = DateTime::getLastErrors();
+		$data = \DateTime::createFromFormat('!d/m/Y', $dia);
+		$dateErrors = \DateTime::getLastErrors();
 		if ($data === false || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))) {
 			return 'Data inválida.';
 		}
@@ -81,8 +83,8 @@ class ReservaController
 
 		$repeatUntil = trim((string) ($post['data_final'] ?? ''));
 		if ($repeatUntil !== '') {
-			$endDate = DateTime::createFromFormat('!d/m/Y', Validator::string($repeatUntil));
-			$dateErrors = DateTime::getLastErrors();
+			$endDate = \DateTime::createFromFormat('!d/m/Y', Validator::string($repeatUntil));
+			$dateErrors = \DateTime::getLastErrors();
 			if ($endDate !== false && ($dateErrors === false || ($dateErrors['warning_count'] === 0 && $dateErrors['error_count'] === 0))) {
 				foreach ($periodosArr as $pId) {
 				$repeatDate = clone $data;

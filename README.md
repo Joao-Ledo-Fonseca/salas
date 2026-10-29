@@ -209,9 +209,17 @@ Permissões relevantes:
 - Formulário de utilizador com lista de reservas do utilizador (compacta, com scroll próprio, status por extenso e botão de eliminação por linha, além de eliminação de todas as reservas).
 - Entidade "Uso" (tabela, form, lista, permissão `M_Usos`) e dropdown de usos no formulário de reservas.
 - Lista de salas com filtro por categoria e estado (activas/inactivas/todas).
+- Formulário de salas com overlay de seleção de imagem (miniaturas existentes, carregar nova, remover). Imagens gravadas sem `addslashes` (prepared statements).
 
 
 ## Configuração e deploy
+
+### Configuração unificada (.env + config.json)
+A aplicação suporta duas fontes de configuração, por ordem de prioridade:
+1. **Variáveis de ambiente** (`.env` em `app/` ou variáveis do servidor) — sobrepõem tudo.
+2. **`config.json`** em `app/` — usado como fallback se não existir `.env`.
+
+Em produção, recomenda-se usar apenas variáveis de ambiente (Apache `SetEnv`, Nginx `fastcgi_param`, ou sistema). O `config.json` é útil para desenvolvimento local.
 
 ### Variáveis de ambiente
 A aplicação suporta um ficheiro `.env` em `app/` (copiar de `app/.env.example`) com as chaves `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_URL_BASE` (ou `auto`). Os valores do `.env` sobrepõem os do `config.json`. O `.env` é ignorado pelo Git.

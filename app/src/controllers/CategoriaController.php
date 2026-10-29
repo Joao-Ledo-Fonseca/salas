@@ -1,8 +1,11 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
-require_once __DIR__ . '/../application/Services/CategoryService.php';
+
+use Salas\Application\Services\CategoryService;
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Infrastructure\Support\Util;
+use Salas\Infrastructure\Validation\Validator;
 
 class CategoriaController
 {

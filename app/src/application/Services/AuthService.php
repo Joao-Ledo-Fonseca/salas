@@ -1,13 +1,12 @@
 <?php
-require_once __DIR__ . '/../../infrastructure/Validation/Validator.php';
+namespace Salas\Application\Services;
 
-require_once __DIR__ . '/../../infrastructure/Auth/Authenticator.php';
-require_once __DIR__ . '/../../infrastructure/Auth/SalasCredentialRepository.php';
-require_once __DIR__ . '/../../infrastructure/Auth/SalasSessionAdapter.php';
-require_once __DIR__ . '/../../infrastructure/Auth/AuthContext.php';
-require_once __DIR__ . '/../../models/Usuario.php';
-require_once __DIR__ . '/../../infrastructure/Support/Util.php';
-require_once __DIR__ . '/../../controllers/UsuarioController.php';
+
+use Salas\Infrastructure\Auth\AuthContext;
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Usuario;
+use Salas\Controllers\UsuarioController;
+use Salas\Infrastructure\Validation\Validator;
 
 class AuthService
 {
@@ -23,8 +22,8 @@ class AuthService
     public function authenticate(string $identifier, string $password): ?array
     {
         $usuario = new Usuario($this->db);
-        $authenticator = new \Salas\Auth\Authenticator(
-            new \Salas\Integration\SalasCredentialRepository($usuario)
+        $authenticator = new \Salas\Infrastructure\Auth\Authenticator(
+            new \Salas\Infrastructure\Auth\SalasCredentialRepository($usuario)
         );
 
         return $authenticator->authenticate(

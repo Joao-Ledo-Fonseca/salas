@@ -1,9 +1,12 @@
 <?php
+namespace Salas\Application\Pages;
 
-require_once __DIR__ . '/../../controllers/DashboardController.php';
-require_once __DIR__ . '/../../infrastructure/Support/Util.php';
-require_once __DIR__ . '/../../application/Services/AuthorizationService.php';
-require_once __DIR__ . '/../../models/Usuario.php';
+
+use Salas\Application\Services\AuthorizationService;
+use Salas\Controllers\DashboardController;
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Usuario;
+use Salas\Infrastructure\Support\Util;
 
 class DashboardPageController
 {
@@ -21,7 +24,7 @@ class DashboardPageController
 		$date = isset($query['data']) && is_string($query['data'])
 			? Util::parseDataPt($query['data'])
 			: null;
-		$date = $date ?? new DateTime();
+		$date = $date ?? new \DateTime();
 
 		$categoryId = filter_var($query['categoria'] ?? null, FILTER_VALIDATE_INT);
 		$categoryId = $categoryId === false || $categoryId === null ? 0 : $categoryId;

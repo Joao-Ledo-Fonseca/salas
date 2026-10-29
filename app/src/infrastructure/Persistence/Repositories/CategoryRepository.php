@@ -1,4 +1,7 @@
 <?php
+namespace Salas\Infrastructure\Persistence\Repositories;
+
+use Salas\Infrastructure\Persistence\Database;
 
 class CategoryRepository
 {

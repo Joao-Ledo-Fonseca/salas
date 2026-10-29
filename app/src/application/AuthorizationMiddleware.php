@@ -1,8 +1,10 @@
 <?php
+namespace Salas\Application;
 
-require_once __DIR__ . '/../infrastructure/Auth/AuthContext.php';
-require_once __DIR__ . '/../infrastructure/Auth/SalasSessionAdapter.php';
-require_once __DIR__ . '/Services/AuthorizationService.php';
+use Salas\Infrastructure\Auth\AuthContext;
+use Salas\Application\Services\AuthorizationService;
+use Salas\Infrastructure\Persistence\Database;
+
 
 class AuthorizationMiddleware
 {

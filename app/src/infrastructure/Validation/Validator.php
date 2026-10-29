@@ -1,4 +1,5 @@
 <?php
+namespace Salas\Infrastructure\Validation;
 
 class Validator
 {

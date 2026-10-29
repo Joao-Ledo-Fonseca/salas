@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . "/../infrastructure/Persistence/Database.php";
+namespace Salas\Models;
+
+use Salas\Infrastructure\Persistence\Database;
 
 class Imagem
 {

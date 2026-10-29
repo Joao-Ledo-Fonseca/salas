@@ -1,4 +1,5 @@
 <?php
+namespace Salas\Infrastructure\Http;
 
 class ViewRenderer
 {

@@ -1,7 +1,10 @@
 <?php
+namespace Salas\Application\Services;
 
-require_once __DIR__ . '/../../models/Permissoes.php';
-require_once __DIR__ . '/../../controllers/PermissoesController.php';
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Permissoes;
+use Salas\Controllers\PermissoesController;
 
 class AuthorizationService
 {

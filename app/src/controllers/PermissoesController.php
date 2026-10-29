@@ -1,6 +1,9 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . "/../models/Permissoes.php";
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Permissoes;
 
 class PermissoesController
     {

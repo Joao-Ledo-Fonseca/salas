@@ -1,4 +1,5 @@
 <?php
+namespace Salas\Config;
 
 final class AppConfig
 {
@@ -51,22 +52,22 @@ final class AppConfig
 			}
 		}
 		if (!is_file($path)) {
-			throw new RuntimeException('O ficheiro de configuração da aplicação não existe.');
+			throw new \RuntimeException('O ficheiro de configuração da aplicação não existe.');
 		}
 
 		$json = file_get_contents($path);
 		if ($json === false) {
-			throw new RuntimeException('Não foi possível ler o ficheiro de configuração da aplicação.');
+			throw new \RuntimeException('Não foi possível ler o ficheiro de configuração da aplicação.');
 		}
 
 		try {
 			$settings = json_decode($json, false, 512, JSON_THROW_ON_ERROR);
-		} catch (JsonException $exception) {
-			throw new RuntimeException('O ficheiro de configuração da aplicação contém JSON inválido.', 0, $exception);
+		} catch (\JsonException $exception) {
+			throw new \RuntimeException('O ficheiro de configuração da aplicação contém JSON inválido.', 0, $exception);
 		}
 
-		if (!$settings instanceof stdClass) {
-			throw new RuntimeException('O ficheiro de configuração da aplicação tem de conter um objeto JSON.');
+		if (!$settings instanceof \stdClass) {
+			throw new \RuntimeException('O ficheiro de configuração da aplicação tem de conter um objeto JSON.');
 		}
 
 		$envMap = ['db_host' => 'DB_HOST', 'db_user' => 'DB_USER', 'db_senha' => 'DB_PASSWORD', 'db_banco' => 'DB_NAME'];
@@ -84,7 +85,7 @@ final class AppConfig
 				continue;
 			}
 			if (!isset($settings->$key) || !is_string($settings->$key) || $settings->$key === '') {
-				throw new RuntimeException('Falta uma configuração de base de dados válida: ' . $key . '.');
+				throw new \RuntimeException('Falta uma configuração de base de dados válida: ' . $key . '.');
 			}
 			$values[$property] = $settings->$key;
 		}
@@ -101,12 +102,12 @@ final class AppConfig
 		}
 
 		if (!isset($settings->db_porta) || !is_int($settings->db_porta) || $settings->db_porta < 1 || $settings->db_porta > 65535) {
-			throw new RuntimeException('A configuração db_porta tem de ser um inteiro entre 1 e 65535.');
+			throw new \RuntimeException('A configuração db_porta tem de ser um inteiro entre 1 e 65535.');
 		}
 
 		$urlBasePath = $settings->url_base_path ?? 'auto';
 		if (!is_string($urlBasePath)) {
-			throw new RuntimeException('A configuração url_base_path tem de ser uma string.');
+			throw new \RuntimeException('A configuração url_base_path tem de ser uma string.');
 		}
 
 		if ($urlBasePath === 'auto') {
@@ -123,7 +124,7 @@ final class AppConfig
 				|| in_array('.', $segments, true)
 				|| in_array('..', $segments, true)
 			) {
-				throw new RuntimeException('A configuração url_base_path tem de ser vazia ou um caminho URL absoluto válido.');
+				throw new \RuntimeException('A configuração url_base_path tem de ser vazia ou um caminho URL absoluto válido.');
 			}
 			$urlBasePath = '/' . implode('/', $segments);
 		}

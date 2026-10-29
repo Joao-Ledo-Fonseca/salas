@@ -1,8 +1,8 @@
 <?php
 
-namespace Salas\Integration;
+namespace Salas\Infrastructure\Auth;
 
-use Salas\Auth\SessionManager;
+
 
 require_once __DIR__ . '/SessionManager.php';
 

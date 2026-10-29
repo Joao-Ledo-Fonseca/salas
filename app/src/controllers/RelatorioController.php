@@ -1,9 +1,11 @@
 <?php
+namespace Salas\Controllers;
 
-require_once __DIR__ . '/../infrastructure/Support/Util.php';
-require_once __DIR__ . "/../models/Reserva.php";
-require_once __DIR__ . "/../models/Sala.php";
-require_once __DIR__ . "/../models/Periodo.php";
+
+use Salas\Infrastructure\Persistence\Database;
+use Salas\Models\Periodo;
+use Salas\Models\Reserva;
+use Salas\Models\Sala;
 
 class RelatorioController
 {
@@ -29,7 +31,7 @@ class RelatorioController
     function disciplinaMaisReservasController($hoje = null, $tipo = 'm', $fim = null)
     {
         if ($hoje === null) {
-            $hoje = new DateTime();
+            $hoje = new \DateTime();
         }
 
         $reserva = new Reserva($this->db);
@@ -68,7 +70,7 @@ class RelatorioController
     function totalReservasController($hoje = null, $tipo = 'm', $fim = null)
     {
         if ($hoje === null) {
-            $hoje = new DateTime();
+            $hoje = new \DateTime();
         }
 
         $reserva = new Reserva($this->db);

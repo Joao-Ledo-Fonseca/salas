@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Salas\Http;
+namespace Salas\Infrastructure\Http;
 
 class ErrorHandler
 {

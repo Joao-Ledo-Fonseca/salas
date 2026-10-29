@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . "/../infrastructure/Persistence/Database.php";
+namespace Salas\Models;
+
+use Salas\Infrastructure\Persistence\Database;
 
 class Reserva
 	{
@@ -69,7 +71,7 @@ class Reserva
 		return $resultado;
 		}
 
-	function listarPorDia(DateTime $hoje, int $categoria_id = 0, int $usuario_id = 0): array
+	function listarPorDia(\DateTime $hoje, int $categoria_id = 0, int $usuario_id = 0): array
 		{
 		$sql = 'select r.*, s.nome as sala_nome, s.categoria_id, p.nome as periodo_nome
 			   from reserva r
@@ -152,7 +154,7 @@ class Reserva
 
 		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
 
-		$next = new datetime();
+		$next = new \DateTime();
 		$next = date_create_from_format('Y-m-d', $dia);
 
 		return $next;
@@ -172,7 +174,7 @@ class Reserva
 
 		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
 
-		$prev = new datetime();
+		$prev = new \DateTime();
 		$prev = date_create_from_format('Y-m-d', $dia);
 
 		return $prev;
@@ -183,7 +185,7 @@ class Reserva
 
 		// Define o filtro padrão como o mês atual, se não for fornecido
 		if (is_null($dia))
-			$dia = new dateTime();
+			$dia = new \DateTime();
 
 
 		if ($tipo == 'm') {   // m - mês ; w - week
@@ -223,7 +225,7 @@ class Reserva
 
 	/**
 	 * Lista reservas num intervalo de datas inclusivo.
-	 * Recebe dois DateTime ($inicio, $fim) e devolve as linhas.
+	 * Recebe dois \DateTime ($inicio, $fim) e devolve as linhas.
 	 */
 	function listaReservasPeriodo($inicio, $fim)
 		{

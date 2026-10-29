@@ -9,6 +9,11 @@
         "phpunit/phpunit": "^10.0",
         "phpstan/phpstan": "^1.10"
     },
+    "autoload": {
+        "psr-4": {
+            "Salas\\": "app/src/"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
             "Salas\\Tests\\": "app/tests/"
