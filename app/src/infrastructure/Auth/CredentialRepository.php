@@ -2,7 +2,6 @@
 
 namespace Salas\Infrastructure\Auth;
 
-use Salas\Infrastructure\Auth\CredentialRepository;
 
 interface CredentialRepository
 {

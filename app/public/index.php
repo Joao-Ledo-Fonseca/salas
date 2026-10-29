@@ -15,6 +15,7 @@ use Salas\Infrastructure\Http\ErrorHandler;
 use Salas\Infrastructure\Http\ViewRenderer;
 use Salas\Infrastructure\Auth\SalasSessionAdapter;
 use Salas\Controllers\LoginController;
+use Salas\Controllers\UsuarioController;
 use Salas\Application\Router;
 
 $database = new Database($appConfig);
@@ -53,7 +54,6 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
 // 1. Intersetar Logout e Login
 if ($request->action() === 'logout') {
     // 🎯 CORREÇÃO: Chama o método diretamente do controlador unificado
-    require_once $appRoot . '/controllers/UsuarioController.php';
     $UsuarioController = new UsuarioController($database);
     $UsuarioController->logout();
     exit;

@@ -214,6 +214,14 @@ Permissões relevantes:
 
 ## Configuração e deploy
 
+### Autoloading (Composer)
+A aplicação usa PSR-4 autoloading via Composer. Após clonar, execute:
+```powershell
+composer install
+composer dump-autoload
+```
+As classes estão nos namespaces `Salas\\Controllers`, `Salas\\Models`, `Salas\\Infrastructure\\*`, etc.
+
 ### Configuração unificada (.env + config.json)
 A aplicação suporta duas fontes de configuração, por ordem de prioridade:
 1. **Variáveis de ambiente** (`.env` em `app/` ou variáveis do servidor) — sobrepõem tudo.

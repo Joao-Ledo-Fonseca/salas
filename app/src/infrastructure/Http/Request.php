@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Salas\Infrastructure\Http;
 
-use Salas\Infrastructure\Http\Request;
 
 final class Request
 {
