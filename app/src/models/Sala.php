@@ -70,6 +70,12 @@ function total()
 	$sql = 'select count(id) as total from sala';
 	return $this->db->query($sql);
 }
+
+function nullifyImageId($imageId)
+{
+	$sql = 'update sala set imagem_id = null where imagem_id = ?';
+	return $this->db->query_update($sql, [$imageId]);
+}
 }
 
 ?>

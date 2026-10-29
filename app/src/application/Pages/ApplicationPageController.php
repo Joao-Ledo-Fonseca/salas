@@ -84,8 +84,10 @@ class ApplicationPageController
 				$data['_layout'] = 'layout.php';
 				$permissionController = new AuthorizationService($this->db);
 				$users = $data['lista'];
-				foreach ($users as $i => $user) {
-					$users[$i]['nivel_nome'] = $permissionController->nomeNivel((int) $user['nivel'], 2);
+				foreach (array_keys($users) as $i) {
+					$user = $users[$i];
+					$user['nivel_nome'] = $permissionController->nomeNivel((int) $user['nivel'], 2);
+					$users[$i] = $user;
 				}
 				$data['lista'] = $users;
 				break;
@@ -246,6 +248,13 @@ class ApplicationPageController
 			if ($reservaId > 0 && $podeEliminarReservas) {
 				(new \Reserva($this->db))->excluir($reservaId);
 				$error = 'Reserva eliminada com sucesso.';
+			}
+		}
+		if (isset($post['eliminar_imagem'])) {
+			$imageId = (int) ($post['imagem_id'] ?? 0);
+			if ($imageId > 0) {
+				$controller->eliminarImagem($imageId);
+				$error = 'Imagem eliminada com sucesso.';
 			}
 		}
 		if ($post !== []) {

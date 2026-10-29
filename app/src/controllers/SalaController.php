@@ -116,6 +116,18 @@ class SalaController
         return $sala->listarPorCategoria($id);
     }
 
+    public function eliminarImagem(int $imageId): bool
+    {
+        if ($imageId <= 0) {
+            return false;
+        }
+        $sala = new Sala($this->db);
+        $sala->nullifyImageId($imageId);
+        $image = new ImageRepository($this->db);
+        $image->delete($imageId);
+        return true;
+    }
+
     public function listarImagensController(): array
     {
         $image = new ImageRepository($this->db);

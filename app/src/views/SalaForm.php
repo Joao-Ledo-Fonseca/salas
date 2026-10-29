@@ -45,15 +45,7 @@
                     <td width="100px">Activa</td>
                     <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?> ></td>
                 </tr>
-                <tr>
-                    <td width="100px">Foto</td>
-                    <td>
-                        <div>
-                            <button type="button" id="btnFicheiro" class="btn1" onclick="abrirOverlayImagens()">Ficheiro</button>
-                            <input name="imagem" id="newimagem" type="file" style="display:none;" />
-                        </div>
-                    </td>
-                </tr>
+                <input name="imagem" id="newimagem" type="file" style="display:none;" />
             </table>
             <input type="submit" name="salvar" value="Salvar" class="btn1" />
             <input type="submit" name="excluir" value="Excluir" class="btn1" />
@@ -68,7 +60,12 @@ $cancelUrl = (($return_to ?? '') !== '')
     </div>
     <div class="apar">
         <?php
-        echo '<img id="imagem" src="data:image/jpeg;base64,' . base64_encode($imagem) . '"  ' . ((strlen($imagem) > 0) ? "" : "style='display:none'") . ' width=400px />';
+        if (strlen($imagem) > 0) {
+            echo '<img id="imagem" src="data:image/jpeg;base64,' . base64_encode($imagem) . '" width=400px style="cursor:pointer;" onclick="abrirOverlayImagens()" />';
+        } else {
+            echo '<div id="imagemPlaceholder" style="width:400px; height:200px; border:1px solid #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; cursor:pointer;" onclick="abrirOverlayImagens()">Adicionar Imagem</div>';
+            echo '<img id="imagem" style="display:none; width:400px;" />';
+        }
         ?>
     </div>
 
@@ -85,9 +82,10 @@ $cancelUrl = (($return_to ?? '') !== '')
             </div>
             <div id="gridImagens" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;">
                 <?php foreach (($imagens ?? []) as $img): ?>
-                    <div class="img-thumb" data-id="<?= (int) $img['id'] ?>" data-base64="<?= base64_encode($img['imagem']) ?>" style="cursor:pointer; border:1px solid #ccc; border-radius:4px; overflow:hidden; text-align:center;" onclick="selecionarImagem(this)">
+                    <div class="img-thumb" data-id="<?= (int) $img['id'] ?>" data-base64="<?= base64_encode($img['imagem']) ?>" style="position:relative; cursor:pointer; border:1px solid #ccc; border-radius:4px; overflow:hidden; text-align:center;" onclick="selecionarImagem(this)">
                         <img src="data:<?= htmlspecialchars($img['tipo_imagem'], ENT_QUOTES, 'UTF-8') ?>;base64,<?= base64_encode($img['imagem']) ?>" style="width:100%; height:60px; object-fit:cover;" />
                         <div style="font-size:9px; padding:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?= htmlspecialchars($img['nome_imagem'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <button type="button" style="position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; line-height:14px; padding:0; cursor:pointer; z-index:10;" title="Eliminar imagem" onclick="event.stopPropagation(); eliminarImagemOverlay(<?= (int) $img['id'] ?>); return false;">&times;</button>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -257,11 +255,35 @@ $cancelUrl = (($return_to ?? '') !== '')
         var img = document.getElementById('imagem');
         img.src = 'data:image/jpeg;base64,' + b64;
         img.style.display = 'block';
+        var ph = document.getElementById('imagemPlaceholder');
+        if (ph) { ph.style.display = 'none'; }
         fecharOverlayImagens();
     }
+    function eliminarImagemOverlay(imageId) {
+        var params = new URLSearchParams();
+        params.append('id', '<?= (int) $id ?>');
+        params.append('categoria_filtro', '<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>');
+        params.append('activas', '<?= htmlspecialchars((string) $activas_filtro, ENT_QUOTES, 'UTF-8') ?>');
+        params.append('csrf_token', '<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>');
+        params.append('eliminar_imagem', '1');
+        params.append('imagem_id', String(imageId));
+
+        fetch('<?= htmlspecialchars(app_url('?acao=sala_form'), ENT_QUOTES, 'UTF-8') ?>', {
+            method: 'POST',
+            body: params,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(function() {
+            window.location.reload();
+        }).catch(function() {
+            window.location.reload();
+        });
+    }
+
     function semImagem() {
         document.getElementById('imagem_id').value = '';
         document.getElementById('imagem').style.display = 'none';
+        var ph = document.getElementById('imagemPlaceholder');
+        if (ph) { ph.style.display = 'flex'; }
         fecharOverlayImagens();
     }
     function carregarNovaImagem() {
@@ -276,6 +298,8 @@ $cancelUrl = (($return_to ?? '') !== '')
                 var img = document.getElementById('imagem');
                 img.src = e.target.result;
                 img.style.display = 'block';
+                var ph = document.getElementById('imagemPlaceholder');
+                if (ph) { ph.style.display = 'none'; }
                 document.getElementById('imagem_id').value = '';
             };
             reader.readAsDataURL(input.files[0]);

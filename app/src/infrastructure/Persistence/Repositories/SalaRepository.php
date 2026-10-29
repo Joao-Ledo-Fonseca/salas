@@ -70,4 +70,10 @@ class SalaRepository
         $rows = $this->find($id);
         return isset($rows[0]['nome']) ? (string) $rows[0]['nome'] : '';
     }
+
+    public function nullifyImageId(int $imageId): int
+    {
+        $sql = 'update sala set imagem_id = null where imagem_id = ?';
+        return $this->db->query_update($sql, [$imageId]);
+    }
 }
