@@ -65,7 +65,6 @@ $tipo_img = $imagem['type'];
 
 //Lê o ficheiro uploaded
 $conteudo = file_get_contents($imagem['tmp_name']);
-$conteudo = addslashes($conteudo);
 
 return array('nome_img' => $nome_img, 'tamanho_img' => $tamanho_img, 'tipo_img' => $tipo_img, 'conteudo' => $conteudo);
 }

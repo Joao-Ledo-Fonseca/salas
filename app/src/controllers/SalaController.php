@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../infrastructure/Support/Util.php';
 require_once __DIR__ . '/../application/Services/SalaService.php';
 require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
+require_once __DIR__ . '/../infrastructure/Persistence/Repositories/ImageRepository.php';
 
 class SalaController
 {
@@ -15,7 +16,7 @@ class SalaController
         $this->service = new SalaService($db);
     }
 
-    public function salvar($categoria_filtro, $activas_filtro): bool
+    public function salvar($categoria_filtro, $activas_filtro, $returnTo = '', $returnId = 0): bool
     {
         if (!isset($_POST['salvar'])) {
             return false;
@@ -32,11 +33,15 @@ class SalaController
         $uploadedImage = Util::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
         $this->service->save($id, $nome, $descricao, $categoryId, $places, $active, $imageId, is_array($uploadedImage) ? $uploadedImage : false);
 
-        header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
+        if ($returnTo !== '') {
+            header('Location: ' . app_url('?acao=' . $returnTo . '&id=' . rawurlencode((string) $returnId)));
+        } else {
+            header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
+        }
         exit();
     }
 
-    public function excluir($categoria_filtro, $activas_filtro): bool
+    public function excluir($categoria_filtro, $activas_filtro, $returnTo = '', $returnId = 0): bool
     {
         if (!isset($_POST['excluir'])) {
             return false;
@@ -47,18 +52,26 @@ class SalaController
         $success = $this->service->delete($id, Validator::string($_POST['imagem_id'] ?? ''));
         if (!$success) {
             $errormsg = 'Erro ao excluir a sala. Existem reservas.';
-            header('Location: ' . app_url('?acao=sala_form&id=' . $id . '&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&errormsg=' . urlencode($errormsg)));
+            header('Location: ' . app_url('?acao=sala_form&id=' . $id . '&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro) . '&errormsg=' . urlencode($errormsg) . ($returnTo !== '' ? '&return_to=' . rawurlencode($returnTo) . '&return_id=' . rawurlencode((string) $returnId) : '')));
             exit();
         }
 
-        header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
+        if ($returnTo !== '') {
+            header('Location: ' . app_url('?acao=' . $returnTo . '&id=' . rawurlencode((string) $returnId)));
+        } else {
+            header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
+        }
         exit();
     }
 
-    public function cancelar($categoria_filtro, $activas_filtro): bool
+    public function cancelar($categoria_filtro, $activas_filtro, $returnTo = '', $returnId = 0): bool
     {
         if (isset($_POST['cancelar'])) {
-            header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
+            if ($returnTo !== '') {
+                header('Location: ' . app_url('?acao=' . $returnTo . '&id=' . rawurlencode((string) $returnId)));
+            } else {
+                header('Location: ' . app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)));
+            }
             exit();
         }
 
@@ -83,5 +96,29 @@ class SalaController
     public function listarController($filtro_categoria_id = 0, $filtro_activas = 'activas'): array
     {
         return $this->service->list((int) $filtro_categoria_id, (string) $filtro_activas);
+    }
+
+    public function listarReservasSala(int $id): array
+    {
+        $reserva = new Reserva($this->db);
+        return $reserva->listarPorSala($id);
+    }
+
+    public function eliminarReservasSala(int $id): int
+    {
+        $reserva = new Reserva($this->db);
+        return (int) $reserva->excluirPorSala($id);
+    }
+
+    public function listarSalasCategoria(int $id): array
+    {
+        $sala = new Sala($this->db);
+        return $sala->listarPorCategoria($id);
+    }
+
+    public function listarImagensController(): array
+    {
+        $image = new ImageRepository($this->db);
+        return $image->listar();
     }
 }

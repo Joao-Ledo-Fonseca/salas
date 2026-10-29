@@ -202,7 +202,7 @@ function show_salvar() {
 }
 
 function cancelaInputsRequired() {        
-	$('input').prop('value','');
+	$('input').not('[name="csrf_token"]').prop('value','');
 	$('input').prop('required', false);		
 }
 

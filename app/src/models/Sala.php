@@ -59,11 +59,17 @@ class Sala
 		return $this->db->query_update($sql, [$id]);
 	}
 
-	function total()
-	{
-		$sql = 'select count(id) as total from sala';
-		return $this->db->query($sql);
-	}
+	function listarPorCategoria($categoria_id)
+{
+    $sql = 'select id, nome, descricao, lugares, activa from sala where categoria_id = ? order by nome;';
+    return $this->db->query($sql, [$categoria_id]);
+}
+
+function total()
+{
+	$sql = 'select count(id) as total from sala';
+	return $this->db->query($sql);
+}
 }
 
 ?>

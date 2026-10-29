@@ -337,6 +337,18 @@ class Reserva
         $sql = 'delete from reserva where usuario_id = ?';
         return $this->db->query_update($sql, [$usuario_id]);
     }
+
+    function listarPorSala($sala_id)
+    {
+        $sql = "select a.id, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.professor_desc, a.disciplina_desc, a.status, d.nome as usuario from reserva a inner join periodo b on a.periodo_id = b.id inner join usuario d on a.usuario_id = d.id where a.sala_id = ? order by a.dia, b.seq";
+        return $this->db->query($sql, [$sala_id]);
+    }
+
+    function excluirPorSala($sala_id)
+    {
+        $sql = 'delete from reserva where sala_id = ?';
+        return $this->db->query_update($sql, [$sala_id]);
+    }
 }
 
 ?>

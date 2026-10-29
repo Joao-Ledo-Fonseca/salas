@@ -15,6 +15,12 @@ class ImageRepository
         return $this->db->query($sql, [$id]);
     }
 
+    public function listar(): array
+    {
+        $sql = 'select id, nome_imagem, tipo_imagem, imagem from imagem order by id desc';
+        return $this->db->query($sql);
+    }
+
     public function save(int $id, string $nome, string $tamanho, string $tipo, string $conteudo): int
     {
         if ($id === 0) {

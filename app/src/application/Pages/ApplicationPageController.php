@@ -53,6 +53,7 @@ class ApplicationPageController
 				break;
 			case 'categoria_form':
 				$data += $this->categoriaForm($query, $post);
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'uso_list':
 				$data['lista'] = (new UsoController($this->db))->listarController();
@@ -82,10 +83,11 @@ class ApplicationPageController
 				$data['lista'] = (new UsuarioController($this->db))->listarController();
 				$data['_layout'] = 'layout.php';
 				$permissionController = new AuthorizationService($this->db);
-				foreach ($data['lista'] as &$user) {
-					$user['nivel_nome'] = $permissionController->nomeNivel((int) $user['nivel'], 2);
+				$users = $data['lista'];
+				foreach ($users as $i => $user) {
+					$users[$i]['nivel_nome'] = $permissionController->nomeNivel((int) $user['nivel'], 2);
 				}
-				unset($user);
+				$data['lista'] = $users;
 				break;
 			case 'usuario_form':
 				$data += $this->usuarioForm($query, $post);
@@ -161,6 +163,11 @@ class ApplicationPageController
 			$controller->salvar();
 		}
 		$record = $controller->abrir();
+		$targetId = (int) ($query['id'] ?? 0);
+		$salasCategoria = [];
+		if ($targetId > 0) {
+			$salasCategoria = (new SalaController($this->db))->listarSalasCategoria($targetId);
+		}
 		return array_merge([
 			'id' => 0,
 			'nome' => '',
@@ -171,6 +178,7 @@ class ApplicationPageController
 			'tipo_img' => '',
 			'imagem' => '',
 			'errormsg' => (string) ($query['errormsg'] ?? ''),
+			'salasCategoria' => $salasCategoria,
 		], is_array($record) ? $record : []);
 	}
 
@@ -217,15 +225,42 @@ class ApplicationPageController
 
 	private function salaForm(array $query, array $post): array
 	{
+		header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+		header('Pragma: no-cache');
 		$categoryFilter = Validator::string($query['categoria_filtro'] ?? $post['categoria_filtro'] ?? 0);
 		$activeFilter = (string) Validator::string($query['activas'] ?? $post['activas'] ?? 'activas');
+		$returnTo = Validator::string($query['return_to'] ?? $post['return_to'] ?? '');
+		$returnId = (int) Validator::string($query['return_id'] ?? $post['return_id'] ?? 0);
 		$controller = new SalaController($this->db);
+		$auth = new AuthContext();
+		$reservasSala = [];
+		$podeEliminarReservas = (new AuthorizationService($this->db))->validaPermissao('M_EliminarReservasUtilizador', $auth->level());
+		$error = '';
+		if (isset($post['eliminar_reservas']) && $podeEliminarReservas) {
+			$targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+			$controller->eliminarReservasSala($targetId);
+			$error = 'Reservas da sala eliminadas com sucesso.';
+		}
+		if (isset($post['eliminar_reserva'])) {
+			$reservaId = (int) ($post['reserva_id'] ?? 0);
+			if ($reservaId > 0 && $podeEliminarReservas) {
+				(new \Reserva($this->db))->excluir($reservaId);
+				$error = 'Reserva eliminada com sucesso.';
+			}
+		}
 		if ($post !== []) {
-			$controller->cancelar($categoryFilter, $activeFilter);
-			$controller->excluir($categoryFilter, $activeFilter);
-			$controller->salvar($categoryFilter, $activeFilter);
+			$controller->cancelar($categoryFilter, $activeFilter, $returnTo, $returnId);
+			$deleteResult = $controller->excluir($categoryFilter, $activeFilter, $returnTo, $returnId);
+			if ($deleteResult === false) {
+				$error = 'Sala não pode ser excluída. Existem reservas associadas.';
+			}
+			$controller->salvar($categoryFilter, $activeFilter, $returnTo, $returnId);
 		}
 		$record = $controller->abrir();
+		$targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+		if ($targetId > 0) {
+			$reservasSala = $controller->listarReservasSala($targetId);
+		}
 		return array_merge([
 			'id' => 0,
 			'nome' => '',
@@ -240,7 +275,12 @@ class ApplicationPageController
 			'imagem' => '',
 			'categoria_filtro' => $categoryFilter,
 			'activas_filtro' => $activeFilter,
-			'errormsg' => (string) ($query['errormsg'] ?? ''),
+			'errormsg' => $error !== '' ? $error : (string) ($query['errormsg'] ?? ''),
+			'reservasSala' => $reservasSala,
+			'podeEliminarReservas' => $podeEliminarReservas,
+			'return_to' => $returnTo,
+			'return_id' => $returnId,
+			'imagens' => (new SalaController($this->db))->listarImagensController(),
 		], is_array($record) ? $record : [], [
 			'categorias' => (new CategoriaController($this->db))->listarOpcoesController(),
 		]);
