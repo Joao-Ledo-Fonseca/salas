@@ -47,6 +47,7 @@
                 <div id="direito_log">
 
                     <form action="<?= app_url('?acao=login') ?>" method="post" name="Formulario">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
 
                         <span style="color:#900"><?= $loginView['errormsg'] ?></span><br /><br />
 
@@ -88,6 +89,7 @@
 
                 <div id="direito_reg" name="novo" style="display:none">
                     <form action="<?= app_url('?acao=login') ?>" method="post" name="Formulario2">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
 
                         <span style="color:#900"><?= $loginView['errormsg'] ?></span><br /><br/>
 

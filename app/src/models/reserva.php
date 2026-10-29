@@ -24,6 +24,7 @@ class Reserva
 		,a.disciplina_desc
 		,a.status
 		,a.observacao
+		,a.uso_id
 		,date_format(a.dia,"%d/%m/%Y") as dia
 		,d.nome as usuario
 					
@@ -68,6 +69,25 @@ class Reserva
 		return $resultado;
 		}
 
+	function listarPorDia(DateTime $hoje, int $categoria_id = 0, int $usuario_id = 0): array
+		{
+		$sql = 'select r.*, s.nome as sala_nome, s.categoria_id, p.nome as periodo_nome
+			   from reserva r
+			   inner join sala s on r.sala_id = s.id
+			   inner join periodo p on r.periodo_id = p.id
+			   where r.dia = ? and (? = 0 or s.categoria_id = ?) and (? = 0 or r.usuario_id = ?)';
+		$rows = $this->db->query($sql, [
+			$hoje->format('Y-m-d'),
+			$categoria_id, $categoria_id,
+			$usuario_id, $usuario_id,
+		]);
+		$map = [];
+		foreach ($rows as $r) {
+			$map[(int)$r['sala_id']][(int)$r['periodo_id']] = $r;
+		}
+		return $map;
+		}
+
 
 	function excluir($id)
 		{
@@ -77,13 +97,13 @@ class Reserva
 		return 0;
 		}
 
-	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo, $usuario)
+	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo, $usuario, $uso_id = null)
 		{
 
 		// atualizar
 		if ($id > 0) {
 			$sql = 'update reserva set
-			dia = ?, professor_desc = ?, disciplina_desc = ?, observacao = ?, status = ?
+			dia = ?, professor_desc = ?, disciplina_desc = ?, observacao = ?, status = ?, uso_id = ?
 			where id = ?';
 
 			$this->db->query_update($sql, [
@@ -92,17 +112,17 @@ class Reserva
 				$disciplina,
 				$observacao,
 				$status,
+				$uso_id,
 				$id,
 			]);
 
 			return $id;
-
-			}
+		}
 		// salvar novo registro
 		else {
 			$sql = 'INSERT INTO reserva
-				(sala_id, periodo_id, dia, professor_desc, disciplina_desc, status, observacao, usuario_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+				(sala_id, periodo_id, dia, professor_desc, disciplina_desc, status, observacao, usuario_id, uso_id)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 			return $this->db->query_insert($sql, [
 				$sala,
@@ -113,21 +133,21 @@ class Reserva
 				$status,
 				$observacao,
 				$usuario,
+				$uso_id,
 			]);
-
-			}
-
+		}
 		}
 
-	function next($hoje, $categoria)
+
+	function next($hoje, $categoria, $usuario_id = 0)
 		{
 
 		$sql = 'select Min(dia)
 				   from reserva
 				   inner join sala on reserva.sala_id = sala.id
-				   where dia > ? and (sala.categoria_id = ? or ? = 0)';
+				   where dia > ? and (sala.categoria_id = ? or ? = 0) and (? = 0 or reserva.usuario_id = ?)';
 
-		$res = $this->db->query($sql, [$hoje->format("Y-m-d"), $categoria, $categoria]);
+		$res = $this->db->query($sql, [$hoje->format("Y-m-d"), $categoria, $categoria, $usuario_id, $usuario_id]);
 		$dia = $res[0]['Min(dia)'];
 
 		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
@@ -139,15 +159,15 @@ class Reserva
 		}
 
 
-	function prev($hoje, $categoria)
+	function prev($hoje, $categoria, $usuario_id = 0)
 		{
 
 		$sql = 'select Max(dia)
 				   from reserva
 				   inner join sala on reserva.sala_id = sala.id
-				   where dia < ? and (sala.categoria_id = ? or ? = 0)';
+				   where dia < ? and (sala.categoria_id = ? or ? = 0) and (? = 0 or reserva.usuario_id = ?)';
 
-		$res = $this->db->query($sql, [$hoje->format("Y-m-d"), $categoria, $categoria]);
+		$res = $this->db->query($sql, [$hoje->format("Y-m-d"), $categoria, $categoria, $usuario_id, $usuario_id]);
 		$dia = $res[0]['Max(dia)'];
 
 		$dia = is_null($dia) ? $hoje->format('Y-m-d') : $dia;
@@ -306,6 +326,17 @@ class Reserva
 		}
 
 
-	}
+	    function listarPorUsuario($usuario_id)
+    {
+        $sql = "select a.id, c.nome as sala, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.professor_desc, a.disciplina_desc, a.status from reserva a inner join periodo b on a.periodo_id = b.id inner join sala c on a.sala_id = c.id where a.usuario_id = ? order by a.dia, c.nome, b.seq";
+        return $this->db->query($sql, [$usuario_id]);
+    }
+
+    function excluirPorUsuario($usuario_id)
+    {
+        $sql = 'delete from reserva where usuario_id = ?';
+        return $this->db->query_update($sql, [$usuario_id]);
+    }
+}
 
 ?>

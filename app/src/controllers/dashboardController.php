@@ -7,172 +7,134 @@ require_once __DIR__ . "/../models/Sala.php";
 require_once __DIR__ . "/../models/Reserva.php";
 
 class DashboardController
-	{
-	private Database $db;
+{
+    private Database $db;
 
-	public $reserva;
+    public $reserva;
 
-	function __construct(Database $db)
-		{
-		$this->db = $db;
-		$this->reserva = new Reserva($db);
-		}
+    function __construct(Database $db)
+    {
+        $this->db = $db;
+        $this->reserva = new Reserva($db);
+    }
 
-	function listarPeriodosDashboard()
-		{
-		$periodo = new Periodo($this->db);
-		return $periodo->listar();
-		}
+    function listarPeriodosDashboard()
+    {
+        $periodo = new Periodo($this->db);
+        return $periodo->listar();
+    }
 
-	function listarSalasDashboard($hoje, $categoria_id = 0)
-		{
-		$sl = new Sala($this->db);
-		$per = new Periodo($this->db);
+    function listarSalasDashboard($hoje, $categoria_id = 0, $usuario_id = 0)
+    {
+        $sl = new sala($this->db);
+        $per = new Periodo($this->db);
 
-		$salas = $sl->listar($categoria_id);
-		$periodos = $per->listar();
-		$linhas = [];
+        $salas = $sl->listar($categoria_id);
+        $periodos = $per->listar();
+        $linhas = [];
 
-		foreach ($salas as $sala) {
-			$cells = [];
+        // Uma única query para todas as reservas do dia (evita N+1)
+        $reservasMap = $this->reserva->listarPorDia($hoje, $categoria_id, $usuario_id);
 
-			foreach ($periodos as $periodo) {
-				$reserva = [
-					'disciplina' => '',
-					'professor' => '',
-					'id' => 0,
-					'usuario_id' => '',
-					'classe' => 'disponivel',
-				];
-				$status = $this->reserva->verificarCompleto($hoje, $sala['id'], $periodo['id']);
+        foreach ($salas as $sala) {
+            $cells = [];
 
-				if (!empty($status) && isset($status[0]['id'])) {
-					if ($status[0]['status'] == 1) {
-						$reserva['classe'] = 'reservado';
-						}
-					elseif ($status[0]['status'] == 2) {
-						$reserva['classe'] = 'confirmado';
-						}
-					elseif ($status[0]['status'] == 3) {
-						$reserva['classe'] = 'cancelado';
-						}
-					else {
-						$reserva['classe'] = 'desconhecido';
-						}
+            foreach ($periodos as $periodo) {
+                $reserva = [
+                    'disciplina' => '',
+                    'professor' => '',
+                    'observacao' => '',
+                    'status' => 0,
+                    'usuario' => '',
+                    'tooltip' => '',
+                    'id' => 0,
+                    'usuario_id' => '',
+                    'classe' => 'disponivel',
+                ];
 
-					$reserva['disciplina'] = $status[0]['disciplina_desc'];
-					$reserva['professor'] = $status[0]['professor_desc'];
-					$reserva['id'] = $status[0]['id'];
-					$reserva['usuario_id'] = $status[0]['usuario_id'];
-					}
+                $status = $reservasMap[(int)$sala['id']][(int)$periodo['id']] ?? null;
 
-				if (isset($_SESSION['user_nivel']) && $_SESSION['user_nivel'] == 0) {
-					$reserva['can_open'] = (($_SESSION['user_id'] == $reserva['usuario_id']) || ($reserva['usuario_id'] == ''));
-					}
-				else {
-					$reserva['can_open'] = true;
-					}
+                if (!empty($status) && isset($status['id'])) {
+                    if ($usuario_id > 0 && (int) $status['usuario_id'] !== (int) $usuario_id) {
+                        $reserva['classe'] = 'disponivel';
+                        $reserva['disciplina'] = '';
+                        $reserva['professor'] = '';
+                        $reserva['observacao'] = '';
+                        $reserva['status'] = 0;
+                        $reserva['usuario'] = '';
+                        $reserva['tooltip'] = '';
+                        $reserva['id'] = 0;
+                        $reserva['usuario_id'] = '';
+                    } else {
+                        if ($status['status'] == 1) {
+                            $reserva['classe'] = 'reservado';
+                        } elseif ($status['status'] == 2) {
+                            $reserva['classe'] = 'confirmado';
+                        } elseif ($status['status'] == 3) {
+                            $reserva['classe'] = 'cancelado';
+                        } else {
+                            $reserva['classe'] = 'desconhecido';
+                        }
 
-				$reserva['sala_id'] = $sala['id'];
-				$reserva['periodo_id'] = $periodo['id'];
-				$cells[] = $reserva;
-				}
+                        $statusNames = [1 => 'Reservado', 2 => 'Confirmado', 3 => 'Cancelado'];
+                        $statusName = $statusNames[(int) $status['status']] ?? 'Desconhecido';
 
-			$linhas[] = [
-				'nome' => $sala['nome'],
-				'cells' => $cells,
-			];
-			}
+                        $reserva['disciplina'] = $status['disciplina_desc'];
+                        $reserva['professor'] = $status['professor_desc'];
+                        $reserva['observacao'] = (string) ($status['observacao'] ?? '');
+                        $reserva['status'] = (int) $status['status'];
+                        $reserva['usuario'] = (string) ($status['usuario'] ?? '');
+                        $reserva['id'] = $status['id'];
+                        $reserva['usuario_id'] = $status['usuario_id'];
 
-		return $linhas;
-		}
+                        $tooltipLines = [];
+                        $tooltipLines[] = 'Entidade: ' . $status['professor_desc'];
+                        $tooltipLines[] = 'Uso: ' . $status['disciplina_desc'];
+                        if (trim((string) ($status['observacao'] ?? '')) !== '') {
+                            $tooltipLines[] = 'Obs: ' . $status['observacao'];
+                        }
+                        $tooltipLines[] = 'Status: ' . $statusName;
+                        if (trim((string) ($status['usuario'] ?? '')) !== '') {
+                            $tooltipLines[] = 'User: ' . $status['usuario'];
+                        }
+                        $reserva['tooltip'] = implode("\n", $tooltipLines);
+                    }
+                }
 
-	// Lista de todas as reservas 
-	function listaReservasController($hoje = null, $tipo = 'm', $fim = null)
-		{
-		if ($tipo === 'p' && $fim !== null) {
-			$rows = $this->reserva->listaReservasPeriodo($hoje, $fim);
-			}
-		else {
-			$rows = $this->reserva->listaReservas($hoje, $tipo);
-			}
+                if (isset($_SESSION['user_nivel']) && $_SESSION['user_nivel'] == 0) {
+                    $reserva['can_open'] = (($_SESSION['user_id'] == $reserva['usuario_id']) || ($reserva['usuario_id'] == ''));
+                } else {
+                    $reserva['can_open'] = true;
+                }
 
-		return $rows;
-		}
+                $reserva['sala_id'] = $sala['id'];
+                $reserva['periodo_id'] = $periodo['id'];
+                $cells[] = $reserva;
+            }
 
-	// relatorio de disciplina com mais reservas
-	function listarCategoriasController()
-		{
-		$categoria = new Categoria($this->db);
-		return $categoria->listar();
-		}
+            $linhas[] = [
+                'nome' => $sala['nome'],
+                'cells' => $cells,
+            ];
+        }
 
-	// 🎯 Alinhado para receber $fim e tratar o período corretamente
-	function disciplinaMaisReservasController($hoje = null, $tipo = 'm', $fim = null)
-		{
-		if ($hoje === null) {
-			$hoje = new DateTime();
-			}
+        return $linhas;
+    }
 
-		$reserva = new Reserva($this->db);
-		
-		// Encaminha os parâmetros necessários para o modelo
-		$row1 = $reserva->disciplinaMaisReservas($hoje, $tipo, $fim);
+    function listarCategoriasController()
+    {
+        $categoria = new Categoria($this->db);
+        return $categoria->listar();
+    }
 
-		return $row1;
-		}
+    function prevController($dia, $categoria_id, $usuario_id = 0)
+    {
+        return $this->reserva->prev($dia, $categoria_id, $usuario_id);
+    }
 
-	// 🎯 UNIFORMIZAÇÃO DOS HORÁRIOS: Ajusta o multiplicador baseado no intervalo real de dias
-	function totalHorariosController($tipo = 'm', $hoje = null, $fim = null)
-	{
-		$sala = new Sala($this->db);
-		$periodo = new Periodo($this->db);
+    function nextController($dia, $categoria_id, $usuario_id = 0)
+    {
+        return $this->reserva->next($dia, $categoria_id, $usuario_id);
+    }
+}
 
-		$salas = $sala->total();
-		$periodos = $periodo->total();
-
-		$total_salas = isset($salas[0]['total']) ? $salas[0]['total'] : (isset($salas['total']) ? $salas['total'] : 1);
-		$total_periodos = isset($periodos[0]['total']) ? $periodos[0]['total'] : (isset($periodos['total']) ? $periodos['total'] : 1);
-
-		// Calcula a quantidade real de dias do filtro
-		if ($tipo === 'w') {
-			$multiplicador_dias = 7;
-		} elseif ($tipo === 'p' && $hoje !== null && $fim !== null) {
-			// Calcula a diferença real de dias entre as duas datas
-			$intervalo = $hoje->diff($fim);
-			$multiplicador_dias = $intervalo->days + 1; // +1 para incluir o próprio dia de fim
-		} else {
-			$multiplicador_dias = 30; // Padrão mensal
-		}
-
-		return ($total_salas * $total_periodos * $multiplicador_dias);
-	}
-
-	// 🎯 UNIFORMIZAÇÃO DO GRÁFICO: Agora recebe e consome os mesmos dados que a listagem
-	function totalReservasController($hoje = null, $tipo = 'm', $fim = null)
-	{
-		if ($hoje === null) {
-			$hoje = new DateTime();
-		}
-
-		$reserva = new Reserva($this->db);
-		
-		// Usamos uma lógica centralizada no modelo para contar as reservas com base nos mesmos filtros
-		$rows = $reserva->listaReservasParaRelatorio($hoje, $tipo, $fim);
-
-		return count($rows);
-	}
-
-	function prevController($dia, $categoria_id)
-		{
-		return $this->reserva->prev($dia, $categoria_id);
-		}
-
-	function nextController($dia, $categoria_id)
-		{
-		return $this->reserva->next($dia, $categoria_id);
-		}
-
-
-	}
-?>

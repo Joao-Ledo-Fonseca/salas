@@ -82,7 +82,8 @@ if ($request->action() !== null) {
             echo $page['response'];
             exit;
         }
-        ViewRenderer::render($page['view'], $page['data']);
+        $layout = $page['data']['_layout'] ?? null;
+        ViewRenderer::render($page['view'], $page['data'], $layout);
         exit;
     }
 

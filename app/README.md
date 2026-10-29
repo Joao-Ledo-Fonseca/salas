@@ -190,6 +190,45 @@ Reinicie ou recarregue o Apache e aceda a `http://localhost/salas/`. O endereço
 
 Se o Apache não usar VirtualHosts, declare o mesmo `Alias /salas/` e o respetivo bloco `<Directory>` na configuração global. Use `Require all granted` apenas se o servidor tiver de aceitar ligações remotas; proteja-o com firewall e HTTPS.
 
+
+## Permissões
+
+As permissões são geridas em `PermissoesController` (`app/src/controllers/PermissoesController.php`) e armazenadas na base de dados. A aplicação cria automaticamente as permissões em falta a partir dos valores por defeito (`permissoes_defaults`). Os níveis de utilizador são: 0 = User, 1 = Gestor, 2 = Admin, 3 = SuperAdmin (tem todas as permissões).
+
+Permissões relevantes:
+
+- `M_Reservas` — acesso ao formulário de reservas e exclusão de reservas.
+- `M_EliminarReservasUtilizador` — autoriza eliminar todas as reservas de um utilizador (no formulário de utilizador).
+- `M_FiltroUtilizador` — autoriza o filtro por utilizador no dashboard (apresentado a Gestores, Admins e SuperAdmins; oculto para Users).
+- `M_Categorias`, `M_Usos`, `M_Salas`, `M_Periodos`, `M_Utilizadores`, `M_Permissoes`, `M_Estatisticas`, `M_Relatorios` — acesso aos respetivos menus.
+
+## Funcionalidades recentes
+
+- Dashboard com filtro por categoria (salas) e, para utilizadores autorizados, filtro por utilizador (dropdown à direita do filtro de categorias), com tooltips identificativos.
+- Tabela do dashboard compacta, com scroll interno, para melhor aproveitamento do ecrã.
+- Formulário de utilizador com lista de reservas do utilizador (compacta, com scroll próprio, status por extenso e botão de eliminação por linha, além de eliminação de todas as reservas).
+- Entidade "Uso" (tabela, form, lista, permissão `M_Usos`) e dropdown de usos no formulário de reservas.
+- Lista de salas com filtro por categoria e estado (activas/inactivas/todas).
+
+
+## Configuração e deploy
+
+### Variáveis de ambiente
+A aplicação suporta um ficheiro `.env` em `app/` (copiar de `app/.env.example`) com as chaves `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_URL_BASE` (ou `auto`). Os valores do `.env` sobrepõem os do `config.json`. O `.env` é ignorado pelo Git.
+
+### Segurança
+- `app/src/` e `app/config.json` são bloqueados ao acesso web via `.htaccess`.
+- `app/public/.htaccess` define cabeçalhos de segurança (X-Frame-Options, X-Content-Type-Options, Referrer-Policy).
+- Em produção, defina `APP_DEBUG=0` para não expor detalhes de erros.
+
+### Deploy
+Copiar o conteúdo de `app/` para o servidor, fornecendo separadamente o `config.json`/`.env` seguro. Excluir `tests/` e `.git/`.
+
+
+## Contribuir
+
+Consulte o [guia de contribuição](../CONTRIBUTING.md) e o [diagrama ER](../docs/er-diagram.md).
+
 ## Testes
 
 Executar os smoke tests:
@@ -209,4 +248,15 @@ Ver `app/tests/README.md` para mais detalhes.
 - As páginas e operações que leem ou alteram dados funcionam com a conta MySQL da aplicação.
 - A raiz do repositório, `app/src/`, `app/config.json` e `project/` não são acessíveis diretamente através do navegador.
 
-O dump disponibiliza o utilizador inicial `teste` com a palavra-passe `teste`. Altere essa palavra-passe ou desative a conta inicial após a primeira entrada e antes de disponibilizar o sistema a utilizadores.
+## Utilizadores iniciais
+
+O dump `sgreserva.sql` disponibiliza os seguintes utilizadores (a palavra-passe é igual ao nome de utilizador):
+
+| Utilizador | Email | Nível | Palavra-passe |
+|---|---|---|---|
+| superadmin | superadmin@local | 3 - SuperAdmin | superadmin |
+| admin | admin@admin | 2 - Admin | admin |
+| user | user@user | 0 - User | user |
+| gestor | gestor@site.com | 1 - Gestor | gestor |
+
+> Nota: se a base de dados estiver vazia, o `DefaultSuperAdminSeeder` cria automaticamente o utilizador `sadmin` com a palavra-passe `sadmin` (nível SuperAdmin). Altere estas palavras-passe ou desative as contas iniciais após a primeira entrada e antes de disponibilizar o sistema a utilizadores.

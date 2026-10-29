@@ -32,13 +32,16 @@ class ErrorHandler
 
         error_log($exception->getMessage() . "\n" . $exception->getTraceAsString());
 
+        $debug = getenv('APP_DEBUG') === '1';
+        $detail = $debug ? ' [' . $exception->getMessage() . ']' : '';
+
         if ($isAjax) {
-            echo json_encode(['error' => $message], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['error' => $message . $detail], JSON_UNESCAPED_UNICODE);
             return;
         }
 
         echo '<!DOCTYPE html><html lang="pt-PT"><head><meta charset="utf-8"><title>Erro</title></head><body>';
-        echo '<h1>Erro</h1><p>' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+        echo '<h1>Erro</h1><p>' . htmlspecialchars($message . $detail, ENT_QUOTES, 'UTF-8') . '</p>';
         echo '</body></html>';
     }
 

@@ -34,10 +34,10 @@ $dia->modify(($dias >= 0 ? '+' : '') . $dias . ' day');
 return self::traduz_data($dia->format('D d/m/Y'), 'pt');
 }
 
-public static function calcularDiaController(DateTime $baseDate, callable $callback, int $categoria): string
+public static function calcularDiaController(DateTime $baseDate, callable $callback, int $categoria, int $usuario_id = 0): string
 {
 $dia = DateTime::createFromFormat('d/m/Y', $baseDate->format('d/m/Y')) ?: clone $baseDate;
-$dia = call_user_func($callback, $dia, $categoria);
+$dia = call_user_func($callback, $dia, $categoria, $usuario_id);
 return self::traduz_data($dia->format('D d/m/Y'), 'pt');
 }
 

@@ -1,0 +1,22 @@
+{
+    "name": "salas/reserva-salas",
+    "description": "Aplicacao web para gerir reservas de salas",
+    "type": "project",
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.10"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Salas\\Tests\\": "app/tests/"
+        }
+    },
+    "scripts": {
+        "lint": "find app/src app/public -name '*.php' -print0 | xargs -0 -n1 php -l",
+        "test": "phpunit",
+        "analyse": "phpstan analyse app/src --level=5"
+    }
+}

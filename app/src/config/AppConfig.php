@@ -34,6 +34,22 @@ final class AppConfig
 
 	public static function fromFile(string $path, string $scriptName): self
 	{
+		// Carregar .env se existir (no mesmo diretório do config.json)
+		$envPath = dirname($path) . DIRECTORY_SEPARATOR . '.env';
+		if (is_file($envPath)) {
+			$lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			foreach ($lines as $line) {
+				$line = trim($line);
+				if ($line === '' || str_starts_with($line, '#')) continue;
+				if (!str_contains($line, '=')) continue;
+				[$k, $v] = explode('=', $line, 2);
+				$k = trim($k); $v = trim($v);
+				if ($k !== '' && getenv($k) === false) {
+					putenv($k . '=' . $v);
+					$_ENV[$k] = $v;
+				}
+			}
+		}
 		if (!is_file($path)) {
 			throw new RuntimeException('O ficheiro de configuração da aplicação não existe.');
 		}
@@ -53,6 +69,7 @@ final class AppConfig
 			throw new RuntimeException('O ficheiro de configuração da aplicação tem de conter um objeto JSON.');
 		}
 
+		$envMap = ['db_host' => 'DB_HOST', 'db_user' => 'DB_USER', 'db_senha' => 'DB_PASSWORD', 'db_banco' => 'DB_NAME'];
 		$requiredStrings = [
 			'db_host' => 'dbHost',
 			'db_user' => 'dbUser',
@@ -61,10 +78,26 @@ final class AppConfig
 		];
 		$values = [];
 		foreach ($requiredStrings as $key => $property) {
+			$envVal = getenv($envMap[$key]);
+			if (is_string($envVal) && $envVal !== '') {
+				$values[$property] = $envVal;
+				continue;
+			}
 			if (!isset($settings->$key) || !is_string($settings->$key) || $settings->$key === '') {
 				throw new RuntimeException('Falta uma configuração de base de dados válida: ' . $key . '.');
 			}
 			$values[$property] = $settings->$key;
+		}
+
+		// db_porta via env
+		$envPort = getenv('DB_PORT');
+		if (is_string($envPort) && $envPort !== '' && ctype_digit($envPort)) {
+			$settings->db_porta = (int) $envPort;
+		}
+		// url_base_path via env
+		$envBase = getenv('APP_URL_BASE');
+		if (is_string($envBase) && $envBase !== '') {
+			$settings->url_base_path = $envBase;
 		}
 
 		if (!isset($settings->db_porta) || !is_int($settings->db_porta) || $settings->db_porta < 1 || $settings->db_porta > 65535) {

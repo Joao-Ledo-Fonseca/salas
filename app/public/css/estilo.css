@@ -22,7 +22,7 @@ body {
 	font-weight: 400;
 	line-height: 1.5;
 	color: #4E4E4E;
-	overflow: hidden;
+	overflow-y: auto;
 	background-color: #FFFFFF;
 }
 
@@ -178,7 +178,8 @@ h3 {
 	width: 100%;
 	max-width: calc(100% - 180px);
 	float: left;
-	height: 100%;
+	min-height: 100%;
+	height: auto;
 	padding: 15px;
 }
 
@@ -202,7 +203,8 @@ h3 {
 		width: 100%;
 		max-width: calc(100%);
 		float: left;
-		height: 100%;
+		min-height: 100%;
+		height: auto;
 		padding: 15px;
 	}
 
@@ -553,6 +555,17 @@ div.dt-container {
    ========================================================================== */
 .hidden {
 	visibility: hidden;
+	position: absolute;
+	z-index: 1000;
+	background: #fff;
+	border: 1px solid #ccc;
+	padding: 4px 8px;
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+	white-space: normal;
+	word-wrap: break-word;
+	width: 400px;
+	max-width: 400px;
 }
 
 .show:hover>.hidden {
@@ -904,6 +917,39 @@ body.pagina-login button {
 	font-weight: 600;
 	color: #444; /* Mantém o mesmo tom de contraste da Home */
 }
+/* ==========================================================================
+   RESPONSIVIDADE
+   ========================================================================== */
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+@media screen and (max-width: 768px) {
+	.corpo {
+		max-width: 100%;
+		padding: 8px;
+	}
+	.tabelarow {
+		overflow-x: auto;
+	}
+	table th,
+	table td {
+		padding: 4px 6px;
+		font-size: 11px;
+	}
+	input[type="text"],
+	input[type="password"],
+	input[type="email"],
+	select {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.dashboard-legend {
+		gap: 8px;
+	}
+}
+
 
 
 /* ==========================================================================
@@ -917,3 +963,44 @@ body.pagina-login button {
 	border-radius: 6px;
 	margin: 8px 0;
 }
+/* ==========================================================================
+   DASHBOARD: tabela mais compacta
+   ========================================================================== */
+.dashboard-table th,
+.dashboard-table td {
+	padding: 6px 8px;
+	line-height: 1.2;
+}
+
+.dashboard-table {
+	font-size: 12px;
+}
+/* ==========================================================================
+   TOOLTIP COMPACTO PARA RESERVAS NO DASHBOARD
+   ========================================================================== */
+.reserva-has-tooltip { position: relative; cursor: pointer; }
+.reserva-cell { position: relative; display: inline-block; }
+.reserva-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    z-index: 1000;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: #fff;
+    text-align: left;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 11px;
+    line-height: 1.3;
+    white-space: pre-line;
+    width: max-content;
+    max-width: 220px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    pointer-events: none;
+    transition: opacity 0.12s ease-in-out;
+    margin-bottom: 4px;
+}
+.reserva-cell:hover .reserva-tooltip { display: block !important; visibility: visible; opacity: 1; }

@@ -30,7 +30,7 @@ $(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
 
 function getVisible() {
 	// configurar a altura da div para nao dar scroll
-	$(".tabelarow").css("height", window.innerHeight - 120);
+	$(".tabelarow").css("height", window.innerHeight - 200);
 	$(".form").css("height", window.innerHeight - 30);
 }
 
@@ -41,8 +41,8 @@ function abreReserva(o) {
 	$(".corpo td").css("background-color", "");
 	$(".corpo td").css("color", "#CCC");
 	
-	// o item selecionado fica verde.
-	$(o).css("background-color", "#BFF9B9"); 
+	// o item selecionado fica com o mesmo cinza do hover de um slot disponível.
+	$(o).css("background-color", "#DFDFDF"); 
 	$(o).css("color", "black");
 
 	//abre o formulario por AJAX preenchido
@@ -105,6 +105,18 @@ function salvaFormularioReserva() {
 	if (salvando === true)
 		return false;
 
+	// validação de campos obrigatórios
+	var entidade = ($('#entidade').val() || '').trim();
+	var usoId = $('#uso_id').val();
+	if (entidade === '') {
+		alert('Preencha a entidade.');
+		return false;
+	}
+	if (!usoId || usoId === '0' || usoId === '') {
+		alert('Selecione um uso.');
+		return false;
+	}
+
 	salvando = true;
 
 	$.ajax({
@@ -144,7 +156,8 @@ function excluirFormularioReserva(id) {
 			// Passa o ID e um gatilho 'submeter_excluir=1' para o controlador interceptar
 			data: {
 				id: id,
-				submeter_excluir: 1
+				submeter_excluir: 1,
+				csrf_token: (document.querySelector('input[name="csrf_token"]') || {}).value || ''
 			},
 			success: function (response) {
 				// recarregar pagina no dia atual.

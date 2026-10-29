@@ -9,6 +9,8 @@ class AuthorizationMiddleware
 	private const PAGE_PERMISSIONS = [
 		'categoria_list' => 'M_Categorias',
 		'categoria_form' => 'M_Categorias',
+		'uso_list' => 'M_Usos',
+		'uso_form' => 'M_Usos',
 		'sala_list' => 'M_Salas',
 		'sala_form' => 'M_Salas',
 		'periodo_list' => 'M_Periodos',

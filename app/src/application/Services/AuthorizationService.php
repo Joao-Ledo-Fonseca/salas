@@ -18,6 +18,12 @@ class AuthorizationService
     public function __construct(Database $db)
     {
         $this->db = $db;
+
+        if (isset($_SESSION['auth_permissions']) && is_array($_SESSION['auth_permissions'])) {
+            $this->permissions = $_SESSION['auth_permissions'];
+            return;
+        }
+
         // Garante que a tabela de permissões está inicializada.
         (new PermissoesController($this->db))->validarTabelaPermissoes();
 
@@ -31,6 +37,8 @@ class AuthorizationService
                 $l[$this->niveis[2][0]],
             ];
         }
+
+        $_SESSION['auth_permissions'] = $this->permissions;
     }
 
     public function validaPermissao(string $permissao, int $nivel): bool

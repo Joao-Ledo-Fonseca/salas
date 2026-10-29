@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/AppConfig.php';
+require_once __DIR__ . '/../infrastructure/Support/Csrf.php';
 
 $appConfig = AppConfig::fromFile(
 	dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config.json',

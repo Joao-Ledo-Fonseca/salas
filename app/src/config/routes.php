@@ -6,6 +6,8 @@ return [
     'relatorios' => 'Relatorios.php',
     'categoria_list' => 'CategoriaList.php',
     'categoria_form' => 'CategoriaForm.php',
+    'uso_list' => 'UsoList.php',
+    'uso_form' => 'UsoForm.php',
     'sala_list' => 'SalaList.php',
     'sala_form' => 'SalaForm.php',
     'periodo_list' => 'PeriodoList.php',

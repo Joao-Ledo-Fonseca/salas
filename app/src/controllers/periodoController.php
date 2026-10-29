@@ -27,6 +27,7 @@ class PeriodoController
 
         $this->service->save($id, $nome, $seq);
 
+        unset($_SESSION['dashboard_cache_' . (int) ($_SESSION['user_id'] ?? 0)]);
         header('Location: ' . app_url('?acao=periodo_list'));
         exit();
     }

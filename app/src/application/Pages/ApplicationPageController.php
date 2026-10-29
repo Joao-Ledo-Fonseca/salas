@@ -5,12 +5,16 @@ require_once __DIR__ . '/../../infrastructure/Validation/Validator.php';
 require_once __DIR__ . '/../../infrastructure/Support/Util.php';
 require_once __DIR__ . '/DashboardPageController.php';
 require_once __DIR__ . '/../../controllers/DashboardController.php';
+require_once __DIR__ . '/../../controllers/RelatorioController.php';
 require_once __DIR__ . '/../../controllers/CategoriaController.php';
+require_once __DIR__ . '/../../controllers/UsoController.php';
 require_once __DIR__ . '/../../controllers/PeriodoController.php';
 require_once __DIR__ . '/../../controllers/SalaController.php';
 require_once __DIR__ . '/../../controllers/UsuarioController.php';
 require_once __DIR__ . '/../../controllers/PermissoesController.php';
 require_once __DIR__ . '/../../controllers/ReservaController.php';
+require_once __DIR__ . '/../../controllers/UsoController.php';
+require_once __DIR__ . '/../../models/Reserva.php';
 require_once __DIR__ . '/../../infrastructure/Auth/AuthContext.php';
 require_once __DIR__ . '/../../infrastructure/Auth/SalasSessionAdapter.php';
 require_once __DIR__ . '/../AuthorizationMiddleware.php';
@@ -28,6 +32,10 @@ class ApplicationPageController
 
 	public function dispatch(string $action, array $query, array $post): array
 	{
+		if ($post !== [] && !Csrf::validate($post['csrf_token'] ?? null)) {
+			http_response_code(403);
+			exit('CSRF token inválido.');
+		}
 		(new AuthorizationMiddleware($this->db))->authorize($action, $query, $post);
 		if ($action === 'reserva_form' && isset($post['submeter_excluir'])) {
 			return ['response' => (new ReservaController($this->db))->excluir($post)];
@@ -41,24 +49,38 @@ class ApplicationPageController
 		switch ($action) {
 			case 'categoria_list':
 				$data['lista'] = (new CategoriaController($this->db))->listarController();
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'categoria_form':
 				$data += $this->categoriaForm($query, $post);
 				break;
+			case 'uso_list':
+				$data['lista'] = (new UsoController($this->db))->listarController();
+				$data['_layout'] = 'layout.php';
+				break;
+			case 'uso_form':
+				$data += $this->usoForm($query, $post);
+				$data['_layout'] = 'layout.php';
+				break;
 			case 'periodo_list':
 				$data['lista'] = (new PeriodoController($this->db))->listarController();
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'periodo_form':
 				$data += $this->periodoForm($query, $post);
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'sala_list':
 				$data += $this->salaList($query, $post);
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'sala_form':
 				$data += $this->salaForm($query, $post);
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'usuario_list':
-				$data['lista'] = (new UsuarioController($this->db))->listarcontroller();
+				$data['lista'] = (new UsuarioController($this->db))->listarController();
+				$data['_layout'] = 'layout.php';
 				$permissionController = new AuthorizationService($this->db);
 				foreach ($data['lista'] as &$user) {
 					$user['nivel_nome'] = $permissionController->nomeNivel((int) $user['nivel'], 2);
@@ -67,9 +89,11 @@ class ApplicationPageController
 				break;
 			case 'usuario_form':
 				$data += $this->usuarioForm($query, $post);
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'permissoes_form':
 				$data += $this->permissoesForm($post);
+				$data['_layout'] = 'layout.php';
 				break;
 			case 'estatisticas':
 				$data += $this->reportSummary($query);
@@ -105,6 +129,7 @@ class ApplicationPageController
 		$level = $auth->level();
 		$items = [
 			['permission' => 'M_Categorias', 'label' => 'Categorias', 'url' => '?acao=categoria_list'],
+			['permission' => 'M_Usos', 'label' => 'Usos', 'url' => '?acao=uso_list'],
 			['permission' => 'M_Salas', 'label' => 'Salas', 'url' => '?acao=sala_list'],
 			['permission' => 'M_Periodos', 'label' => 'Períodos', 'url' => '?acao=periodo_list'],
 			['permission' => 'M_Utilizadores', 'label' => 'Utilizadores', 'url' => '?acao=usuario_list'],
@@ -147,6 +172,23 @@ class ApplicationPageController
 			'imagem' => '',
 			'errormsg' => (string) ($query['errormsg'] ?? ''),
 		], is_array($record) ? $record : []);
+	}
+
+	private function usoForm(array $query, array $post = []): array
+	{
+		$controller = new UsoController($this->db);
+		if ($post !== []) {
+			$controller->cancelar();
+			$controller->excluir();
+			$controller->salvar();
+		}
+		$record = $controller->abrir();
+		return array_merge([
+			'id' => 0,
+			'nome' => '',
+			'descricao' => '',
+			'errormsg' => (string) ($query['errormsg'] ?? ''),
+		], is_array($record) ? $record[0] ?? [] : []);
 	}
 
 	private function periodoForm(array $query, array $post = []): array
@@ -211,11 +253,32 @@ class ApplicationPageController
 			$controller->cancelar();
 		}
 		$auth = new AuthContext();
+		$reservasUsuario = [];
+		$podeEliminarReservas = (new AuthorizationService($this->db))->validaPermissao('M_EliminarReservasUtilizador', $auth->level());
+		$error = '';
 		$isSelf = (int) ($post['id'] ?? $query['id'] ?? 0) === $auth->id();
+		if (isset($post['eliminar_reservas']) && !$isSelf && $podeEliminarReservas) {
+			$targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+			$controller->eliminarReservasUsuario($targetId);
+			$error = 'Reservas do utilizador eliminadas com sucesso.';
+		}
+		if (isset($post['eliminar_reserva'])) {
+			$reservaId = (int) ($post['reserva_id'] ?? 0);
+			if ($reservaId > 0 && ($podeEliminarReservas || $isSelf)) {
+				(new \Reserva($this->db))->excluir($reservaId);
+				$error = 'Reserva eliminada com sucesso.';
+			}
+		}
+
 		$deleteResult = ($post !== [] && !$isSelf) ? $controller->excluir() : false;
 		$error = isset($post['excluir']) && is_string($deleteResult)
 			? 'Utilizador não pode ser excluído. Existem reservas em seu nome.'
-			: '';
+			: $error;
+
+		if (isset($post['excluir']) && is_string($deleteResult)) {
+			$targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+			$reservasUsuario = $controller->listarReservasUsuario($targetId);
+		}
 		if ($isSelf && $post !== []) {
 			$post['nivel'] = (string) $auth->level();
 		}
@@ -228,9 +291,22 @@ class ApplicationPageController
 		}
 
 		$record = [];
+		if (!isset($_GET['id']) && $targetId > 0) {
+			$_GET['id'] = $targetId;
+		}
 		if (!isset($post['salvar'])) {
 			$opened = $controller->abrir();
 			$record = $opened[0] ?? [];
+			if (empty($record) && isset($post['id'])) {
+				$record = [
+					'id' => Validator::int($post['id'] ?? 0),
+					'nome' => Validator::string($post['nome'] ?? ''),
+					'email' => Validator::string($post['email'] ?? ''),
+					'telefone' => Validator::string($post['telefone'] ?? ''),
+					'NIF' => Validator::string($post['NIF'] ?? ''),
+					'nivel' => Validator::int($post['nivel'] ?? 0),
+				];
+			}
 		} else {
 			$record = [
 				'id' => (int) ($post['id'] ?? 0),
@@ -240,6 +316,11 @@ class ApplicationPageController
 				'NIF' => Validator::string($post['NIF'] ?? ''),
 				'nivel' => (int) ($post['nivel'] ?? 0),
 			];
+		}
+
+		$targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+		if ($targetId > 0) {
+			$reservasUsuario = $controller->listarReservasUsuario($targetId);
 		}
 
 		$permissionController = new AuthorizationService($this->db);
@@ -261,6 +342,8 @@ class ApplicationPageController
 			'NIF' => '',
 			'nivel' => 0,
 			'errormsg' => $error,
+			'reservasUsuario' => $reservasUsuario,
+			'podeEliminarReservas' => $podeEliminarReservas,
 			'levelOptions' => $levelOptions,
 			'sessionUserName' => (string) ($_SESSION['user_nome'] ?? ''),
 			'sessionUserLevel' => (int) ($_SESSION['user_nivel'] ?? 0),
@@ -318,11 +401,11 @@ class ApplicationPageController
 	private function reportSummary(array $query): array
 	{
 		$data = $this->reportDates($query);
-		$dashboard = new DashboardController($this->db);
+		$relatorio = new RelatorioController($this->db);
 		$end = $data['tipo'] === 'p' ? $data['fim'] : null;
-		$bookings = $dashboard->disciplinaMaisReservasController($data['hoje'], $data['tipo'], $end);
-		$totalBookings = $dashboard->totalReservasController($data['hoje'], $data['tipo'], $end);
-		$totalSlots = $dashboard->totalHorariosController($data['tipo'], $data['hoje'], $end);
+		$bookings = $relatorio->disciplinaMaisReservasController($data['hoje'], $data['tipo'], $end);
+		$totalBookings = $relatorio->totalReservasController($data['hoje'], $data['tipo'], $end);
+		$totalSlots = $relatorio->totalHorariosController($data['tipo'], $data['hoje'], $end);
 		if ($totalSlots >= $totalBookings) {
 			$totalSlots -= $totalBookings;
 		}
@@ -339,8 +422,8 @@ class ApplicationPageController
 	private function reportReservations(array $query): array
 	{
 		$data = $this->reportDates($query);
-		$dashboard = new DashboardController($this->db);
-		$data['reservas'] = $dashboard->listaReservasController(
+		$relatorio = new RelatorioController($this->db);
+		$data['reservas'] = $relatorio->listaReservasController(
 			$data['hoje'],
 			$data['tipo'],
 			$data['tipo'] === 'p' ? $data['fim'] : null
@@ -355,6 +438,9 @@ class ApplicationPageController
 		$id = $id === false || $id === null ? 0 : $id;
 		$roomId = filter_var($query['sala_id'] ?? null, FILTER_VALIDATE_INT) ?: 0;
 		$periodId = filter_var($query['periodo_id'] ?? null, FILTER_VALIDATE_INT) ?: 0;
+		$periodosRaw = isset($query['periodos']) && is_string($query['periodos']) ? $query['periodos'] : '';
+		$periodosArr = array_filter(array_map('intval', explode(',', $periodosRaw)));
+		$periodos = implode(',', $periodosArr);
 		$record = $id > 0 ? ($controller->abrirController($id)[0] ?? []) : [];
 		$date = isset($query['data']) && is_string($query['data'])
 			? DateTime::createFromFormat('!d/m/Y', $query['data'])
@@ -374,8 +460,11 @@ class ApplicationPageController
 			'usuario' => (string) ($_SESSION['user_nome'] ?? ''),
 			'sala' => $roomId ? $room->nomeSala($roomId) : '',
 			'periodo' => $periodId ? $period->nomePeriodo($periodId) : '',
+			'periodos' => $periodos,
 		], $record);
 		$record['options_status'] = $controller->options_status($record['status']);
+		$record['usos'] = (new UsoController($this->db))->listarOpcoesController();
+		$record['uso_id'] = isset($record['uso_id']) ? (int) $record['uso_id'] : 0;
 		return $record;
 	}
 
