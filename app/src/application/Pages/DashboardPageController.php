@@ -2,7 +2,7 @@
 namespace Salas\Application\Pages;
 
 
-use Salas\Application\Services\AuthorizationService;
+use Salas\Infrastructure\Auth\AuthorizationService;
 use Salas\Controllers\DashboardController;
 use Salas\Infrastructure\Persistence\Database;
 use Salas\Models\Usuario;

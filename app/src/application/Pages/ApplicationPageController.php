@@ -4,7 +4,7 @@ namespace Salas\Application\Pages;
 
 use Salas\Infrastructure\Auth\AuthContext;
 use Salas\Application\AuthorizationMiddleware;
-use Salas\Application\Services\AuthorizationService;
+use Salas\Infrastructure\Auth\AuthorizationService;
 use Salas\Controllers\CategoriaController;
 use Salas\Infrastructure\Support\Csrf;
 use Salas\Infrastructure\Persistence\Database;

@@ -1,8 +1,7 @@
 <?php
 namespace Salas\Controllers;
 
-
-use Salas\Application\Services\CategoryService;
+use Salas\Models\Categoria;
 use Salas\Infrastructure\Persistence\Database;
 use Salas\Infrastructure\Support\Util;
 use Salas\Infrastructure\Validation\Validator;
@@ -10,12 +9,10 @@ use Salas\Infrastructure\Validation\Validator;
 class CategoriaController
 {
     private Database $db;
-    private CategoryService $service;
 
     public function __construct(Database $db)
     {
         $this->db = $db;
-        $this->service = new CategoryService($db);
     }
 
     public function salvar(): bool
@@ -30,7 +27,8 @@ class CategoriaController
         $imagemId = Validator::string($_POST['imagem_id'] ?? '');
 
         $uploadedImage = Util::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
-        $this->service->save($id, $nome, $descricao, $imagemId, is_array($uploadedImage) ? $uploadedImage : false);
+        $categoria = new Categoria($this->db);
+        $categoria->salvar($id, $nome, $descricao, $imagemId, is_array($uploadedImage) ? $uploadedImage : false);
 
         unset($_SESSION['dashboard_cache_' . (int) ($_SESSION['user_id'] ?? 0)]);
         header('Location: ' . app_url('?acao=categoria_list'));
@@ -46,7 +44,8 @@ class CategoriaController
         $id = (int) Validator::int($_POST['id'] ?? 0);
         $imagemId = Validator::string($_POST['imagem_id'] ?? '');
 
-        $success = $this->service->delete($id, $imagemId);
+        $categoria = new Categoria($this->db);
+        $success = $categoria->excluir($id, $imagemId);
         if (!$success) {
             $errormsg = 'Erro ao excluir a categoria! Existem salas na categoria.';
             header('Location: ' . app_url('?acao=categoria_form&id=' . $id . '&errormsg=' . urlencode($errormsg)));
@@ -71,7 +70,8 @@ class CategoriaController
     {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             $id = (int) Validator::int($_GET['id'] ?? 0);
-            return $this->service->open($id);
+            $categoria = new Categoria($this->db);
+            return $categoria->abrir($id);
         }
 
         return false;
@@ -79,11 +79,13 @@ class CategoriaController
 
     public function listarController(): array
     {
-        return $this->service->list();
+        $categoria = new Categoria($this->db);
+        return $categoria->listar();
     }
 
     public function listarOpcoesController(): array
     {
-        return $this->service->list();
+        $categoria = new Categoria($this->db);
+        return $categoria->listar();
     }
 }

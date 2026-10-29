@@ -34,12 +34,36 @@ class Sala
 
 	function abrir($id)
 	{
-		$sql = 'select * from sala where id = ?';
-		return $this->db->query($sql, [$id]);
+		$rows = $this->db->query('select * from sala where id = ?', [$id]);
+		if (!isset($rows[0])) {
+			return [];
+		}
+		$imageId = $rows[0]['imagem_id'] ?? null;
+		$image = ['id' => 0, 'nome_imagem' => '', 'tamanho_imagem' => '', 'tipo_imagem' => '', 'imagem' => ''];
+		if ($imageId !== null) {
+			$found = (new \Salas\Models\Imagem($this->db))->abrir((int) $imageId);
+			if (isset($found[0])) {
+				$image = $found[0];
+			}
+		}
+		return [array_merge($image, $rows[0])];
 	}
 
-	function salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id)
+	function salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id, $uploadedImage = false)
 	{
+		if (is_array($uploadedImage)) {
+			if ($imagem_id !== 0 && $imagem_id !== '' && $imagem_id !== null) {
+				(new \Salas\Models\Imagem($this->db))->excluir((int) $imagem_id);
+			}
+			$imagem_id = (new \Salas\Models\Imagem($this->db))->salvar(
+				0,
+				$uploadedImage['nome_img'],
+				$uploadedImage['tamanho_img'],
+				$uploadedImage['tipo_img'],
+				$uploadedImage['conteudo']
+			);
+		}
+
 		if ($imagem_id === '') {
 			$imagem_id = null;
 		}
@@ -47,24 +71,45 @@ class Sala
 		$activa = $activa ? 1 : 0;
 
 		if ($id == 0) {
+			if (strlen($nome) <= 0) {
+				return 0;
+			}
 			$sql = 'insert into sala (nome, descricao, categoria_id, lugares, activa, imagem_id) values (?, ?, ?, ?, ?, ?)';
 			return $this->db->query_insert($sql, [$nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id]);
 		} else {
+			if (strlen($nome) <= 0) {
+				return $id;
+			}
 			$sql = 'update sala set nome = ?, descricao = ?, categoria_id = ?, lugares = ?, activa = ?, imagem_id = ? where id = ?';
-			return $this->db->query_update($sql, [$nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id, $id]);
+			$this->db->query_update($sql, [$nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id, $id]);
+			return $id;
 		}
 	}
 
-	function excluir($id)
+	function excluir($id, $imageId = '')
 	{
-		$sql = 'delete from sala where id = ?';
-		return $this->db->query_update($sql, [$id]);
+		try {
+			$sql = 'delete from sala where id = ?';
+			$this->db->query_update($sql, [$id]);
+		} catch (\PDOException $e) {
+			return false;
+		}
+		if ($imageId !== 0 && $imageId !== '' && $imageId !== null) {
+			(new \Salas\Models\Imagem($this->db))->excluir((int) $imageId);
+		}
+		return true;
 	}
 
 	function listarPorCategoria($categoria_id)
 {
     $sql = 'select id, nome, descricao, lugares, activa from sala where categoria_id = ? order by nome;';
     return $this->db->query($sql, [$categoria_id]);
+}
+
+function name($id)
+{
+	$rows = $this->db->query('select * from sala where id = ?', [$id]);
+	return isset($rows[0]['nome']) ? (string) $rows[0]['nome'] : '';
 }
 
 function total()

@@ -2,7 +2,7 @@
 namespace Salas\Application;
 
 use Salas\Infrastructure\Auth\AuthContext;
-use Salas\Application\Services\AuthorizationService;
+use Salas\Infrastructure\Auth\AuthorizationService;
 use Salas\Infrastructure\Persistence\Database;
 
 

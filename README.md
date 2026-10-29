@@ -275,4 +275,4 @@ O dump `sgreserva.sql` disponibiliza os seguintes utilizadores (a palavra-passe 
 | user | user@user | 0 - User | user |
 | gestor | gestor@site.com | 1 - Gestor | gestor |
 
-> Nota: se a base de dados estiver vazia, o `DefaultSuperAdminSeeder` cria automaticamente o utilizador `sadmin` com a palavra-passe `sadmin` (nível SuperAdmin). Altere estas palavras-passe ou desative as contas iniciais após a primeira entrada e antes de disponibilizar o sistema a utilizadores.
+> Nota: se a base de dados estiver vazia, o `Usuario::seedSuperAdmin()` cria automaticamente o utilizador `sadmin` com a palavra-passe `sadmin` (nível SuperAdmin). Altere estas palavras-passe ou desative as contas iniciais após a primeira entrada e antes de disponibilizar o sistema a utilizadores.

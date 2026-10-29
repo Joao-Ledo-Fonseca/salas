@@ -79,6 +79,19 @@ class Usuario
 		$sql = 'delete from usuario where id = ?';
 		return $this->db->query_update($sql, array($id));
 	}
+
+	public static function seedSuperAdmin(\Salas\Infrastructure\Persistence\Database $db): void
+	{
+		$result = $db->query('select count(*) as total from usuario');
+		$total = isset($result[0]['total']) ? (int) $result[0]['total'] : 0;
+		if ($total === 0) {
+			$senhaHash = password_hash('sadmin', PASSWORD_DEFAULT);
+			$db->query_insert(
+				'insert into usuario (nome, email, senha, telefone, NIF, nivel) values (?, ?, ?, ?, ?, ?)',
+				['sadmin', 'sadmin', $senhaHash, '', '', 3]
+			);
+		}
+	}
 }
 
 ?>

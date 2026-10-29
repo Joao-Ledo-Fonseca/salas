@@ -52,6 +52,12 @@ class Periodo
 	}
 	
 	
+	function name($id)
+	{
+		$rows = $this->abrir($id);
+		return isset($rows[0]['nome']) ? (string) $rows[0]['nome'] : '';
+	}
+
 	function total()
 	{
 		

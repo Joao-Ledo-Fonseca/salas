@@ -8,7 +8,7 @@ $appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 require_once $appRoot . '/../src/config/bootstrap.php';
 
 use Salas\Infrastructure\Persistence\Database;
-use Salas\Application\Services\DefaultSuperAdminSeeder;
+use Salas\Models\Usuario;
 use Salas\Infrastructure\Http\Request;
 use Salas\Infrastructure\Http\Response;
 use Salas\Infrastructure\Http\ErrorHandler;
@@ -20,7 +20,7 @@ use Salas\Application\Router;
 
 $database = new Database($appConfig);
 
-(new DefaultSuperAdminSeeder($database))->seed();
+Usuario::seedSuperAdmin($database);
 
 ErrorHandler::register();
 

@@ -1,5 +1,5 @@
 <?php
-namespace Salas\Application\Services;
+namespace Salas\Infrastructure\Auth;
 
 
 use Salas\Infrastructure\Persistence\Database;

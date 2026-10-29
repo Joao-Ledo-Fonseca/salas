@@ -5,7 +5,7 @@ PHP_SAPI === 'cli' or exit('CLI only');
 require_once __DIR__ . '/../src/config/bootstrap.php';
 require_once __DIR__ . '/../src/infrastructure/Persistence/Database.php';
 
-$database = new Database($appConfig);
+$database = new \Salas\Infrastructure\Persistence\Database($appConfig);
 
 $failures = [];
 
@@ -25,10 +25,10 @@ try {
     $failures[] = 'Database exception: ' . $e->getMessage();
 }
 
-// Authorization service
+// Authorization service (now in infrastructure/Auth)
 try {
-    require_once __DIR__ . '/../src/application/Services/AuthorizationService.php';
-    $authz = new AuthorizationService($database);
+    require_once __DIR__ . '/../src/infrastructure/Auth/AuthorizationService.php';
+    $authz = new \Salas\Infrastructure\Auth\AuthorizationService($database);
     assert_true($authz->nomeNivel(3, 2) === 'SuperAdmin', 'AuthorizationService level name failed');
     assert_true($authz->validaPermissao('M_Reservas', 3), 'SuperAdmin should have M_Reservas');
     assert_true(!$authz->validaPermissao('M_Permissoes', 0), 'External user should not have M_Permissoes');
@@ -36,42 +36,44 @@ try {
     $failures[] = 'AuthorizationService exception: ' . $e->getMessage();
 }
 
-// Category service
+// Categoria model
 try {
-    require_once __DIR__ . '/../src/application/Services/CategoryService.php';
-    $categories = new CategoryService($database);
-    $list = $categories->list();
-    assert_true(is_array($list), 'CategoryService::list did not return an array');
+    require_once __DIR__ . '/../src/models/Categoria.php';
+    $categorias = new \Salas\Models\Categoria($database);
+    $list = $categorias->listar();
+    assert_true(is_array($list), 'Categoria::listar did not return an array');
 } catch (\Throwable $e) {
-    $failures[] = 'CategoryService exception: ' . $e->getMessage();
+    $failures[] = 'Categoria exception: ' . $e->getMessage();
 }
 
-// Sala service
+// Sala model
 try {
-    require_once __DIR__ . '/../src/application/Services/SalaService.php';
-    $rooms = new SalaService($database);
-    $list = $rooms->list();
-    assert_true(is_array($list), 'SalaService::list did not return an array');
+    require_once __DIR__ . '/../src/models/Sala.php';
+    $rooms = new \Salas\Models\Sala($database);
+    $list = $rooms->listar();
+    assert_true(is_array($list), 'Sala::listar did not return an array');
 } catch (\Throwable $e) {
-    $failures[] = 'SalaService exception: ' . $e->getMessage();
+    $failures[] = 'Sala exception: ' . $e->getMessage();
 }
 
-// Periodo service
+// Periodo model
 try {
-    require_once __DIR__ . '/../src/application/Services/PeriodoService.php';
-    $periods = new PeriodoService($database);
-    $list = $periods->list();
-    assert_true(is_array($list), 'PeriodoService::list did not return an array');
+    require_once __DIR__ . '/../src/models/Periodo.php';
+    $periods = new \Salas\Models\Periodo($database);
+    $list = $periods->listar();
+    assert_true(is_array($list), 'Periodo::listar did not return an array');
 } catch (\Throwable $e) {
-    $failures[] = 'PeriodoService exception: ' . $e->getMessage();
+    $failures[] = 'Periodo exception: ' . $e->getMessage();
 }
+
+// AuthService inlined in LoginController (authenticate via Usuario)
 try {
-    require_once __DIR__ . '/../src/application/Services/AuthService.php';
-    $auth = new AuthService($database);
-    $identity = $auth->authenticate('utilizador_inexistente', 'senha_invalida');
-    assert_true($identity === null, 'AuthService should reject invalid credentials');
+    require_once __DIR__ . '/../src/models/Usuario.php';
+    $usuario = new \Salas\Models\Usuario($database);
+    $identity = $usuario->autenticar('utilizador_inexistente', 'senha_invalida');
+    assert_true($identity === [] || $identity === null, 'Usuario should reject invalid credentials');
 } catch (\Throwable $e) {
-    $failures[] = 'AuthService exception: ' . $e->getMessage();
+    $failures[] = 'Usuario exception: ' . $e->getMessage();
 }
 
 if ($failures === []) {
