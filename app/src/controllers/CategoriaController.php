@@ -29,6 +29,7 @@ class CategoriaController
         $uploadedImage = Util::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
         $this->service->save($id, $nome, $descricao, $imagemId, is_array($uploadedImage) ? $uploadedImage : false);
 
+        unset($_SESSION['dashboard_cache_' . (int) ($_SESSION['user_id'] ?? 0)]);
         header('Location: ' . app_url('?acao=categoria_list'));
         exit();
     }

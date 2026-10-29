@@ -3,6 +3,7 @@ require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
 
 
 require_once __DIR__ . "/../models/Reserva.php";
+require_once __DIR__ . "/../models/Uso.php";
 require_once __DIR__ . '/../infrastructure/Support/Util.php';
 
 class ReservaController
@@ -25,6 +26,16 @@ class ReservaController
 	{
 		$id = (int) Validator::string($post['id'] ?? '0');
 		$dia = Validator::string($post['dia'] ?? '');
+
+		$userId = (int) ($_SESSION['user_id'] ?? 0);
+		$usoId = (int) Validator::int($post['uso_id'] ?? 0);
+		if (trim(Validator::string($post['entidade'] ?? '')) === '') {
+			return 'Preencha a entidade.';
+		}
+		if ($usoId <= 0) {
+			return 'Selecione um uso.';
+		}
+
 		$data = DateTime::createFromFormat('!d/m/Y', $dia);
 		$dateErrors = DateTime::getLastErrors();
 		if ($data === false || ($dateErrors !== false && ($dateErrors['warning_count'] > 0 || $dateErrors['error_count'] > 0))) {
@@ -33,48 +44,67 @@ class ReservaController
 
 		$salaId = (int) Validator::string($post['sala_id'] ?? '0');
 		$periodoId = (int) Validator::string($post['periodo_id'] ?? '0');
+		$periodosRaw = isset($post['periodos']) && is_string($post['periodos']) ? $post['periodos'] : '';
+		$periodosArr = array_values(array_filter(array_map('intval', explode(',', $periodosRaw))));
+		if (empty($periodosArr)) {
+			$periodosArr = [$periodoId];
+		}
 		$reserva = new Reserva($this->db);
-		if ($id === 0 && $reserva->verificar($data, $salaId, $periodoId)) {
-			return 'A data selecionada para essa sala nesse período já se encontra ocupada.';
+		foreach ($periodosArr as $pId) {
+			if ($id === 0 && $reserva->verificar($data, $salaId, $pId)) {
+				return 'A data selecionada para essa sala nesse período já se encontra ocupada.';
+			}
 		}
 
-		$userId = (int) ($_SESSION['user_id'] ?? 0);
-		$id = (int) $reserva->salvar(
-			$id,
-			$dia,
-			Validator::string($post['professor'] ?? ''),
-			Validator::string($post['disciplina'] ?? ''),
-			$data,
-			Validator::string($post['observacao'] ?? ''),
-			(int) Validator::string($post['status'] ?? '1'),
-			$salaId,
-			$periodoId,
-			$userId
-		);
+		$usoNome = '';
+		if ($usoId > 0) {
+			$usoRecord = (new Uso($this->db))->abrir($usoId);
+			$usoNome = isset($usoRecord[0]['nome']) ? (string) $usoRecord[0]['nome'] : '';
+		}
+		$lastId = $id;
+		foreach ($periodosArr as $pId) {
+			$lastId = (int) $reserva->salvar(
+				$id === 0 ? 0 : $id,
+				$dia,
+				Validator::string($post['entidade'] ?? ''),
+				$usoNome,
+				$data,
+				Validator::string($post['observacao'] ?? ''),
+				(int) Validator::string($post['status'] ?? '1'),
+				$salaId,
+				$pId,
+				$userId,
+				$usoId > 0 ? $usoId : null
+			);
+		}
+		$id = $lastId;
 
 		$repeatUntil = trim((string) ($post['data_final'] ?? ''));
 		if ($repeatUntil !== '') {
 			$endDate = DateTime::createFromFormat('!d/m/Y', Validator::string($repeatUntil));
 			$dateErrors = DateTime::getLastErrors();
 			if ($endDate !== false && ($dateErrors === false || ($dateErrors['warning_count'] === 0 && $dateErrors['error_count'] === 0))) {
+				foreach ($periodosArr as $pId) {
 				$repeatDate = clone $data;
 				$repeatDate->modify('+7 days');
 				while ($repeatDate <= $endDate) {
-					if (!$reserva->verificar($repeatDate, $salaId, $periodoId)) {
+					if (!$reserva->verificar($repeatDate, $salaId, $pId)) {
 						$reserva->salvar(
 							0,
 							$repeatDate->format('d/m/Y'),
-							Validator::string($post['professor'] ?? ''),
-							Validator::string($post['disciplina'] ?? ''),
+							Validator::string($post['entidade'] ?? ''),
+							$usoNome,
 							$repeatDate,
 							Validator::string($post['observacao'] ?? ''),
 							(int) Validator::string($post['status'] ?? '1'),
 							$salaId,
-							$periodoId,
-							$userId
+							$pId,
+							$userId,
+							$usoId > 0 ? $usoId : null
 						);
 					}
 					$repeatDate->modify('+7 days');
+				}
 				}
 			}
 		}

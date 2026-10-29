@@ -4,6 +4,7 @@ require_once __DIR__ . '/../infrastructure/Validation/Validator.php';
 
 require_once __DIR__ . '/../infrastructure/Support/Util.php';
 require_once __DIR__ . "/../models/Usuario.php";
+require_once __DIR__ . "/../models/Reserva.php";
 require_once __DIR__ . '/PermissoesController.php';
 require_once __DIR__ . '/../infrastructure/Auth/AuthContext.php';
 require_once __DIR__ . '/../infrastructure/Auth/SalasSessionAdapter.php';
@@ -54,6 +55,7 @@ class UsuarioController
 			// O nome é obrigatório
 			if (strlen($nome) > 0) {
 				$resultado = $usuario->salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel);
+				unset($_SESSION['dashboard_cache_' . (int) ($_SESSION['user_id'] ?? 0)]);
 				}
 
 			// Se a gravação foi feita do ecrã de login
@@ -120,7 +122,7 @@ class UsuarioController
 		}
 
 	// listagem
-	function listarcontroller()
+	function listarController()
 		{
 		$usuario = new Usuario($this->db);
 		return $usuario->listar();
@@ -147,5 +149,16 @@ class UsuarioController
 		}
 
 
-	}
+	    public function listarReservasUsuario(int $id): array
+    {
+        $reserva = new Reserva($this->db);
+        return $reserva->listarPorUsuario($id);
+    }
+
+    public function eliminarReservasUsuario(int $id): int
+    {
+        $reserva = new Reserva($this->db);
+        return (int) $reserva->excluirPorUsuario($id);
+    }
+}
 ?>

@@ -14,6 +14,7 @@ class PermissoesController
     public $permissoes_defaults = [
         // "nome" => [tipo, permissão User, permissão Gestor, Descrição] 
         "M_Categorias" => ['n', false, true, false, "Autoriza acesso ao Menu de Categorias"],
+        "M_Usos" => ['n', false, true, false, "Autoriza a gestão de Usos"],
         "M_Salas" => ['n', false, true, false, "Autoriza acesso ao Menu de Salas"],
         "M_Periodos" => ['n', false, true, false, "Autoriza acesso ao Menu de Períodos"],
         "M_Utilizadores" => ['n', false, true, false, "Autoriza acesso ao Menu de Utilizadores"],
@@ -21,6 +22,8 @@ class PermissoesController
         "M_Estatisticas" => ['n', false, true, false, "Autoriza acesso ao Menu de Estatísticas"],
         "M_Relatorios" => ['n', false, true, false, "Autoriza acesso ao Menu de Relatórios"],
         "M_Reservas" => ['n', true, true, true, "Autoriza acesso ao formulário de reservas e exclusão de reservas"],
+        "M_EliminarReservasUtilizador" => ['n', false, true, true, "Autoriza eliminar todas as reservas de um utilizador"],
+        "M_FiltroUtilizador" => ['n', false, true, true, "Autoriza o filtro por utilizador no dashboard"],
         "A_RegNovoUtilizador" => ['s', true, null, null, "Activa o registo de novos utilizadores no ecrã de login. (não implementado)"],
         "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"]
     ];
@@ -141,6 +144,7 @@ class PermissoesController
                 $permissoes->update(null, $k, $l[0], $l[1], $l[2], $l[3], "Update");
                 }
 
+            unset($_SESSION['auth_permissions']);
             header('Location: ' . app_url('?acao=permissoes_form'));
             exit;
             }
