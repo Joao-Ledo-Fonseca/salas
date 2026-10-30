@@ -5,7 +5,7 @@
 $projectRoot = dirname(__DIR__);
 $appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 
-require_once $appRoot . '/../src/config/bootstrap.php';
+require_once $appRoot . '/../src/Config/bootstrap.php';
 
 use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
@@ -79,7 +79,7 @@ if ($request->action() === 'imagens_list') {
 // 2. Sistema de distribuição de páginas baseado no Menu
 if ($request->action() !== null) {
     $pagina = $request->query('acao');
-    $routes = include $appRoot . '/config/routes.php';
+    $routes = include $appRoot . '/Config/routes.php';
 
     if (array_key_exists($pagina, $routes)) {
         $page = (new Router($database))->dispatch($pagina, $request->allQuery(), $request->allPost());

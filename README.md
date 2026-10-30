@@ -250,10 +250,10 @@ Consulte o [guia de contribuição](CONTRIBUTING.md) e o [diagrama ER](docs/er-d
 Executar os smoke tests:
 
 ```powershell
-php app/tests/SmokeTest.php
+php app/Tests/SmokeTest.php
 ```
 
-Ver `app/tests/README.md` para mais detalhes.
+Ver `app/Tests/README.md` para mais detalhes.
 
 
 ## Verificação após a instalação

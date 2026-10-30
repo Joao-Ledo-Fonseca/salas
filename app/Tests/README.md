@@ -3,7 +3,7 @@
 Executar os smoke tests:
 
 ```powershell
-php app/tests/SmokeTest.php
+php app/Tests/SmokeTest.php
 ```
 
 Os testes validam:

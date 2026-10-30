@@ -9,16 +9,6 @@
         "phpunit/phpunit": "^10.0",
         "phpstan/phpstan": "^1.10"
     },
-    "autoload": {
-        "psr-4": {
-            "Salas\\": "app/src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Salas\\Tests\\": "app/tests/"
-        }
-    },
     "scripts": {
         "lint": "find app/src app/public -name '*.php' -print0 | xargs -0 -n1 php -l",
         "test": "phpunit",

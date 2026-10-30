@@ -1,6 +1,22 @@
 <?php
 namespace Salas\Config {
-	require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
+	// Autoloader manual (sem Composer).
+	\spl_autoload_register(function (string $class): void {
+		$prefixes = [
+			'Salas\\Tests\\' => dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Tests' . DIRECTORY_SEPARATOR,
+			'Salas\\' => dirname(__DIR__) . DIRECTORY_SEPARATOR,
+		];
+		foreach ($prefixes as $prefix => $baseDir) {
+			if (strncmp($class, $prefix, strlen($prefix)) === 0) {
+				$relative = substr($class, strlen($prefix));
+				$file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relative) . '.php';
+				if (is_file($file)) {
+					require_once $file;
+				}
+				return;
+			}
+		}
+	});
 
 	$appConfig = AppConfig::fromFile(
 		dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config.json',

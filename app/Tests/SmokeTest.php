@@ -2,8 +2,8 @@
 
 PHP_SAPI === 'cli' or exit('CLI only');
 
-require_once __DIR__ . '/../src/config/bootstrap.php';
-require_once __DIR__ . '/../src/core/Persistence/Database.php';
+require_once __DIR__ . '/../src/Config/bootstrap.php';
+require_once __DIR__ . '/../src/Core/Persistence/Database.php';
 
 $database = new \Salas\Core\Persistence\Database($appConfig);
 
@@ -27,7 +27,7 @@ try {
 
 // Authorization service (now in infrastructure/Auth)
 try {
-    require_once __DIR__ . '/../src/core/Auth/AuthorizationService.php';
+    require_once __DIR__ . '/../src/Core/Auth/AuthorizationService.php';
     $authz = new \Salas\Core\Auth\AuthorizationService($database);
     assert_true($authz->nomeNivel(3, 2) === 'SuperAdmin', 'AuthorizationService level name failed');
     assert_true($authz->validaPermissao('M_Reservas', 3), 'SuperAdmin should have M_Reservas');
@@ -38,7 +38,7 @@ try {
 
 // Categoria model
 try {
-    require_once __DIR__ . '/../src/models/Categoria.php';
+    require_once __DIR__ . '/../src/Models/Categoria.php';
     $categorias = new \Salas\Models\Categoria($database);
     $list = $categorias->listar();
     assert_true(is_array($list), 'Categoria::listar did not return an array');
@@ -48,7 +48,7 @@ try {
 
 // Sala model
 try {
-    require_once __DIR__ . '/../src/models/Sala.php';
+    require_once __DIR__ . '/../src/Models/Sala.php';
     $rooms = new \Salas\Models\Sala($database);
     $list = $rooms->listar();
     assert_true(is_array($list), 'Sala::listar did not return an array');
@@ -58,7 +58,7 @@ try {
 
 // Periodo model
 try {
-    require_once __DIR__ . '/../src/models/Periodo.php';
+    require_once __DIR__ . '/../src/Models/Periodo.php';
     $periods = new \Salas\Models\Periodo($database);
     $list = $periods->listar();
     assert_true(is_array($list), 'Periodo::listar did not return an array');
@@ -68,7 +68,7 @@ try {
 
 // AuthService inlined in LoginController (authenticate via Usuario)
 try {
-    require_once __DIR__ . '/../src/models/Usuario.php';
+    require_once __DIR__ . '/../src/Models/Usuario.php';
     $usuario = new \Salas\Models\Usuario($database);
     $identity = $usuario->autenticar('utilizador_inexistente', 'senha_invalida');
     assert_true($identity === [] || $identity === null, 'Usuario should reject invalid credentials');
@@ -79,7 +79,7 @@ try {
 
 // core/ Http Request
 try {
-    require_once __DIR__ . '/../src/core/Http/Request.php';
+    require_once __DIR__ . '/../src/Core/Http/Request.php';
     $req = new \Salas\Core\Http\Request(['acao' => 'sala_form']);
     assert_true($req->action() === 'sala_form', 'Request::action failed');
     assert_true($req->isAjax() === false, 'Request::isAjax default false failed');
@@ -89,7 +89,7 @@ try {
 
 // core/ Http Response
 try {
-    require_once __DIR__ . '/../src/core/Http/Response.php';
+    require_once __DIR__ . '/../src/Core/Http/Response.php';
     $res = \Salas\Core\Http\Response::redirect('?acao=login');
     assert_true($res->getStatusCode() === 302, 'Response::redirect status failed');
     assert_true($res->getHeaders()['Location'] === '?acao=login', 'Response::redirect Location failed');

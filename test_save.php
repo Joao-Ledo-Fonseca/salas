@@ -1,6 +1,5 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
-require __DIR__ . '/app/src/config/bootstrap.php';
+require __DIR__ . '/app/src/Config/bootstrap.php';
 
 // Use test DB
 putenv('DB_NAME=sgreserva_test');
