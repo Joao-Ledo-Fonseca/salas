@@ -26,5 +26,18 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Create app config
+        run: |
+          cat > app/config.json <<'EOF'
+          {
+            "db_host": "127.0.0.1",
+            "db_user": "root",
+            "db_senha": "dummy",
+            "db_banco": "sgreserva",
+            "db_porta": 3306,
+            "url_base_path": "/"
+          }
+          EOF
+
       - name: Run tests
         run: vendor/bin/phpunit
