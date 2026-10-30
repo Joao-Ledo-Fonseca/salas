@@ -8,13 +8,13 @@ class Reserva
 
 	private $db = null;
 
-	function __construct(Database $db)
+	public function __construct(Database $db)
 		{
 		$this->db = $db;
 		}
 
 
-	function abrir($id)
+	public function abrir($id)
 		{
 		$sql = ' select 
 		a.id
@@ -22,8 +22,7 @@ class Reserva
 		,c.nome as sala
 		,a.periodo_id
 		,b.nome as periodo
-		,a.professor_desc
-		,a.disciplina_desc
+		,a.entidade_desc
 		,a.status
 		,a.observacao
 		,a.uso_id
@@ -49,7 +48,7 @@ class Reserva
 
 
 
-	function verificar($data, $sala, $periodo)
+	public function verificar($data, $sala, $periodo)
 		{
 
 		$sql = 'select a.id
@@ -63,7 +62,7 @@ class Reserva
 		}
 
 
-	function verificarCompleto($data, $sala, $periodo)
+	public function verificarCompleto($data, $sala, $periodo)
 		{
 		$sql = 'select * from reserva where sala_id = ? and periodo_id = ? and dia = ?';
 		$resultado = $this->db->query($sql, [$sala, $periodo, $data->format("Y-m-d")]);
@@ -71,12 +70,13 @@ class Reserva
 		return $resultado;
 		}
 
-	function listarPorDia(\DateTime $hoje, int $categoria_id = 0, int $usuario_id = 0): array
+	public function listarPorDia(\DateTime $hoje, int $categoria_id = 0, int $usuario_id = 0): array
 		{
-		$sql = 'select r.*, s.nome as sala_nome, s.categoria_id, p.nome as periodo_nome
+		$sql = 'select r.*, s.nome as sala_nome, s.categoria_id, p.nome as periodo_nome, u.nome as uso_nome
 			   from reserva r
 			   inner join sala s on r.sala_id = s.id
 			   inner join periodo p on r.periodo_id = p.id
+			   left join uso u on r.uso_id = u.id
 			   where r.dia = ? and (? = 0 or s.categoria_id = ?) and (? = 0 or r.usuario_id = ?)';
 		$rows = $this->db->query($sql, [
 			$hoje->format('Y-m-d'),
@@ -91,7 +91,7 @@ class Reserva
 		}
 
 
-	function excluir($id)
+	public function excluir($id)
 		{
 		$sql = 'delete from reserva where id = ?';
 		$this->db->query_update($sql, [$id]);
@@ -99,19 +99,18 @@ class Reserva
 		return 0;
 		}
 
-	function salvar($id, $dia, $professor, $disciplina, $data, $observacao, $status, $sala, $periodo, $usuario, $uso_id = null)
+	public function salvar($id, $dia, $entidade, $data, $observacao, $status, $sala, $periodo, $usuario, $uso_id = null)
 		{
 
 		// atualizar
 		if ($id > 0) {
 			$sql = 'update reserva set
-			dia = ?, professor_desc = ?, disciplina_desc = ?, observacao = ?, status = ?, uso_id = ?
+			dia = ?, entidade_desc = ?, observacao = ?, status = ?, uso_id = ?
 			where id = ?';
 
 			$this->db->query_update($sql, [
 				$data->format("Y-m-d"),
-				$professor,
-				$disciplina,
+				$entidade,
 				$observacao,
 				$status,
 				$uso_id,
@@ -123,15 +122,14 @@ class Reserva
 		// salvar novo registro
 		else {
 			$sql = 'INSERT INTO reserva
-				(sala_id, periodo_id, dia, professor_desc, disciplina_desc, status, observacao, usuario_id, uso_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+				(sala_id, periodo_id, dia, entidade_desc, status, observacao, usuario_id, uso_id)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 
 			return $this->db->query_insert($sql, [
 				$sala,
 				$periodo,
 				$data->format("Y-m-d"),
-				$professor,
-				$disciplina,
+				$entidade,
 				$status,
 				$observacao,
 				$usuario,
@@ -141,7 +139,7 @@ class Reserva
 		}
 
 
-	function next($hoje, $categoria, $usuario_id = 0)
+	public function next($hoje, $categoria, $usuario_id = 0)
 		{
 
 		$sql = 'select Min(dia)
@@ -161,7 +159,7 @@ class Reserva
 		}
 
 
-	function prev($hoje, $categoria, $usuario_id = 0)
+	public function prev($hoje, $categoria, $usuario_id = 0)
 		{
 
 		$sql = 'select Max(dia)
@@ -180,7 +178,7 @@ class Reserva
 		return $prev;
 		}
 
-	function listaReservas($dia = null, $tipo = 'm')
+	public function listarReservas($dia = null, $tipo = 'm')
 		{
 
 		// Define o filtro padrão como o mês atual, se não for fornecido
@@ -199,7 +197,7 @@ class Reserva
 			}
 
 		// Consulta corrigida com a cláusula WHERE antes do ORDER BY e uso de parâmetros
-		$sql = ' SELECT ' . $filtro . ' as data, categoria.nome AS categoria, sala.nome AS sala, disciplina_desc, dia, periodo.nome AS periodo, status
+		$sql = ' SELECT ' . $filtro . ' as data, categoria.nome AS categoria, sala.nome AS sala, entidade_desc, dia, periodo.nome AS periodo, status
             FROM reserva
             LEFT JOIN sala ON sala_id = sala.id
             LEFT JOIN periodo ON periodo_id = periodo.id
@@ -227,7 +225,7 @@ class Reserva
 	 * Lista reservas num intervalo de datas inclusivo.
 	 * Recebe dois \DateTime ($inicio, $fim) e devolve as linhas.
 	 */
-	function listaReservasPeriodo($inicio, $fim)
+	public function listarReservasPeriodo($inicio, $fim)
 		{
 		if (is_null($inicio) || is_null($fim))
 			return array();
@@ -235,7 +233,7 @@ class Reserva
 		$inicio_str = $inicio->format('Y-m-d');
 		$fim_str = $fim->format('Y-m-d');
 
-		$sql = ' SELECT dia, categoria.nome AS categoria, sala.nome AS sala, disciplina_desc, dia, periodo.nome AS periodo, status
+		$sql = ' SELECT dia, categoria.nome AS categoria, sala.nome AS sala, entidade_desc, dia, periodo.nome AS periodo, status
 		    FROM reserva
 		    LEFT JOIN sala ON sala_id = sala.id
 		    LEFT JOIN periodo ON periodo_id = periodo.id
@@ -254,7 +252,7 @@ class Reserva
 		return $reservas;
 		}
 
-	public function listaReservasParaRelatorio($hoje, $tipo, $fim = null)
+	public function listarReservasParaRelatorio($hoje, $tipo, $fim = null)
 		{
 		if ($tipo === 'p' && $fim !== null) {
 			$inicio_str = $hoje->format('Y-m-d');
@@ -278,16 +276,18 @@ class Reserva
 		return $this->db->query($sql, [$mes, $ano]);
 		}
 
-	public function disciplinaMaisReservas($hoje, $tipo, $fim = null)
+		public function usoMaisReservas($hoje, $tipo, $fim = null)
 		{
+
 		if ($tipo === 'p' && $fim !== null) {
 			$inicio = $hoje->format('Y-m-d');
 			$fim_str = $fim->format('Y-m-d');
 
-			$sql = "SELECT disciplina_desc, COUNT(*) as total 
-                FROM reserva 
-                WHERE dia BETWEEN ? AND ? AND status IN (1, 2)
-                GROUP BY disciplina_desc 
+			$sql = "SELECT u.nome as uso, COUNT(*) as total
+                FROM reserva r
+                LEFT JOIN uso u ON r.uso_id = u.id
+                WHERE r.dia BETWEEN ? AND ? AND r.status IN (1, 2)
+                GROUP BY u.nome
                 ORDER BY total DESC";
 
 			return $this->db->query($sql, [$inicio, $fim_str]);
@@ -296,10 +296,11 @@ class Reserva
 		if ($tipo === 'w') {
 			$data_base = $hoje->format('Y-m-d');
 
-			$sql = "SELECT disciplina_desc, COUNT(*) as total 
-                FROM reserva 
-                WHERE YEARWEEK(dia, 1) = YEARWEEK(?, 1) AND status IN (1, 2)
-                GROUP BY disciplina_desc 
+			$sql = "SELECT u.nome as uso, COUNT(*) as total
+                FROM reserva r
+                LEFT JOIN uso u ON r.uso_id = u.id
+                WHERE YEARWEEK(r.dia, 1) = YEARWEEK(?, 1) AND r.status IN (1, 2)
+                GROUP BY u.nome
                 ORDER BY total DESC";
 
 			return $this->db->query($sql, [$data_base]);
@@ -308,10 +309,11 @@ class Reserva
 			$mes = (int) $hoje->format('m');
 			$ano = (int) $hoje->format('Y');
 
-			$sql = "SELECT disciplina_desc, COUNT(*) as total 
-                FROM reserva 
-                WHERE MONTH(dia) = ? AND YEAR(dia) = ? AND status IN (1, 2)
-                GROUP BY disciplina_desc 
+			$sql = "SELECT u.nome as uso, COUNT(*) as total
+                FROM reserva r
+                LEFT JOIN uso u ON r.uso_id = u.id
+                WHERE MONTH(r.dia) = ? AND YEAR(r.dia) = ? AND r.status IN (1, 2)
+                GROUP BY u.nome
                 ORDER BY total DESC";
 
 			return $this->db->query($sql, [$mes, $ano]);
@@ -319,7 +321,7 @@ class Reserva
 		}
 
 
-	function totalReservasMes($hoje)
+	public function totalReservasMes($hoje)
 		{
 
 		$sql = 'select count(id) as total from reserva where month(dia) = ?';
@@ -328,29 +330,32 @@ class Reserva
 		}
 
 
-	    function listarPorUsuario($usuario_id)
+	    public function listarPorUsuario($usuario_id)
     {
-        $sql = "select a.id, c.nome as sala, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.professor_desc, a.disciplina_desc, a.status from reserva a inner join periodo b on a.periodo_id = b.id inner join sala c on a.sala_id = c.id where a.usuario_id = ? order by a.dia, c.nome, b.seq";
+        $sql = "select a.id, c.nome as sala, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.entidade_desc, u.nome as uso, a.status from reserva a inner join periodo b on a.periodo_id = b.id inner join sala c on a.sala_id = c.id left join uso u on a.uso_id = u.id where a.usuario_id = ? order by a.dia, c.nome, b.seq";
         return $this->db->query($sql, [$usuario_id]);
     }
 
-    function excluirPorUsuario($usuario_id)
+    public function excluirPorUsuario($usuario_id)
     {
         $sql = 'delete from reserva where usuario_id = ?';
         return $this->db->query_update($sql, [$usuario_id]);
     }
 
-    function listarPorSala($sala_id)
+    public function listarPorSala($sala_id)
     {
-        $sql = "select a.id, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.professor_desc, a.disciplina_desc, a.status, d.nome as usuario from reserva a inner join periodo b on a.periodo_id = b.id inner join usuario d on a.usuario_id = d.id where a.sala_id = ? order by a.dia, b.seq";
+        $sql = "select a.id, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.entidade_desc, u.nome as uso, a.status, d.nome as usuario from reserva a inner join periodo b on a.periodo_id = b.id inner join usuario d on a.usuario_id = d.id left join uso u on a.uso_id = u.id where a.sala_id = ? order by a.dia, b.seq";
         return $this->db->query($sql, [$sala_id]);
     }
 
-    function excluirPorSala($sala_id)
+    public function excluirPorSala($sala_id)
     {
         $sql = 'delete from reserva where sala_id = ?';
         return $this->db->query_update($sql, [$sala_id]);
     }
+
+
+
 }
 
 ?>

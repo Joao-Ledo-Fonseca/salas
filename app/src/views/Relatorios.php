@@ -13,9 +13,7 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
 <!DOCTYPE html>
@@ -76,9 +74,9 @@ use Salas\Application\Services\AuthorizationService;
                 <div class="titulo_inicial">
                     <div class="toolbar-row">
 
-                        <!-- 🎯 Chevron Esquerdo: Oculto no Modo Período -->
+                        <!--  Chevron Esquerdo: Oculto no Modo Período -->
                         <?php if ($tipo != 'p'): ?>
-                            <img src="<?= app_url('/img/chevron_left.png') ?>" width="40" height="40" alt="Anterior" class="nav-button"
+                            <img src="<?= app_url('/img/chevron_left.png') ?>" width="26" height="26" style="width:26px;height:26px;" alt="Anterior" class="nav-button"
                                 onclick="alteraData(dia_anterior)" />
                         <?php endif; ?>
 
@@ -86,7 +84,7 @@ use Salas\Application\Services\AuthorizationService;
                             <form id="relatorios_form" method="get" action="<?= app_url() ?>" target="_self" name="form1"
                                 style="display:inline;vertical-align: top;">
 
-                                <!-- 🎯 Garante que o index.php sabe que deve recarregar a página relatorios2 -->
+                                <!--  Garante que o index.php sabe que deve recarregar a página relatorios2 -->
                                 <input type="hidden" name="acao" value="relatorios" />
 
                                 <input type="hidden" name="tipo" id="tipo_input"
@@ -98,11 +96,11 @@ use Salas\Application\Services\AuthorizationService;
                                     ?>
                                     <span class="date-range">
                                         <input type="text" name="data_inicio_pt" id="data_inicio_pt"
-                                            class="date-input date-range-input"
+                                            class="date-input date-range-input" style="height:26px; font-size:13px; width:120px; padding:0 8px;"
                                             value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>"
                                             readonly="readonly">
                                         <input type="text" name="data_fim_pt" id="data_fim_pt"
-                                            class="date-input date-range-input"
+                                            class="date-input date-range-input" style="height:26px; font-size:13px; width:120px; padding:0 8px;"
                                             value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>"
                                             readonly="readonly">
                                     </span>
@@ -111,16 +109,16 @@ use Salas\Application\Services\AuthorizationService;
                                     <input type="hidden" name="data_fim" id="data_fim"
                                         value="<?= isset($fim) ? $fim->format('dmY') : date('dmY') ?>" />
                                 <?php else: ?>
-                                    <input type="text" name="data_pt" id="data_pt" class="date-input"
+                                    <input type="text" name="data_pt" id="data_pt" class="date-input" style="height:26px; font-size:13px; width:160px; padding:0 8px;"
                                         value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
                                     <input type="hidden" name="data" id="data" value="<?= $hoje->format("dmY") ?>" />
                                 <?php endif; ?>
                             </form>
                         </div>
 
-                        <!-- 🎯 Chevron Direito: Oculto no Modo Período -->
+                        <!--  Chevron Direito: Oculto no Modo Período -->
                         <?php if ($tipo != 'p'): ?>
-                            <img src="<?= app_url('/img/chevron_right.png') ?>" width="40" height="40" class="nav-button" alt="Próximo"
+                            <img src="<?= app_url('/img/chevron_right.png') ?>" width="26" height="26" style="width:26px;height:26px;" class="nav-button" alt="Próximo"
                                 onclick="alteraData(dia_posterior)" />
                         <?php endif; ?>
 
@@ -161,7 +159,7 @@ use Salas\Application\Services\AuthorizationService;
                             <tr>
                                 <td><?= htmlspecialchars((string) $reserva['categoria'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
-                                <td width="300"><?= htmlspecialchars((string) $reserva['disciplina_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td width="300"><?= htmlspecialchars((string) $reserva['entidade_desc'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><a href="<?= htmlspecialchars(app_url('?data=' . $dataLink), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($diaFormatado, ENT_QUOTES, 'UTF-8') ?></a></td>
                                 <td><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><?= htmlspecialchars((string) $reserva['status_nome'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -233,7 +231,7 @@ switch ($tipo) {
   // 3. Inicialização Centralizada do DOM
   $(document).ready(function () {
     
-    // 🎯 OTIMIZAÇÃO E UNIFORMIZAÇÃO: Gere o estado ativo dos botões
+    //  OTIMIZAÇÃO E UNIFORMIZAÇÃO: Gere o estado ativo dos botões
     $('#semanal, #mensal, #periodo').removeClass('active');
     if (tipo === 'w') $('#semanal').addClass('active');
     if (tipo === 'm') $('#mensal').addClass('active');

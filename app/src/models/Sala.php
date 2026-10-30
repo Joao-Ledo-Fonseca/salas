@@ -7,12 +7,12 @@ class Sala
 {
 	private $db = null;
 
-	function __construct(Database $db)
+	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
-	function listar($filtro_categorias = 0, $filtro_activas = 'todas')
+	public function listar($filtro_categorias = 0, $filtro_activas = 'todas')
 	{
 		switch ($filtro_activas) {
 			case 'todas':
@@ -32,7 +32,7 @@ class Sala
 		return $this->db->query($sql, [$filtro_categorias, $filtro_categorias]);
 	}
 
-	function abrir($id)
+	public function abrir($id)
 	{
 		$rows = $this->db->query('select * from sala where id = ?', [$id]);
 		if (!isset($rows[0])) {
@@ -49,7 +49,7 @@ class Sala
 		return [array_merge($image, $rows[0])];
 	}
 
-	function salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id, $uploadedImage = false)
+	public function salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id, $uploadedImage = false)
 	{
 		if (is_array($uploadedImage)) {
 			if ($imagem_id !== 0 && $imagem_id !== '' && $imagem_id !== null) {
@@ -86,7 +86,7 @@ class Sala
 		}
 	}
 
-	function excluir($id, $imageId = '')
+	public function excluir($id, $imageId = '')
 	{
 		try {
 			$sql = 'delete from sala where id = ?';
@@ -100,29 +100,33 @@ class Sala
 		return true;
 	}
 
-	function listarPorCategoria($categoria_id)
+	public function listarPorCategoria($categoria_id)
 {
     $sql = 'select id, nome, descricao, lugares, activa from sala where categoria_id = ? order by nome;';
     return $this->db->query($sql, [$categoria_id]);
 }
 
-function name($id)
+public function name($id)
 {
 	$rows = $this->db->query('select * from sala where id = ?', [$id]);
 	return isset($rows[0]['nome']) ? (string) $rows[0]['nome'] : '';
 }
 
-function total()
+public function total()
 {
 	$sql = 'select count(id) as total from sala';
 	return $this->db->query($sql);
 }
 
-function nullifyImageId($imageId)
+public function nullifyImageId($imageId)
 {
 	$sql = 'update sala set imagem_id = null where imagem_id = ?';
 	return $this->db->query_update($sql, [$imageId]);
 }
+
+
+
+
 }
 
 ?>

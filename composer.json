@@ -22,6 +22,7 @@
     "scripts": {
         "lint": "find app/src app/public -name '*.php' -print0 | xargs -0 -n1 php -l",
         "test": "phpunit",
+    "test:integration": "phpunit -c phpunit.integration.xml",
         "analyse": "phpstan analyse app/src --level=5"
     }
 }

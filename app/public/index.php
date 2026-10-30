@@ -16,7 +16,7 @@ use Salas\Core\Http\ViewRenderer;
 use Salas\Core\Auth\SalasSessionAdapter;
 use Salas\Controllers\LoginController;
 use Salas\Controllers\UsuarioController;
-use Salas\Application\Router;
+use Salas\Core\Router;
 
 $database = new Database($appConfig);
 
@@ -33,11 +33,11 @@ $sessionAdapter->start();
 
 $request = Request::fromGlobals();
 
-// 🎯 CONFIGURAÇÃO: Tempo limite de inatividade (ex: 1800s = 30 minutos)
+//  CONFIGURAÇÃO: Tempo limite de inatividade (ex: 1800s = 30 minutos)
 $tempo_limite = 600; 
 
 if ($sessionAdapter->expireIfInactive($tempo_limite)) {
-        // 🎯 DETEÇÃO DE AJAX: Verifica se a requisição veio via JavaScript (AJAX)
+        //  DETEÇÃO DE AJAX: Verifica se a requisição veio via JavaScript (AJAX)
         $isAjax = $request->isAjax();
         
         if ($isAjax) {
@@ -46,37 +46,35 @@ if ($sessionAdapter->expireIfInactive($tempo_limite)) {
             exit;
         } else {
             // Se for um clique normal no navegador, faz o redirecionamento convencional
-            \Salas\Core\Http\Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
+            Response::redirect(app_url('?acao=login&errormsg=' . urlencode("Sessão expirada.")))->send();
             exit;
         }
 }
 
 // 1. Intersetar Logout e Login
 if ($request->action() === 'logout') {
-    // 🎯 CORREÇÃO: Chama o método diretamente do controlador unificado
-    $UsuarioController = new UsuarioController($database);
-    $UsuarioController->logout();
+    (new Router($database))->logout();
     exit;
-    }
+}
 
 if ($request->action() === 'login') {
-    $loginView = (new LoginController($database))->handle($request->allQuery(), $request->allPost());
-    if ($loginView['redirect'] !== null) {
-        \Salas\Core\Http\Response::redirect($loginView['redirect'])->send();
-        exit;
-    }
-
-    ViewRenderer::render('Login.php', ['loginView' => $loginView]);
+    (new Router($database))->login($request);
     exit;
-    }
+}
 
 if ($request->action() === 'imagens_list') {
-    require_once $appRoot . '/../src/Controllers/SalaController.php';
-    $ctrl = new \Salas\Controllers\SalaController($database);
-    header('Content-Type: application/json; charset=UTF-8');
-    echo $ctrl->listarImagensJson($request->allQuery());
+    (new Router($database))->imagensList($request);
     exit;
-    }
+}
+
+
+
+
+
+
+
+
+
 
 // 2. Sistema de distribuição de páginas baseado no Menu
 if ($request->action() !== null) {

@@ -6,9 +6,9 @@ use Salas\Core\Auth\CredentialRepository;
 
 class Authenticator
 {
-	private CredentialRepository $credentials;
+	private UserCredentialRepository $credentials;
 
-	public function __construct(CredentialRepository $credentials)
+	public function __construct(UserCredentialRepository $credentials)
 	{
 		$this->credentials = $credentials;
 	}

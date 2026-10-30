@@ -13,18 +13,16 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
- $title = 'Cadastro de Períodos'; ?>
+ <?php $title = 'Cadastro de Períodos'; ?>
 
 <h3>Cadastro de Períodos</h3>
 
 <div class="container_top lista_comum" style="max-height:60vh; overflow-y:auto;">
     <div class="form_sel">
-        <input type="button" name="novo" value="novo" class="btn1" onclick='abre("periodo_form.php")' />
+        <input type="button" name="novo" value="Novo" class="btn1" onclick='abre("periodo_form.php")' />
     </div>
 </div>
 

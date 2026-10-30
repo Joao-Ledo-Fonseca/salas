@@ -47,7 +47,13 @@ class ErrorHandler
 
     public static function handleError(int $severity, string $message, string $file, int $line): bool
     {
-        if (!in_array($severity, [E_ERROR, E_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR], true)) {
+        $maskEnv = getenv('APP_ERROR_LEVEL');
+        if (is_string($maskEnv) && $maskEnv !== '') {
+            $mask = (int) $maskEnv;
+            if (($mask & $severity) === 0) {
+                return false;
+            }
+        } elseif (!in_array($severity, [E_ERROR, E_WARNING, E_USER_ERROR, E_RECOVERABLE_ERROR], true)) {
             return false;
         }
 

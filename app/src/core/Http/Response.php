@@ -60,6 +60,11 @@ class Response
         return $this->content;
     }
 
+    public function output(): string
+    {
+        return $this->content;
+    }
+
     public function send(): void
     {
         if (!headers_sent()) {
@@ -69,6 +74,6 @@ class Response
             }
         }
 
-        echo $this->content;
+        echo $this->output();
     }
 }

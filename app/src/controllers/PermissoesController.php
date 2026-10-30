@@ -56,14 +56,14 @@ class PermissoesController
         }
     }
 
-    function validaPermissao($permissao, $nivel)
+    public function validaPermissao($permissao, $nivel)
         {
         $validade = ($this->niveis[$nivel][0] == "superadmin") || (array_key_exists($permissao, $this->permissions) && $this->permissions[$permissao][$nivel]);
 
         return $validade;
         }
 
-    function nomeNivel($nivel, $tipoNome = 0)
+    public function nomeNivel($nivel, $tipoNome = 0)
         {
         if (array_key_exists($nivel, $this->niveis)) {
             if ($tipoNome == 0) {
@@ -80,7 +80,7 @@ class PermissoesController
         return "N/A";
         }
 
-    function requirePermission($permissao)
+    public function requirePermission($permissao)
         {
         if (!isset($_SESSION['user_nivel']) || !$this->validaPermissao($permissao, $_SESSION['user_nivel'])) {
             header('Location: ' . app_url());
@@ -88,8 +88,8 @@ class PermissoesController
             }
         }
 
-    // 🎯 NOVO MÉTODO: Retorna ao Dashboard Inicial
-    function cancelar()
+    //  NOVO MÉTODO: Retorna ao Dashboard Inicial
+    public function cancelar()
         {
         if (isset($_POST['cancelar'])) {
             header('Location: ' . app_url());
@@ -98,7 +98,7 @@ class PermissoesController
         return false;
         }
 
-    function salvar()
+    public function salvar()
         {
         $permissoes = new Permissoes($this->db);
 
@@ -118,9 +118,10 @@ class PermissoesController
                 }
 
             // Preenche o array $lista com os valores do $POST
+            $lista = [];
             foreach ($_POST as $post_nome => $post_value) {
 
-                // 🎯 CORREÇÃO CRÍTICA: Se for o botão salvar ou a variável acao, ignora e salta para o próximo
+                //  CORREÇÃO CRÍTICA: Se for o botão salvar ou a variável acao, ignora e salta para o próximo
                 if ($post_nome === 'salvar' || $post_nome === 'acao') {
                     continue;
                     }
@@ -154,50 +155,13 @@ class PermissoesController
         return false;
         }
     // Preencher e verificar base de dados
-    function validarTabelaPermissoes()
-        {
-
-        $permissoes = new Permissoes($this->db);
-        $linhas = $permissoes->listar();
-
-        $ctrl_seq[''] = '0';
-        foreach ($linhas as $linha) {
-            if (!array_key_exists($linha['nome'], $this->permissoes_defaults)) {
-                // Verifica permissoes na bd, e elimina as não parametrizadas em $permissoes_defaults
-                $permissoes->excluir($linha['nome']);
-                }
-            else {
-                // para as permissoes válidas, regista o numero de seq que está na BD
-                $ctrl_seq[$linha['nome']] = $linha['seq'];
-                }
-            }
-
-        $i = 0;
-        foreach ($this->permissoes_defaults as $nome => $value) {
-            // atualiza na BD as permissões ausentes ou a sequencia das já existentes  
-            if (!array_key_exists($nome, $ctrl_seq)) {
-                // se não existe na BD, adiciona
-                $permissoes->salvar(
-                    $i,
-                    $nome,
-                    $value[0],
-                    $value[1],
-                    $value[2],
-                    $value[3]
-                );
-                $ctrlBd[] = [$nome => $i];
-
-                }
-            else if ($i <> $ctrl_seq[$nome]) {
-                // se existe mas tem valor de "seq" diferente, renumera                   
-                $permissoes->renumerar($i, $nome, );
-                }
-            $i++;
-            }
-        }
+    public function validarTabelaPermissoes()
+    {
+        (new Permissoes($this->db))->ensureDefaults();
+    }
 
     // listagem
-    function listar($tipo)
+    public function listar($tipo)
         {
 
         $this->validarTabelaPermissoes();
@@ -213,11 +177,11 @@ class PermissoesController
 
             if ($tipo == 'n') {
 
-                $linha['descricao'] = $this->permissoes_defaults[$linha['nome']][4];
+                $linha['descricao'] = \Salas\Models\Permissoes::DEFAULTS[$linha['nome']][4];
                 $tabela[] = $linha;
                 }
             else if ($tipo == 's') {
-                $linha['descricao'] = $this->permissoes_defaults[$linha['nome']][4];
+                $linha['descricao'] = \Salas\Models\Permissoes::DEFAULTS[$linha['nome']][4];
                 $tabela[] = $linha;
                 }
             }
@@ -227,7 +191,28 @@ class PermissoesController
         }
 
 
+    public function permissoesForm(array $post = []): array
+    {
+        $controller = $this;
+        if ($post !== []) {
+            $controller->cancelar();
+            $controller->salvar();
+        }
+        return [
+            'tabela_n' => $controller->listar('n'),
+            'tabela_s' => $controller->listar('s'),
+            'nivelLabels' => [
+                $controller->nomeNivel(0, 2),
+                $controller->nomeNivel(1, 2),
+                $controller->nomeNivel(2, 2),
+                $controller->nomeNivel(3, 2),
+            ],
+        ];
     }
+
+
+
+}
 
 
 ?>

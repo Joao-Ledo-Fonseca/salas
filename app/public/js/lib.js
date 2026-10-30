@@ -131,7 +131,7 @@ function salvaFormularioReserva() {
 			// recarregar pagina no dia atual.
 			if ($.isNumeric(response))
 				// 🎯 CORREÇÃO 2: Redireciona através da raiz limpa "/" do MVC
-				window.location.href = appUrl('?data=') + data_pt;
+				if (typeof data_pt !== 'undefined' && data_pt) { window.location.href = appUrl('?data=') + data_pt; } else { window.location.reload(); }
 			else {
 				alert(response);
 				salvando = false;
@@ -163,7 +163,7 @@ function excluirFormularioReserva(id) {
 				// recarregar pagina no dia atual.
 				if ($.isNumeric(response))
 					// 🎯 CORREÇÃO 4: Redireciona através da raiz limpa "/" do MVC
-					window.location.href = appUrl('?data=') + data_pt;
+					if (typeof data_pt !== 'undefined' && data_pt) { window.location.href = appUrl('?data=') + data_pt; } else { window.location.reload(); }
 				else
 					alert(response)
 			}

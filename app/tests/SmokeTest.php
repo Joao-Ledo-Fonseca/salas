@@ -99,9 +99,8 @@ try {
 
 // core/ Support Util
 try {
-    require_once __DIR__ . '/../src/core/Support/Util.php';
-    $d = \Salas\Core\Support\Util::parseDataPt('29/10/2026');
-    assert_true($d instanceof \DateTime, 'Util::parseDataPt failed');
+    $d = \Salas\Core\Support\DateUtil::parseDataPt('29/10/2026');
+    assert_true($d instanceof \DateTime, 'DateUtil::parseDataPt failed');
 } catch (\Throwable $e) {
     $failures[] = 'Util exception: ' . $e->getMessage();
 }

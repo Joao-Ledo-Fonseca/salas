@@ -3,7 +3,6 @@ namespace Salas\Controllers;
 
 use Salas\Core\Auth\AuthContext;
 use Salas\Core\Auth\Authenticator;
-use Salas\Core\Auth\SalasCredentialRepository;
 use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
 use Salas\Core\Validation\Validator;
@@ -60,9 +59,7 @@ return 'invalid';
 }
 
 $usuario = new Usuario($this->db);
-$authenticator = new Authenticator(
-new SalasCredentialRepository($usuario)
-);
+$authenticator = new Authenticator($usuario);
 
 $identity = $authenticator->authenticate(
 Validator::string($post['email_l']),

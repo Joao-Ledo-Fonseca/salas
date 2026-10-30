@@ -13,12 +13,10 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
- $title = 'Cadastro de Salas'; ?>
+ <?php $title = 'Cadastro de Salas'; ?>
 
 <h3>Cadastro de Salas</h3>
 
@@ -60,6 +58,7 @@ use Salas\Application\Services\AuthorizationService;
                 <th width="150px">Categoria</th>
                 <th width="150px">Nome</th>
                 <th width="200px">Descrição</th>
+                <th width="80px">Nº Lugares</th>
                 <th width="200px">Activa</th>
                 <th width="50px">ID</th>
                 <th></th>
@@ -73,6 +72,7 @@ use Salas\Application\Services\AuthorizationService;
                     <td style="border:none"><?= $categoriaAtual === $categoriaAnterior ? '' : htmlspecialchars($categoriaAtual, ENT_QUOTES, 'UTF-8') ?></td>
                     <td><a href="<?= htmlspecialchars(app_url('?acao=sala_form&id=' . (int) $sala['id'] . '&categoria_filtro=' . rawurlencode((string) $categoria_id) . '&activas=' . rawurlencode((string) $activas)), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $sala['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
                     <td><?= htmlspecialchars((string) $sala['descricao'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= (int) $sala['lugares'] ?></td>
                     <td><?= !empty($sala['activa']) ? '&#10003;' : '-' ?></td>
                     <td><?= (int) $sala['id'] ?></td>
                     <td></td>

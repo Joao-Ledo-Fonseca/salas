@@ -13,15 +13,13 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
 
 <?php $title = 'Cadastro de Salas'; ?>
 
-<h3>Cadastro de Salas</h3><br>Categorias:<?= htmlspecialchars((string)$categoria_filtro, ENT_QUOTES, 'UTF-8') ?> Activas:<?= htmlspecialchars((string)$activas_filtro, ENT_QUOTES, 'UTF-8') ?>
+<h3>Cadastro de Salas</h3>
 
 <div class="container">
     <div class="a_par">
@@ -141,8 +139,8 @@ $cancelUrl = (($return_to ?? '') !== '')
                         <td style="padding:0 3px;"><?= (int) $reserva['id'] ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['professor_desc'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['disciplina_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['entidade_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['usuario'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;">
@@ -254,7 +252,7 @@ $cancelUrl = (($return_to ?? '') !== '')
                     btn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; line-height:14px; padding:0; cursor:pointer; z-index:10;';
                     btn.title = 'Eliminar imagem';
                     btn.innerHTML = '&times;';
-                    btn.onclick = function(e){ e.stopPropagation(); eliminarImagemOverlay(img.id); return false; };
+                    btn.onclick = function(e){ e.stopPropagation(); excluirImagemOverlay(img.id); return false; };
                     div.appendChild(btn);
                     grid.appendChild(div);
                 });
@@ -321,7 +319,7 @@ $cancelUrl = (($return_to ?? '') !== '')
         if (ph) { ph.style.display = 'none'; }
         fecharOverlayImagens();
     }
-    function eliminarImagemOverlay(imageId) {
+    function excluirImagemOverlay(imageId) {
         var params = new URLSearchParams();
         params.append('id', '<?= (int) $id ?>');
         params.append('categoria_filtro', '<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>');

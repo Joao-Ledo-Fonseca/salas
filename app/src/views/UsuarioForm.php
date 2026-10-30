@@ -13,12 +13,10 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
- $title = 'Perfil de utilizador'; ?>
+ <?php $title = 'Perfil de utilizador'; ?>
 
 <script>
     nomeSessao = <?= json_encode($sessionUserName) ?>;
@@ -107,7 +105,7 @@ use Salas\Application\Services\AuthorizationService;
                     <th style="padding:0 3px;">Sala</th>
                     <th style="padding:0 3px;">Período</th>
                     <th style="padding:0 3px;">Dia</th>
-                    <th style="padding:0 3px;">Disciplina</th>
+                    <th style="padding:0 3px;">Uso</th>
                     <th style="padding:0 3px;">Status</th>
                     <th style="padding:0 3px;">Eliminar</th>
                 </tr>
@@ -117,7 +115,7 @@ use Salas\Application\Services\AuthorizationService;
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['disciplina_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;">
                             <?php if ($podeEliminarReservas): ?>

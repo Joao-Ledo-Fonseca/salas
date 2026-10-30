@@ -1,8 +1,6 @@
 <?php
 namespace Salas\Core\Auth;
 
-require_once __DIR__ . '/SessionManager.php';
-require_once __DIR__ . '/SalasSessionAdapter.php';
 
 class AuthContext
 {

@@ -13,9 +13,7 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
 <!DOCTYPE html>
@@ -231,7 +229,7 @@ use Salas\Application\Services\AuthorizationService;
 									data-periodo="<?= htmlspecialchars((string) $cell['periodo_id'], ENT_QUOTES, 'UTF-8') ?>"
 									data-usuario_id="<?= htmlspecialchars((string) $cell['usuario_id'], ENT_QUOTES, 'UTF-8') ?>"
 									<?= !empty($cell['tooltip']) ? 'title="' . htmlspecialchars($cell['tooltip'], ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
-									<?= htmlspecialchars((string) $cell['disciplina'], ENT_QUOTES, 'UTF-8') ?>&nbsp;<hr>&nbsp;<?= htmlspecialchars((string) $cell['professor'], ENT_QUOTES, 'UTF-8') ?>
+									<?= htmlspecialchars((string) $cell['uso'], ENT_QUOTES, 'UTF-8') ?>&nbsp;<hr>&nbsp;<?= htmlspecialchars((string) $cell['entidade'], ENT_QUOTES, 'UTF-8') ?>
 								</td>
 							<?php endforeach; ?>
 						</tr>

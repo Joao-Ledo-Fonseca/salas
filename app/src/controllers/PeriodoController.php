@@ -83,4 +83,19 @@ class PeriodoController
         $periodo = new Periodo($this->db);
         return $periodo->listar();
     }
+    public function periodoForm(array $query, array $post = []): array
+    {
+        $controller = $this;
+        if ($post !== []) {
+            $controller->cancelar();
+            $controller->excluir();
+            $controller->salvar();
+        }
+        $record = $controller->abrir();
+        return array_merge(['id' => 0, 'nome' => '', 'seq' => 0], isset($record[0]) ? $record[0] : []);
+    }
+
+
+
+
 }

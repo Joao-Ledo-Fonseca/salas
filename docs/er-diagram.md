@@ -58,8 +58,8 @@ erDiagram
         int sala_id FK
         int periodo_id FK
         date dia
-        varchar professor_desc
-        varchar disciplina_desc
+        varchar entidade_desc
+        int uso_id FK
         int status
         text observacao
         int usuario_id FK

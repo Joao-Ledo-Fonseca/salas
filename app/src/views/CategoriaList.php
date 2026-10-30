@@ -13,19 +13,17 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
- $title = 'Cadastro de Categorias'; ?>
+ <?php $title = 'Cadastro de Categorias'; ?>
 
 <h3>Cadastro de Categorias</h3>
 
 <div class="container_top lista_comum" style="max-height:60vh; overflow-y:auto;">
     <form class="form_sel" name="form1" method="post" target="_self">
         <span style="float:left;">
-            <input type="button" name="novo" value="novo" class="btn1" onclick="abre('categoria_form.php')" />
+            <input type="button" name="novo" value="Novo" class="btn1" onclick="abre('categoria_form.php')" />
         </span>
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
     </form>

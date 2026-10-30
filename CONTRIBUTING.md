@@ -27,7 +27,7 @@ Obrigado por contribuir para o projeto **Reserva de Salas**.
 3. Criar controller em `app/src/controllers/` (salvar, excluir, cancelar, abrir, listarController, listarOpcoesController).
 4. Criar views `*List.php` e `*Form.php` em `app/src/views/` (usar o layout comum).
 5. Adicionar rotas em `app/src/config/routes.php`.
-6. Adicionar cases no `ApplicationPageController::dispatch` e método `*Form`.
+6. Adicionar casos no `Router::dispatch` e método `*Form` no controller correspondente.
 7. Adicionar permissão em `PermissoesController::$permissoes_defaults` e em `AuthorizationMiddleware`.
 8. Adicionar item no menu (`menuData()`) se aplicável.
 9. Atualizar `README.md`.

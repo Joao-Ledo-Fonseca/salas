@@ -5,8 +5,11 @@ use Salas\Core\Persistence\Database;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 use Salas\Models\Imagem;
-use Salas\Core\Support\Util;
+use Salas\Core\Support\DateUtil;
+use Salas\Core\Support\ImageUtil;
 use Salas\Core\Validation\Validator;
+use Salas\Core\Auth\AuthContext;
+use Salas\Core\Auth\AuthorizationService;
 
 class SalaController
 {
@@ -31,7 +34,7 @@ class SalaController
         $active = isset($_POST['activa']);
         $imageId = Validator::string($_POST['imagem_id'] ?? '');
 
-        $uploadedImage = Util::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
+        $uploadedImage = ImageUtil::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
         $sala = new Sala($this->db);
         $sala->salvar($id, $nome, $descricao, $categoryId, $places, $active, $imageId, is_array($uploadedImage) ? $uploadedImage : false);
 
@@ -104,25 +107,25 @@ class SalaController
         return $sala->listar((int) $filtro_categoria_id, (string) $filtro_activas);
     }
 
-    public function listarReservasSala(int $id): array
+    public function listarReservasPorSala(int $id): array
     {
         $reserva = new Reserva($this->db);
         return $reserva->listarPorSala($id);
     }
 
-    public function eliminarReservasSala(int $id): int
+    public function excluirReservasPorSala(int $id): int
     {
         $reserva = new Reserva($this->db);
         return (int) $reserva->excluirPorSala($id);
     }
 
-    public function listarSalasCategoria(int $id): array
+    public function listarSalasPorCategoria(int $id): array
     {
         $sala = new Sala($this->db);
         return $sala->listarPorCategoria($id);
     }
 
-    public function eliminarImagem(int $imageId): bool
+    public function excluirImagem(int $imageId): bool
     {
         if ($imageId <= 0) {
             return false;
@@ -159,4 +162,88 @@ class SalaController
         $hasMore = ($offset + count($rows)) < $total;
         return json_encode(['images' => $images, 'hasMore' => $hasMore], JSON_UNESCAPED_UNICODE);
     }
+    public function salaList(array $query, array $post): array
+    {
+        $categoryId = (int) Validator::string($post['categoria_id'] ?? $query['categoria_id'] ?? 0);
+        $activeFilter = (string) Validator::string($post['activas'] ?? $query['activas'] ?? 'activas');
+        return [
+            'categoria_id' => $categoryId,
+            'activas' => $activeFilter,
+            'categorias' => (new CategoriaController($this->db))->listarOpcoesController(),
+            'lista' => $this->listarController($categoryId, $activeFilter),
+        ];
+    }
+
+    public function salaForm(array $query, array $post): array
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        $categoryFilter = Validator::string($query['categoria_filtro'] ?? $post['categoria_filtro'] ?? 0);
+        $activeFilter = (string) Validator::string($query['activas'] ?? $post['activas'] ?? 'activas');
+        $returnTo = Validator::string($query['return_to'] ?? $post['return_to'] ?? '');
+        $returnId = (int) Validator::string($query['return_id'] ?? $post['return_id'] ?? 0);
+        $controller = $this;
+        $auth = new AuthContext();
+        $reservasSala = [];
+        $podeEliminarReservas = (new AuthorizationService($this->db))->validaPermissao('M_EliminarReservasUtilizador', $auth->level());
+        $error = '';
+        if (isset($post['eliminar_reservas']) && $podeEliminarReservas) {
+            $targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+            $controller->excluirReservasPorSala($targetId);
+            $error = 'Reservas da sala eliminadas com sucesso.';
+        }
+        if (isset($post['eliminar_reserva'])) {
+            $reservaId = (int) ($post['reserva_id'] ?? 0);
+            if ($reservaId > 0 && $podeEliminarReservas) {
+                (new Reserva($this->db))->excluir($reservaId);
+                $error = 'Reserva eliminada com sucesso.';
+            }
+        }
+        if (isset($post['eliminar_imagem'])) {
+            $imageId = (int) ($post['imagem_id'] ?? 0);
+            if ($imageId > 0) {
+                $controller->excluirImagem($imageId);
+                $error = 'Imagem eliminada com sucesso.';
+            }
+        }
+        if ($post !== []) {
+            $controller->cancelar($categoryFilter, $activeFilter, $returnTo, $returnId);
+            $deleteResult = $controller->excluir($categoryFilter, $activeFilter, $returnTo, $returnId);
+            if ($deleteResult === false) {
+                $error = 'Sala não pode ser excluída. Existem reservas associadas.';
+            }
+            $controller->salvar($categoryFilter, $activeFilter, $returnTo, $returnId);
+        }
+        $record = $controller->abrir();
+        $targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+        if ($targetId > 0) {
+            $reservasSala = $controller->listarReservasPorSala($targetId);
+        }
+        return array_merge([
+            'id' => 0,
+            'nome' => '',
+            'descricao' => '',
+            'categoria_id' => $categoryFilter,
+            'lugares' => 0,
+            'activa' => true,
+            'imagem_id' => '',
+            'nome_img' => '',
+            'tamanho_img' => '',
+            'tipo_img' => '',
+            'imagem' => '',
+            'categoria_filtro' => $categoryFilter,
+            'activas_filtro' => $activeFilter,
+            'errormsg' => $error !== '' ? $error : (string) ($query['errormsg'] ?? ''),
+            'reservasSala' => $reservasSala,
+            'podeEliminarReservas' => $podeEliminarReservas,
+            'return_to' => $returnTo,
+            'return_id' => $returnId,
+        ], is_array($record) ? $record[0] ?? [] : [], [
+            'categorias' => (new CategoriaController($this->db))->listarOpcoesController(),
+        ]);
+    }
+
+
+
+
 }

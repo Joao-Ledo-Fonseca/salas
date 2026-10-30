@@ -70,7 +70,7 @@ A configuração da aplicação é carregada uma vez por pedido por `AppConfig`;
 
 O front controller usa `Router` para encaminhar pedidos e `AuthorizationMiddleware` para autorização. `ApplicationPageController` coordena as operações e prepara os dados de apresentação. `ViewRenderer` centraliza a renderização das vistas. As vistas recebem esses dados e limitam-se a construir o HTML e escapar os valores apresentados; não instanciam nem chamam controllers.
 
-O fluxo `?acao=login` é coordenado por `LoginController`, que trata autenticação ou registo e prepara o estado consumido pela vista `login.php`. A página inicial passa por `DashboardPageController`, que interpreta os filtros e prepara categorias, períodos, salas, reservas e datas para `index.php`; o `DashboardController` fornece dados estruturados para o mapa.
+O fluxo `?acao=login` é coordenado por `LoginController`, que trata autenticação ou registo e prepara o estado consumido pela vista `login.php`. A página inicial passa por `DashboardController`, que interpreta os filtros e prepara categorias, períodos, salas, reservas e datas para `index.php`.
 
 Os relatórios seguem a mesma separação: `DashboardController` devolve arrays de reservas e totais; `relatorios.php` e `relatorios2.php` renderizam tabelas e mensagens. A listagem de categorias, períodos, salas e utilizadores também recebe arrays dos controllers e constrói as linhas nas respetivas vistas. A vista de permissões cria as caixas de seleção a partir dos dados devolvidos pelo controller. O controller de reservas devolve os estados como dados para `reserva_form.php` gerar as opções do formulário.
 

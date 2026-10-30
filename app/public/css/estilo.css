@@ -568,7 +568,7 @@ div.dt-container {
 	max-width: 400px;
 }
 
-.show:hover>.hidden {
+.show:hover .hidden {
 	visibility: visible;
 }
 

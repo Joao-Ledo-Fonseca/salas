@@ -4,14 +4,13 @@ namespace Salas\Core\Auth;
 
 use Salas\Core\Persistence\Database;
 use Salas\Models\Permissoes;
-use Salas\Controllers\PermissoesController;
 
 class AuthorizationService
 {
     private Database $db;
     private array $permissions = [];
 
-    public array $niveis = [
+    private array $niveis = [
         0 => ['uexterno', 'u', 'User'],
         1 => ['uinterno', 'g', 'Gestor'],
         2 => ['admin', 'a', 'Admin'],
@@ -28,7 +27,7 @@ class AuthorizationService
         }
 
         // Garante que a tabela de permissões está inicializada.
-        (new PermissoesController($this->db))->validarTabelaPermissoes();
+        (new Permissoes($db))->ensureDefaults();
 
         $model = new Permissoes($db);
         $linhas = $model->listar();
@@ -43,6 +42,12 @@ class AuthorizationService
 
         $_SESSION['auth_permissions'] = $this->permissions;
     }
+    public function niveis(): array
+    {
+        return $this->niveis;
+    }
+
+
 
     public function validaPermissao(string $permissao, int $nivel): bool
     {

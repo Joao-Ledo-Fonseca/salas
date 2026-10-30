@@ -13,12 +13,10 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
- $title = 'Reserva'; ?>
+ <?php $title = 'Reserva'; ?>
 
 <form name="frm_reserva" id="frm_reserva" onsubmit="return salvaFormularioReserva()">
 
@@ -34,7 +32,7 @@ use Salas\Application\Services\AuthorizationService;
     <input type="text" name="sala" value="<?= htmlspecialchars((string)$sala, ENT_QUOTES, 'UTF-8') ?>" disabled style="margin-bottom:2px;" />
     <input type="text" name="periodo" value="<?= (isset($periodos) && substr_count((string)$periodos, ',') > 0) ? 'Multiplos' : htmlspecialchars((string)$periodo, ENT_QUOTES, 'UTF-8') ?>" disabled style="margin-bottom:2px;" />
 
-    <input type="text" placeholder="Entidade" name="entidade" id="entidade" value="<?= htmlspecialchars((string)$professor_desc, ENT_QUOTES, 'UTF-8') ?>" required style="margin-bottom:2px;" /><BR />
+    <input type="text" placeholder="Entidade" name="entidade" id="entidade" value="<?= htmlspecialchars((string)$entidade_desc, ENT_QUOTES, 'UTF-8') ?>" required style="margin-bottom:2px;" /><BR />
 
     <select name="uso_id" id="uso_id" required style="margin-top:0; margin-bottom:2px;">
         <option value="">-- selecione uso --</option>

@@ -103,6 +103,20 @@ class SessionManager
 		session_destroy();
 	}
 
+    public function get(string $key, mixed $default = null): mixed
+    {
+        $this->start();
+
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public function set(string $key, mixed $value): void
+    {
+        $this->start();
+        $_SESSION[$key] = $value;
+    }
+
+
 	private function setIdentity(array $identity): void
 	{
 		$this->start();

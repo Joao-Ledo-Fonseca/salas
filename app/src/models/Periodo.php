@@ -7,12 +7,12 @@ class Periodo
 {
 	private $db = null;
 
-	function __construct(Database $db)
+	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
-	function listar()
+	public function listar()
 	{
 		
 		
@@ -20,13 +20,13 @@ class Periodo
 		return $this->db->query($sql);
 	}
 	
-	function abrir($id)
+	public function abrir($id)
 	{
 		$sql = 'select * from periodo where id = ?';
 		return $this->db->query($sql, array($id));
 	}
 	
-	function salvar($id, $nome, $seq)
+	public function salvar($id, $nome, $seq)
 	{
 		$seq = (int) $seq;
 
@@ -45,26 +45,30 @@ class Periodo
 		}
 	}
 	
-	function excluir($id)
+	public function excluir($id)
 	{
 		$sql = 'delete from periodo where id = ?'; 
 		return $this->db->query_update($sql, array($id));
 	}
 	
 	
-	function name($id)
+	public function name($id)
 	{
 		$rows = $this->abrir($id);
 		return isset($rows[0]['nome']) ? (string) $rows[0]['nome'] : '';
 	}
 
-	function total()
+	public function total()
 	{
 		
 		$sql = 'select count(id) as total from periodo  ';
 		return $this->db->query($sql);
 		
 	}
+
+
+
+
 }
 
 ?>

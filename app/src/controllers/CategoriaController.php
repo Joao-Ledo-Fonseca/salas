@@ -3,7 +3,8 @@ namespace Salas\Controllers;
 
 use Salas\Models\Categoria;
 use Salas\Core\Persistence\Database;
-use Salas\Core\Support\Util;
+use Salas\Core\Support\DateUtil;
+use Salas\Core\Support\ImageUtil;
 use Salas\Core\Validation\Validator;
 
 class CategoriaController
@@ -26,7 +27,7 @@ class CategoriaController
         $descricao = Validator::string($_POST['descricao'] ?? '');
         $imagemId = Validator::string($_POST['imagem_id'] ?? '');
 
-        $uploadedImage = Util::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
+        $uploadedImage = ImageUtil::imagemUpload($_FILES['imagem']['tmp_name'] ?? '');
         $categoria = new Categoria($this->db);
         $categoria->salvar($id, $nome, $descricao, $imagemId, is_array($uploadedImage) ? $uploadedImage : false);
 
@@ -88,4 +89,35 @@ class CategoriaController
         $categoria = new Categoria($this->db);
         return $categoria->listar();
     }
+    public function categoriaForm(array $query, array $post = []): array
+    {
+        $controller = $this;
+        if ($post !== []) {
+            $controller->cancelar();
+            $controller->excluir();
+            $controller->salvar();
+        }
+        $record = $controller->abrir();
+        $targetId = (int) ($query['id'] ?? 0);
+        $salasCategoria = [];
+        if ($targetId > 0) {
+            $salasCategoria = (new SalaController($this->db))->listarSalasPorCategoria($targetId);
+        }
+        return array_merge([
+            'id' => 0,
+            'nome' => '',
+            'descricao' => '',
+            'imagem_id' => '',
+            'nome_img' => '',
+            'tamanho_img' => '',
+            'tipo_img' => '',
+            'imagem' => '',
+            'errormsg' => (string) ($query['errormsg'] ?? ''),
+            'salasCategoria' => $salasCategoria,
+        ], is_array($record) ? $record[0] ?? [] : []);
+    }
+
+
+
+
 }

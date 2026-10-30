@@ -13,12 +13,10 @@ use Salas\Controllers\ReservaController;
 use Salas\Controllers\PeriodoController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\PermissoesController;
-use Salas\Core\Support\Util;
 use Salas\Core\Validation\Validator;
-use Salas\Application\Services\AuthorizationService;
 ?>
 
- $title = 'Lista de Utilizadores'; ?>
+ <?php $title = 'Lista de Utilizadores'; ?>
 
 <h3>Lista de Utilizadores</h3>
 

@@ -23,19 +23,19 @@ class Database
 		return $stmt;
 	}
 
-	function query($sql, $params = array())
+	public function query(string $sql, array $params = []): array
 	{
 		return $this->execute($sql, $params)->fetchAll();
 	}
 
-	function query_insert($sql, $params = array())
+	public function query_insert(string $sql, array $params = []): int
 	{
 		$this->execute($sql, $params);
 
 		return (int) $this->connection()->lastInsertId();
 	}
 
-	function query_update($sql, $params = array())
+	public function query_update(string $sql, array $params = []): int
 	{
 		return $this->execute($sql, $params)->rowCount();
 	}
@@ -59,5 +59,18 @@ class Database
 
 		return $this->link;
 	}
+    public function beginTransaction(): void
+    {
+        $this->connection()->beginTransaction();
+    }
+
+    public function rollBack(): void
+    {
+        if ($this->connection()->inTransaction()) {
+            $this->connection()->rollBack();
+        }
+    }
+
+
 }
 ?>

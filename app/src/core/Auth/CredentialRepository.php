@@ -12,5 +12,5 @@ interface CredentialRepository
 	 */
 	public function findByIdentifier(string $identifier): ?array;
 
-	public function updatePasswordHash(int|string $id, string $passwordHash): void;
+	public function updatePasswordHash(int|string $id, string $passwordHash): int;
 }

@@ -77,5 +77,25 @@ class UsoController
         $uso = new Uso($this->db);
         return $uso->listar();
     }
+    public function usoForm(array $query, array $post = []): array
+    {
+        $controller = $this;
+        if ($post !== []) {
+            $controller->cancelar();
+            $controller->excluir();
+            $controller->salvar();
+        }
+        $record = $controller->abrir();
+        return array_merge([
+            'id' => 0,
+            'nome' => '',
+            'descricao' => '',
+            'errormsg' => (string) ($query['errormsg'] ?? ''),
+        ], is_array($record) ? $record[0] ?? [] : []);
+    }
+
+
+
+
 }
 ?>

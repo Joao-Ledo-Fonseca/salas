@@ -5,7 +5,9 @@ class ViewRenderer
 {
     public static function render(string $view, array $data = [], ?string $layout = null): void
     {
-        global $cfg;
+        if (!array_key_exists('cfg', $data)) {
+            $data['cfg'] = $GLOBALS['cfg'] ?? null;
+        }
         extract($data, EXTR_SKIP);
 
         $viewPath = __DIR__ . '/../../views/' . ltrim($view, '/');

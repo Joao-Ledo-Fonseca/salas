@@ -8,19 +8,19 @@ class Categoria
 
 private $db = null;
 
-function __construct(Database $db)
+public function __construct(Database $db)
 {
 $this->db = $db;
 }
 
-function listar()
+public function listar()
 {
 
 $sql = ' select id, nome, descricao from categoria order by nome;';
 return $this->db->query($sql);
 }
 
-function abrir($id)
+public function abrir($id)
 {
 $rows = $this->db->query('select * from categoria where categoria.id = ?', [$id]);
 if (!isset($rows[0])) {
@@ -37,7 +37,7 @@ $image = $found[0];
 return [array_merge($image, $rows[0])];
 }
 
-function salvar($id, $nome, $descricao, $imagem_id, $uploadedImage = false)
+public function salvar($id, $nome, $descricao, $imagem_id, $uploadedImage = false)
 {
 
 if (is_array($uploadedImage)) {
@@ -76,7 +76,7 @@ return $id;
 }
 }
 
-function excluir($id, $imagemId = '')
+public function excluir($id, $imagemId = '')
 {
 try {
 $sql = 'delete from categoria where id = ?';
@@ -90,13 +90,16 @@ if ($imagemId !== 0 && $imagemId !== '' && $imagemId !== null) {
 return true;
 }
 
-function total()
+public function total()
 {
 
 $sql = 'select count(id) as total from categoria  ';
 return $this->db->query($sql);
 
 }
+
+
+
 
 }
 

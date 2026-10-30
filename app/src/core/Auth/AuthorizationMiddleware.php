@@ -1,5 +1,5 @@
 <?php
-namespace Salas\Application;
+namespace Salas\Core\Auth;
 
 use Salas\Core\Auth\AuthContext;
 use Salas\Core\Auth\AuthorizationService;

@@ -3,11 +3,15 @@ namespace Salas\Controllers;
 
 
 use Salas\Models\Categoria;
+use Salas\Core\Auth\AuthContext;
+use Salas\Core\Auth\AuthorizationService;
 use Salas\Core\Persistence\Database;
 use Salas\Models\Periodo;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 use Salas\Models\Uso;
+use Salas\Models\Usuario;
+use Salas\Core\Support\DateUtil;
 
 class DashboardController
 {
@@ -15,19 +19,19 @@ class DashboardController
 
     public $reserva;
 
-    function __construct(Database $db)
+    public function __construct(Database $db)
     {
         $this->db = $db;
         $this->reserva = new Reserva($db);
     }
 
-    function listarPeriodosDashboard()
+    public function listarPeriodosPainel()
     {
         $periodo = new Periodo($this->db);
         return $periodo->listar();
     }
 
-    function listarSalasDashboard($hoje, $categoria_id = 0, $usuario_id = 0)
+    public function listarSalasPainel($hoje, $categoria_id = 0, $usuario_id = 0)
     {
         $sl = new Sala($this->db);
         $per = new Periodo($this->db);
@@ -44,8 +48,8 @@ class DashboardController
 
             foreach ($periodos as $periodo) {
                 $reserva = [
-                    'disciplina' => '',
-                    'professor' => '',
+                    'uso' => '',
+                    'entidade' => '',
                     'observacao' => '',
                     'status' => 0,
                     'usuario' => '',
@@ -60,8 +64,8 @@ class DashboardController
                 if (!empty($status) && isset($status['id'])) {
                     if ($usuario_id > 0 && (int) $status['usuario_id'] !== (int) $usuario_id) {
                         $reserva['classe'] = 'disponivel';
-                        $reserva['disciplina'] = '';
-                        $reserva['professor'] = '';
+                        $reserva['uso'] = '';
+                        $reserva['entidade'] = '';
                         $reserva['observacao'] = '';
                         $reserva['status'] = 0;
                         $reserva['usuario'] = '';
@@ -82,8 +86,8 @@ class DashboardController
                         $statusNames = [1 => 'Reservado', 2 => 'Confirmado', 3 => 'Cancelado'];
                         $statusName = $statusNames[(int) $status['status']] ?? 'Desconhecido';
 
-                        $reserva['disciplina'] = $status['disciplina_desc'];
-                        $reserva['professor'] = $status['professor_desc'];
+                        $reserva['uso'] = $status['uso_nome'] ?? '';
+                        $reserva['entidade'] = $status['entidade_desc'] ?? '';
                         $reserva['observacao'] = (string) ($status['observacao'] ?? '');
                         $reserva['status'] = (int) $status['status'];
                         $reserva['usuario'] = (string) ($status['usuario'] ?? '');
@@ -91,8 +95,8 @@ class DashboardController
                         $reserva['usuario_id'] = $status['usuario_id'];
 
                         $tooltipLines = [];
-                        $tooltipLines[] = 'Entidade: ' . $status['professor_desc'];
-                        $tooltipLines[] = 'Uso: ' . $status['disciplina_desc'];
+                        $tooltipLines[] = 'Entidade: ' . ($status['entidade_desc'] ?? '');
+                        $tooltipLines[] = 'Uso: ' . ($status['uso_nome'] ?? '');
                         if (trim((string) ($status['observacao'] ?? '')) !== '') {
                             $tooltipLines[] = 'Obs: ' . $status['observacao'];
                         }
@@ -104,8 +108,9 @@ class DashboardController
                     }
                 }
 
-                if (isset($_SESSION['user_nivel']) && $_SESSION['user_nivel'] == 0) {
-                    $reserva['can_open'] = (($_SESSION['user_id'] == $reserva['usuario_id']) || ($reserva['usuario_id'] == ''));
+                $auth = new AuthContext();
+                if ($auth->level() == 0) {
+                    $reserva['can_open'] = (($auth->id() == $reserva['usuario_id']) || ($reserva['usuario_id'] == ''));
                 } else {
                     $reserva['can_open'] = true;
                 }
@@ -124,20 +129,93 @@ class DashboardController
         return $linhas;
     }
 
-    function listarCategoriasController()
+    public function listarCategoriasController()
     {
         $categoria = new Categoria($this->db);
         return $categoria->listar();
     }
 
-    function prevController($dia, $categoria_id, $usuario_id = 0)
+    public function prevController($dia, $categoria_id, $usuario_id = 0)
     {
         return $this->reserva->prev($dia, $categoria_id, $usuario_id);
     }
 
-    function nextController($dia, $categoria_id, $usuario_id = 0)
+    public function nextController($dia, $categoria_id, $usuario_id = 0)
     {
         return $this->reserva->next($dia, $categoria_id, $usuario_id);
     }
+    public function index(array $query): array
+    {
+        $date = isset($query['data']) && is_string($query['data'])
+            ? DateUtil::parseDataPt($query['data'])
+            : null;
+        $date = $date ?? new \DateTime();
+
+        $categoryId = filter_var($query['categoria'] ?? null, FILTER_VALIDATE_INT);
+        $categoryId = $categoryId === false || $categoryId === null ? 0 : $categoryId;
+
+        $usuarioId = filter_var($query['usuario'] ?? null, FILTER_VALIDATE_INT);
+        $usuarioId = $usuarioId === false || $usuarioId === null ? 0 : $usuarioId;
+
+        $authLevel = (new AuthContext())->level();
+        $showUserFilter = (new AuthorizationService($this->db))->validaPermissao('M_FiltroUtilizador', $authLevel);
+
+        $cacheKey = 'dashboard_cache_' . (new AuthContext())->id();
+        $cache = $_SESSION[$cacheKey] ?? null;
+        $cacheValid = is_array($cache)
+            && isset($cache['ts'], $cache['categories'], $cache['periods'], $cache['users'])
+            && (time() - (int) $cache['ts'] < 60);
+
+        if ($cacheValid) {
+            $categories = $cache['categories'];
+            $periods = $cache['periods'];
+            $users = $cache['users'];
+        } else {
+            $users = [];
+            if ($showUserFilter) {
+                $usuarioModel = new Usuario($this->db);
+                $users = $usuarioModel->listar();
+            }
+            $categories = $this->listarCategoriasController();
+            $periods = $this->listarPeriodosPainel();
+
+            $_SESSION[$cacheKey] = [
+                'ts' => time(),
+                'categories' => $categories,
+                'periods' => $periods,
+                'users' => $users,
+            ];
+        }
+
+        return [
+            'date' => $date,
+            'dateLabel' => DateUtil::traduz_data($date->format('D d/m/Y'), 'pt'),
+            'previousDay' => DateUtil::calcularDiaAdjacente($date, -1),
+            'nextDay' => DateUtil::calcularDiaAdjacente($date, 1),
+            'previousReservation' => DateUtil::calcularDiaController(
+                $date,
+                [$this, 'prevController'],
+                $categoryId,
+                $usuarioId
+            ),
+            'nextReservation' => DateUtil::calcularDiaController(
+                $date,
+                [$this, 'nextController'],
+                $categoryId,
+                $usuarioId
+            ),
+            'categoryId' => $categoryId,
+            'usuarioId' => $usuarioId,
+            'showUserFilter' => $showUserFilter,
+            'users' => $users,
+            'categories' => $categories,
+            'periods' => $periods,
+            'rooms' => $this->listarSalasPainel($date, $categoryId, $usuarioId),
+        ];
+    }
+
+
+
 }
+
 

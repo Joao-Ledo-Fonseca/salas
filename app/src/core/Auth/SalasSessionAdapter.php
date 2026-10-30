@@ -4,7 +4,6 @@ namespace Salas\Core\Auth;
 
 
 
-require_once __DIR__ . '/SessionManager.php';
 
 class SalasSessionAdapter
 {

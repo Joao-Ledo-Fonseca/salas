@@ -33,8 +33,8 @@ class SalasCredentialRepository implements CredentialRepository
 		];
 	}
 
-	public function updatePasswordHash(int|string $id, string $passwordHash): void
+	public function updatePasswordHash(int|string $id, string $passwordHash): int
 	{
-		$this->usuario->updatePasswordHash($id, $passwordHash);
+		return $this->usuario->updatePasswordHash($id, $passwordHash);
 	}
 }
