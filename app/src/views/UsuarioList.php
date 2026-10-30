@@ -22,9 +22,7 @@ use Salas\Core\Validation\Validator;
 
 <div class="lista_comum container_top" style="max-height:60vh; overflow-y:auto;">
     <form class="form_sel" name="form1" method="post" target="_self">
-        <div class="form_sel">
-            <input type="button" name="novo" value="Novo" class="btn1" onclick="abre('usuario_form.php')" />
-        </div>
+        <input type="button" name="novo" value="Novo" class="btn1" onclick="abre('usuario_form.php')" />
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
     </form>
 </div>

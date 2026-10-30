@@ -21,6 +21,16 @@ use Salas\Core\Validation\Validator;
 <h3>Permissões</h3>
 
 <form name="form1" method="post" action="<?= app_url('?acao=permissoes_form') ?>">
+    <div class="container_top lista_comum">
+        <div class="form_sel flex gap-10">
+            <input type="submit" name="cancelar" value="Voltar" class="btn1" id="cancelar" onclick="cancelaInputsRequired()" />
+            <div id="salvar" class="d-none">
+                <input type="submit" name="salvar" value="Salvar" class="btn1" />
+            </div>
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
+        </div>
+    </div>
+
     <div class="container_conteudo" class="scroll-y-perm">
 
         <div class="lista_comum">
@@ -77,16 +87,6 @@ use Salas\Core\Validation\Validator;
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <div class="lista_comum">
-        <div class="form_sel flex gap-10">
-            <input type="submit" name="cancelar" value="Voltar" class="btn1" id="cancelar" onclick="cancelaInputsRequired()" />
-            <div id="salvar" class="d-none">
-                <input type="submit" name="salvar" value="Salvar" class="btn1" />
-            </div>
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
         </div>
     </div>
 

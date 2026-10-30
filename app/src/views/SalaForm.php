@@ -92,7 +92,7 @@ $cancelUrl = (($return_to ?? '') !== '')
         <div style="position:absolute; right:20px; top:60px; width:320px; max-height:80vh; overflow-y:auto; background:#fff; border:1px solid #999; border-radius:6px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); pointer-events:auto;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <h4 style="margin:0;">Selecionar imagem</h4>
-                <button type="button" onclick="fecharOverlayImagens()" style="background:none; border:none; font-size:18px; cursor:pointer;">&times;</button>
+                <button type="button" onclick="fecharOverlayImagens()" style="background:none; border:none; font-size:1.29rem; cursor:pointer;">&times;</button>
             </div>
             <div style="display:flex; gap:6px; margin-bottom:10px;">
                 <button type="button" id="btnCarregar" class="btn1" onclick="carregarNovaImagem()" style="flex:1;">Carregar</button>
@@ -114,7 +114,7 @@ $cancelUrl = (($return_to ?? '') !== '')
                 <input type="hidden" name="categoria_filtro" value="<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>" />
                 <input type="hidden" name="activas" value="<?= htmlspecialchars((string) $activas_filtro, ENT_QUOTES, 'UTF-8') ?>" />
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
-                <input type="submit" name="eliminar_reservas" value="Eliminar Reservas" class="btn1" style="height:22px; padding:0 10px; font-size:11px; width:auto;" />
+                <input type="submit" name="eliminar_reservas" value="Eliminar Reservas" class="btn1" style="height:1.57rem; padding:0 0.71rem; font-size:0.79rem; width:auto;" />
             </form>
         <?php endif; ?>
     </div>
@@ -249,7 +249,7 @@ $cancelUrl = (($return_to ?? '') !== '')
                     div.appendChild(label);
                     var btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:16px; height:16px; font-size:10px; line-height:14px; padding:0; cursor:pointer; z-index:10;';
+                    btn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:1.14rem; height:1.14rem; font-size:0.71rem; line-height:1rem; padding:0; cursor:pointer; z-index:10;';
                     btn.title = 'Eliminar imagem';
                     btn.innerHTML = '&times;';
                     btn.onclick = function(e){ e.stopPropagation(); excluirImagemOverlay(img.id); return false; };

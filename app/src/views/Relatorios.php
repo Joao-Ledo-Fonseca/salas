@@ -89,7 +89,7 @@ use Salas\Core\Validation\Validator;
 
                         <!--  Chevron Esquerdo: Oculto no Modo Período -->
                         <?php if ($tipo != 'p'): ?>
-                            <img src="<?= app_url('/img/chevron_left.png') ?>" width="26" height="26" style="width:26px;height:26px;" alt="Anterior" class="nav-button"
+                            <img src="<?= app_url('/img/chevron_left.png') ?>" width="26" height="26" style="width:1.86rem;height:1.86rem;" alt="Anterior" class="nav-button"
                                 onclick="alteraData(dia_anterior)" />
                         <?php endif; ?>
 
@@ -131,7 +131,7 @@ use Salas\Core\Validation\Validator;
 
                         <!--  Chevron Direito: Oculto no Modo Período -->
                         <?php if ($tipo != 'p'): ?>
-                            <img src="<?= app_url('/img/chevron_right.png') ?>" width="26" height="26" style="width:26px;height:26px;" class="nav-button" alt="Próximo"
+                            <img src="<?= app_url('/img/chevron_right.png') ?>" width="26" height="26" style="width:1.86rem;height:1.86rem;" class="nav-button" alt="Próximo"
                                 onclick="alteraData(dia_posterior)" />
                         <?php endif; ?>
 

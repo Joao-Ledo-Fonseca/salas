@@ -23,7 +23,7 @@ use Salas\Core\Validation\Validator;
    <span class="closebtn" onclick="closeNav()">&times;</span>
    <div class="menu-inner">
    <div class="user">
-      <img src="<?= app_url('/img/do-utilizador-branco.png') ?>" width="20" height="20" alt="" />
+      <img src="<?= app_url('/img/do-utilizador-branco.png') ?>" width="20" height="20" style="width:1.43rem;height:1.43rem;" alt="" />
       <a class="dropdown-btn" href="#">
          <p><?= htmlspecialchars($menuData['userName'] . ' (' . $menuData['userLevel'] . ')', ENT_QUOTES, 'UTF-8') ?> ▼</p>
       </a>
@@ -55,10 +55,18 @@ use Salas\Core\Validation\Validator;
          <?php endif; ?>
 
       </ul>
-   <div class="theme-switcher">
-      <label for="theme-selector" class="theme-switcher-label">Tema:</label>
-      <select id="theme-selector" class="theme-selector" aria-label="Tema"></select>
    </div>
+   <div class="theme-switcher">
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Tema" aria-expanded="false" aria-controls="theme-selector">
+         <svg viewBox="0 0 24 24" width="1.43rem" height="1.43rem" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.52-4.48-10-10-10z"></path>
+            <circle cx="7.5" cy="11.5" r="1.5"></circle>
+            <circle cx="10.5" cy="7.5" r="1.5"></circle>
+            <circle cx="15.5" cy="7.5" r="1.5"></circle>
+            <circle cx="18" cy="11.5" r="1.5"></circle>
+         </svg>
+      </button>
+      <select id="theme-selector" class="theme-selector" aria-label="Tema" style="display:none;"></select>
    </div>
 </div>
 
@@ -100,4 +108,26 @@ document.addEventListener('DOMContentLoaded', function () {
       });
    }
 });
+document.addEventListener('DOMContentLoaded', function () {
+   var toggle = document.getElementById('theme-toggle');
+   var sel = document.getElementById('theme-selector');
+   if (!toggle || !sel) return;
+   toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = sel.style.display !== 'block';
+      sel.style.display = open ? 'block' : 'none';
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+   });
+   document.addEventListener('click', function (e) {
+      if (!sel.contains(e.target) && e.target !== toggle) {
+         sel.style.display = 'none';
+         toggle.setAttribute('aria-expanded', 'false');
+      }
+   });
+   sel.addEventListener('change', function () {
+      sel.style.display = 'none';
+      toggle.setAttribute('aria-expanded', 'false');
+   });
+});
+
 </script>
