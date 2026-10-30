@@ -21,10 +21,10 @@ use Salas\Core\Validation\Validator;
 <h3>Cadastro de Usos</h3>
 
 <?php if (!empty($errormsg)): ?>
-    <div class="form_sel lista_comum" style="color:#900"><?= htmlspecialchars($errormsg, ENT_QUOTES, 'UTF-8') ?></div>
+    <div class="form_sel lista_comum text-error"><?= htmlspecialchars($errormsg, ENT_QUOTES, 'UTF-8') ?></div>
 <?php endif; ?>
 
-<div class="container_conteudo lista_comum" style="max-height:60vh; overflow-y:auto;">
+<div class="container_conteudo lista_comum scroll-y-60">
     <form name="form1" method="post" action="<?= app_url('?acao=uso_form') ?>">
 
         <input type="hidden" name="id" value="<?= (int) $id ?>" />
@@ -45,7 +45,7 @@ use Salas\Core\Validation\Validator;
         <div class="form_sel lista_comum">
             <input type="submit" name="salvar" value="Salvar" class="btn1" />
             <input type="submit" name="excluir" value="Excluir" class="btn1" />
-            <input type="submit" name="cancelar" value="Cancelar" class="btn1" id="cancelar" style="display:inline" onclick="cancelaInputsRequired()" />
+            <input type="submit" name="cancelar" value="Cancelar" class="btn1 inline-form" id="cancelar" onclick="cancelaInputsRequired()" />
         </div>
     </form>
 </div>

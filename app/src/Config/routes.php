@@ -15,5 +15,6 @@ return [
     'periodo_form' => 'PeriodoForm.php',
     'usuario_list' => 'UsuarioList.php',
     'permissoes_form' => 'PermissoesForm.php',
-    'reserva_form' => 'ReservaForm.php'
+    'reserva_form' => 'ReservaForm.php',
+    'temas' => 'Temas.php'
 ];

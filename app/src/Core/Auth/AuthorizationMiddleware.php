@@ -21,6 +21,7 @@ class AuthorizationMiddleware
 		'permissoes_form' => 'M_Permissoes',
 		'estatisticas' => 'M_Estatisticas',
 		'relatorios' => 'M_Relatorios',
+		'temas' => 'M_Temas',
 		'reserva_form' => 'M_Reservas',
 	];
 

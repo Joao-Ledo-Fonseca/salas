@@ -7,6 +7,9 @@ $appRoot = $projectRoot . DIRECTORY_SEPARATOR . 'src';
 
 require_once $appRoot . '/../src/Config/bootstrap.php';
 
+/** @var \Salas\Config\AppConfig $appConfig */
+$appConfig = $GLOBALS['appConfig'] ?? null;
+
 use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
 use Salas\Core\Http\Request;

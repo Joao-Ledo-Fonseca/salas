@@ -14,6 +14,7 @@ use Salas\Controllers\PermissoesController;
 use Salas\Controllers\RelatorioController;
 use Salas\Controllers\ReservaController;
 use Salas\Controllers\SalaController;
+use Salas\Controllers\TemaController;
 use Salas\Controllers\UsoController;
 use Salas\Controllers\UsuarioController;
 
@@ -32,6 +33,7 @@ class Router
         'usuario_list' => [UsuarioController::class, 'listarController', 'none', 'lista', true],
         'usuario_form' => [UsuarioController::class, 'usuarioForm', 'query_post', 'merge', true],
         'permissoes_form' => [PermissoesController::class, 'permissoesForm', 'post', 'merge', true],
+        'temas' => [TemaController::class, 'temasForm', 'query_post', 'merge', true],
         'estatisticas' => [RelatorioController::class, 'reportSummary', 'query', 'merge', false],
         'relatorios' => [RelatorioController::class, 'reportReservations', 'query', 'merge', false],
         'reserva_form' => [ReservaController::class, 'reservaForm', 'query', 'merge', false],
@@ -126,6 +128,7 @@ class Router
             ['permission' => 'M_Periodos', 'label' => 'Períodos', 'url' => '?acao=periodo_list'],
             ['permission' => 'M_Utilizadores', 'label' => 'Utilizadores', 'url' => '?acao=usuario_list'],
             ['permission' => 'M_Permissoes', 'label' => 'Permissões', 'url' => '?acao=permissoes_form'],
+            ['permission' => 'M_Temas', 'label' => 'Temas', 'url' => '?acao=temas'],
         ];
         $visibleItems = [];
         foreach ($items as $item) {

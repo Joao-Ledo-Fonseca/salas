@@ -55,6 +55,10 @@ use Salas\Core\Validation\Validator;
          <?php endif; ?>
 
       </ul>
+   <div class="theme-switcher">
+      <label for="theme-selector" class="theme-switcher-label">Tema:</label>
+      <select id="theme-selector" class="theme-selector" aria-label="Tema"></select>
+   </div>
    </div>
 </div>
 

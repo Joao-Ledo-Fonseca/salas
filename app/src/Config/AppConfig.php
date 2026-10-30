@@ -9,6 +9,7 @@ final class AppConfig
 	private string $dbName;
 	private int $dbPort;
 	private string $urlBasePath;
+	private ?string $theme;
 
 	private function __construct(
 		string $dbHost,
@@ -16,7 +17,8 @@ final class AppConfig
 		string $dbPassword,
 		string $dbName,
 		int $dbPort,
-		string $urlBasePath
+		string $urlBasePath,
+		?string $theme = null
 	) {
 		$this->dbHost = $dbHost;
 		$this->dbUser = $dbUser;
@@ -24,6 +26,7 @@ final class AppConfig
 		$this->dbName = $dbName;
 		$this->dbPort = $dbPort;
 		$this->urlBasePath = $urlBasePath;
+		$this->theme = $theme;
 	}
 
 	public function dbHost(): string { return $this->dbHost; }
@@ -32,6 +35,7 @@ final class AppConfig
 	public function dbName(): string { return $this->dbName; }
 	public function dbPort(): int { return $this->dbPort; }
 	public function urlBasePath(): string { return $this->urlBasePath; }
+	public function theme(): ?string { return $this->theme; }
 
 	public static function fromFile(string $path, string $scriptName): self
 	{
@@ -129,13 +133,27 @@ final class AppConfig
 			$urlBasePath = '/' . implode('/', $segments);
 		}
 
+		$envTheme = getenv('APP_THEME');
+		if (is_string($envTheme) && $envTheme !== '') {
+			$settings->theme = $envTheme;
+		}
+
+		$theme = null;
+		if (isset($settings->theme)) {
+			if (!is_string($settings->theme) || $settings->theme === '') {
+				throw new \RuntimeException('A configuração theme tem de ser uma string não vazia.');
+			}
+			$theme = $settings->theme;
+		}
+
 		return new self(
 			$values['dbHost'],
 			$values['dbUser'],
 			$values['dbPassword'],
 			$values['dbName'],
 			$settings->db_porta,
-			$urlBasePath
+			$urlBasePath,
+			$theme
 		);
 	}
 }

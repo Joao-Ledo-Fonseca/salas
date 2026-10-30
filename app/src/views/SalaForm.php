@@ -123,7 +123,7 @@ $cancelUrl = (($return_to ?? '') !== '')
     <?php else: ?>
         <?php $statusNomes = [1 => 'Reservado', 2 => 'Confirmado', 3 => 'Cancelado']; ?>
         <div style="width:100%; max-height:55vh; overflow-y:auto; overflow-x:auto;">
-            <table class="tabela_comum" cellpadding="0" cellspacing="0" style="width:100%; min-width:600px; font-size:11px;">
+            <table class="tabela_comum table-compact" cellpadding="0" cellspacing="0">
                 <tr style="border-bottom:1px solid #999;">
                     <th style="padding:0 3px;">ID</th>
                     <th style="padding:0 3px;">Período</th>
@@ -145,14 +145,14 @@ $cancelUrl = (($return_to ?? '') !== '')
                         <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['usuario'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td style="padding:0 3px;">
                             <?php if ($podeEliminarReservas): ?>
-                                <form method="post" action="<?= htmlspecialchars(app_url('?acao=sala_form&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)), ENT_QUOTES, 'UTF-8') ?>" style="display:inline; margin:0;">
+                                <form method="post" action="<?= htmlspecialchars(app_url('?acao=sala_form&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)), ENT_QUOTES, 'UTF-8') ?>" class="inline-form">
                                     <input type="hidden" name="id" value="<?= (int) $id ?>" />
                                     <input type="hidden" name="categoria_filtro" value="<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>" />
                                     <input type="hidden" name="activas" value="<?= htmlspecialchars((string) $activas_filtro, ENT_QUOTES, 'UTF-8') ?>" />
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
                                     <input type="hidden" name="eliminar_reserva" value="1" />
                                     <input type="hidden" name="reserva_id" value="<?= (int) $reserva['id'] ?>" />
-                                    <button type="submit" class="btn1" style="width:60px; height:18px; padding:0; font-size:10px;">Eliminar</button>
+                                    <button type="submit" class="btn1 btn-small">Eliminar</button>
                                 </form>
                             <?php endif; ?>
                         </td>

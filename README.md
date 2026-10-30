@@ -232,6 +232,68 @@ Em produção, recomenda-se usar apenas variáveis de ambiente (Apache `SetEnv`,
 ### Variáveis de ambiente
 A aplicação suporta um ficheiro `.env` em `app/` (copiar de `app/.env.example`) com as chaves `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `APP_URL_BASE` (ou `auto`). Os valores do `.env` sobrepõem os do `config.json`. O `.env` é ignorado pelo Git.
 
+### Temas (cores e fontes)
+
+A aplicação usa um sistema de temas baseado em JSON. Os valores base (cores, família de fonte, tamanho base) vivem em `app/themes/`, e o CSS consome-os através de variáveis CSS (`--color-*`, `--dashboard-*`, `--font-family-base`, `--font-size-base`). Não é necessário editar CSS para alterar cores/fontes.
+
+Estrutura:
+
+```text
+app/themes/
+  themes.json   # manifesto: tema por defeito e lista de temas disponíveis
+  light.json    # tema claro
+  dark.json     # tema escuro
+```
+
+Camada PHP: `app/src/Core/Theme/Theme.php` (value object) e `app/src/Core/Theme/ThemeLoader.php`. O `bootstrap.php` carrega o tema selecionado em `$cfg->theme`, mantém `$cfg->dashboard_colors` por compatibilidade e expõe `$cfg->availableThemes`.
+
+#### Ajustar cores e fontes
+
+1. Editar `app/themes/light.json` (ou `app/themes/dark.json`).
+2. Alterar:
+   - `fontFamily`: família de fonte CSS (ex.: `"Inter, Segoe UI, Roboto, Arial, sans-serif"`).
+   - `fontSizeBase`: tamanho base (ex.: `"14px"`). O CSS usa `rem`/`em` relativos a este valor.
+   - `colors`: mapa de cores. Cada chave em camelCase gera uma variável `--color-<kebab>` (ex.: `primaryDark` -> `--color-primary-dark`).
+   - `dashboard`: mapa de cores do dashboard, gera `--dashboard-<kebab>` (ex.: `disponivelHover` -> `--dashboard-disponivel-hover`).
+3. Guardar e recarregar a página. As vistas injetam as variáveis em `:root`.
+
+Campos obrigatórios de cada tema: `name`, `fontFamily`, `fontSizeBase`, `colors`, `dashboard` (`colors` e `dashboard` têm de ser objetos).
+
+#### Definir o tema por defeito
+
+Por ordem de prioridade:
+
+1. Variável de ambiente `APP_THEME` (em `.env` ou no servidor).
+2. Chave `"theme"` em `config.json` (ex.: `"theme": "dark"`).
+3. Parâmetro de URL `?theme=dark` (atualiza a preferência guardada no navegador).
+
+#### Trocar tema no cliente
+
+- `app/public/js/theme.js` guarda a escolha em `localStorage` (`salas-theme`) e respeita `prefers-color-scheme`.
+- Seletor opcional: adicione `<select id="theme-selector"></select>` em qualquer vista; o script preenche e gere a troca.
+- Programático: `window.SalasTheme.set('dark')`.
+- Listar temas disponíveis: `window.SalasTheme.available`.
+
+#### Adicionar um novo tema
+
+1. Criar `app/themes/<chave>.json` seguindo o esquema acima (copiar de `light.json` e ajustar).
+2. Registar a chave em `app/themes/themes.json`:
+
+   ```json
+   { "default": "light", "available": ["light", "dark", "meu-tema"] }
+   ```
+
+   Opcionalmente definir `"default": "meu-tema"`.
+3. (Opcional) definir `APP_THEME=meu-tema` no `.env`.
+4. Validar com os smoke tests: `php app/Tests/SmokeTest.php` (valida o manifesto e os JSONs) e os testes unitários do `ThemeLoader`.
+
+Notas:
+
+- O manifesto e os JSONs são validados no arranque; um tema inválido ou inexistente cai no tema por defeito.
+- Apenas temas listados em `available` são aceites por `APP_THEME` e por `?theme=`.
+- Estilos de terceiros (ex.: `jquery.datetimepicker`) e estilos inline em JS (ex.: `SalaForm`) podem precisar de ajustes manuais por tema.
+- O CSS mantém fallbacks (`var(--color-..., #fallback)`) para degradar graciosamente.
+
 ### Segurança
 - `app/src/` e `app/config.json` são bloqueados ao acesso web via `.htaccess`.
 - `app/public/.htaccess` define cabeçalhos de segurança (X-Frame-Options, X-Content-Type-Options, Referrer-Policy).

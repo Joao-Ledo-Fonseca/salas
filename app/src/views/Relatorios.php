@@ -54,6 +54,19 @@ use Salas\Core\Validation\Validator;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
+    <script>window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+    <script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+    <script src="<?= app_url('/js/theme.js') ?>"></script>
+
+    <?php if (!empty($cfg) && isset($cfg->theme)): ?>
+    <style>
+        :root {
+            <?= $cfg->theme->toCssVariables() ?>
+        }
+        html { font-size: var(--font-size-base, 14px); }
+    </style>
+    <?php endif; ?>
+
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">   
 
     <title>Relatorios</title>

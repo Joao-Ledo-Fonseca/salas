@@ -35,9 +35,9 @@ use Salas\Core\Validation\Validator;
 <h3>Perfil de utilizador</h3>
 
 <div class="container_conteudo lista_comum">
-    <div class=aviso style="color:red"><?= htmlspecialchars((string)$errormsg, ENT_QUOTES, 'UTF-8') ?></div>
+    <div class="aviso text-error"><?= htmlspecialchars((string)$errormsg, ENT_QUOTES, 'UTF-8') ?></div>
 
-    <div style="flex:1 1 360px; min-width:320px; order:1;">
+    <div class="form-col">
     <form name="form1" method="post" action="<?= app_url('?acao=usuario_form') ?>">
 
         <input type="hidden" name="id" value="<?= (int)$id ?>" />
@@ -67,7 +67,7 @@ use Salas\Core\Validation\Validator;
             <tr id="permissoes">
                 <td width="100">Nivel</td>
                 <td>
-                    <select style="width:150px" name="nivel" id="nivel">
+                    <select class="w-150" name="nivel" id="nivel">
                         <?php foreach ($levelOptions as $option): ?>
                             <option value="<?= (int) $option['value'] ?>" <?= ((int) $nivel === (int) $option['value'] ? 'selected' : '') ?>><?= htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8') ?></option>
                         <?php endforeach; ?>
@@ -78,19 +78,19 @@ use Salas\Core\Validation\Validator;
 
         <input type="submit" name="salvar" value="Salvar" class="btn1" />
         <input type="button" value="Cancelar" class="btn1" onclick="window.location.href='<?= htmlspecialchars(app_url('?acao=usuario_list'), ENT_QUOTES, 'UTF-8') ?>'" />
-        <input type="submit" name="excluir" value="Excluir" class="btn1" id="excluir" style="display:inline" />
+        <input type="submit" name="excluir" value="Excluir" class="btn1 inline-form" id="excluir" />
     </form></div>
 </div>
 
 
-<div class="container_conteudo" style="width:100%; margin-top:10px; box-sizing:border-box;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <h4 style="margin:0;">Reservas do utilizador</h4>
+<div class="container_conteudo form-section">
+    <div class="flex-between mb-4">
+        <h4 class="m-0">Reservas do utilizador</h4>
         <?php if (!empty($podeEliminarReservas)): ?>
-            <form name="eliminar_reservas_form" method="post" action="<?= app_url('?acao=usuario_form') ?>" style="margin:0;">
+            <form name="eliminar_reservas_form" method="post" action="<?= app_url('?acao=usuario_form') ?>" class="m-0">
                 <input type="hidden" name="id" value="<?= (int) $id ?>" />
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
-                <input type="submit" name="eliminar_reservas" value="Eliminar Reservas" class="btn1" style="height:22px; padding:0 10px; font-size:11px; width:auto;" />
+                <input type="submit" name="eliminar_reservas" value="Eliminar Reservas" class="btn1 btn-compact" />
             </form>
         <?php endif; ?>
     </div>
@@ -98,40 +98,40 @@ use Salas\Core\Validation\Validator;
         <p>Nenhuma reserva encontrada.</p>
     <?php else: ?>
         <?php $statusNomes = [1 => 'Reservado', 2 => 'Confirmado', 3 => 'Cancelado']; ?>
-        <div style="width:100%; max-height:55vh; overflow-y:auto; overflow-x:auto;">
-            <table class="tabela_comum" cellpadding="0" cellspacing="0" style="width:100%; min-width:600px; font-size:11px;">
-                <tr style="border-bottom:1px solid #999;">
-                    <th style="padding:0 3px;">ID</th>
-                    <th style="padding:0 3px;">Sala</th>
-                    <th style="padding:0 3px;">Período</th>
-                    <th style="padding:0 3px;">Dia</th>
-                    <th style="padding:0 3px;">Uso</th>
-                    <th style="padding:0 3px;">Status</th>
-                    <th style="padding:0 3px;">Eliminar</th>
+        <div class="scroll-xy">
+            <table class="tabela_comum table-compact" cellpadding="0" cellspacing="0">
+                <tr class="border-bottom-999">
+                    <th class="p-0-3">ID</th>
+                    <th class="p-0-3">Sala</th>
+                    <th class="p-0-3">Período</th>
+                    <th class="p-0-3">Dia</th>
+                    <th class="p-0-3">Uso</th>
+                    <th class="p-0-3">Status</th>
+                    <th class="p-0-3">Eliminar</th>
                 </tr>
                 <?php foreach ($reservasUsuario as $reserva): ?>
-                    <tr style="line-height:1.0;">
-                        <td style="padding:0 3px;"><?= (int) $reserva['id'] ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;">
+                    <tr class="lh-1">
+                        <td class="p-0-3"><?= (int) $reserva['id'] ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3">
                             <?php if ($podeEliminarReservas): ?>
-                                <form method="post" action="<?= app_url('?acao=usuario_form') ?>" style="display:inline; margin:0;">
+                                <form method="post" action="<?= app_url('?acao=usuario_form') ?>" class="inline-form">
                                     <input type="hidden" name="id" value="<?= (int) $id ?>" />
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
                                     <input type="hidden" name="eliminar_reserva" value="1" />
                                     <input type="hidden" name="reserva_id" value="<?= (int) $reserva['id'] ?>" />
-                                    <button type="submit" class="btn1" style="width:60px; height:18px; padding:0; font-size:10px;">Eliminar</button>
+                                    <button type="submit" class="btn1 btn-small">Eliminar</button>
                                 </form>
                             <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
-            <hr style="border:0; border-top:1px solid #999; margin:0;" />
+            <hr class="hr-compact" />
         </div>
     <?php endif; ?>
 </div>

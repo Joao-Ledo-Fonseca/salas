@@ -105,6 +105,28 @@ try {
     $failures[] = 'Util exception: ' . $e->getMessage();
 }
 
+// Theme JSONs (smoke)
+try {
+    $themesDir = __DIR__ . '/../themes';
+    $manifestPath = $themesDir . '/themes.json';
+    assert_true(is_file($manifestPath), 'themes.json não encontrado');
+    $manifestRaw = file_get_contents($manifestPath);
+    $manifest = is_string($manifestRaw) ? json_decode($manifestRaw, true) : null;
+    assert_true(is_array($manifest) && isset($manifest['default'], $manifest['available']) && is_array($manifest['available']), 'Manifesto de temas inválido');
+    foreach ($manifest['available'] as $themeKey) {
+        $file = $themesDir . '/' . $themeKey . '.json';
+        assert_true(is_file($file), 'Tema não encontrado: ' . $themeKey);
+        $raw = file_get_contents($file);
+        $data = is_string($raw) ? json_decode($raw, true) : null;
+        assert_true(is_array($data), 'Tema inválido: ' . $themeKey);
+        foreach (['name', 'fontFamily', 'fontSizeBase', 'colors', 'dashboard'] as $field) {
+            assert_true(isset($data[$field]), 'Tema ' . $themeKey . ' sem campo ' . $field);
+        }
+    }
+} catch (\Throwable $e) {
+    $failures[] = 'Theme JSON smoke exception: ' . $e->getMessage();
+}
+
 if ($failures === []) {
     echo "Smoke tests passed.\n";
     exit(0);

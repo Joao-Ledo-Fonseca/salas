@@ -1,0 +1,40 @@
+{
+    "name": "Escuro",
+    "fontFamily": "Inter, Segoe UI, Roboto, Arial, sans-serif",
+    "fontSizeBase": "14px",
+    "colors": {
+        "bg": "#4C4C4C",
+        "surface": "#2a2a2a",
+        "surfaceAlt": "#3a3a3a",
+        "text": "#e6e6e6",
+        "textStrong": "#f2f2f2",
+        "textMuted": "#b3b3b3",
+        "border": "#3a3a3a",
+        "borderStrong": "#666666",
+        "primary": "#4a9fd8",
+        "primaryDark": "#2f7fb8",
+        "primaryLight": "#7aa9dd",
+        "success": "#2f6b2f",
+        "warning": "#6b6b2f",
+        "danger": "#6b2f2f",
+        "dangerDark": "#ff6b6b",
+        "dangerLight": "#3a1f1f",
+        "dangerBorder": "#5a2a2a",
+        "menuBg": "#2b2b2b",
+        "menuItem": "#3a3a3a",
+        "menuHoverBg": "#4a4a4a",
+        "menuHoverText": "#ffffff",
+        "overlay": "#111111",
+        "menuText": "#e6e6e6"
+    },
+    "dashboard": {
+        "reservado": "#4a4a2f",
+        "confirmado": "#2f4a2f",
+        "cancelado": "#4a2f2f",
+        "disponivel": "#2a2a2a",
+        "disponivelHover": "#3a3a3a",
+        "selected": "#2f4a2f",
+        "cellBorder": "#3a3a3a",
+        "cellText": "#e6e6e6"
+    }
+}

@@ -74,6 +74,7 @@ class Permissoes
         "M_Permissoes" => ['n', false, true, false, "Autoriza acesso ao Menu de Permissões"],
         "M_Estatisticas" => ['n', false, true, false, "Autoriza acesso ao Menu de Estatísticas"],
         "M_Relatorios" => ['n', false, true, false, "Autoriza acesso ao Menu de Relatórios"],
+        "M_Temas" => ['n', false, true, true, "Autoriza acesso à gestão de temas"],
         "M_Reservas" => ['n', true, true, true, "Autoriza acesso ao formulário de reservas e exclusão de reservas"],
         "M_EliminarReservasUtilizador" => ['n', false, true, true, "Autoriza eliminar todas as reservas de um utilizador"],
         "M_FiltroUtilizador" => ['n', false, true, true, "Autoriza o filtro por utilizador no dashboard"],

@@ -28,13 +28,13 @@ use Salas\Core\Validation\Validator;
     <input type="hidden" name="periodos" id="periodos" value="<?= htmlspecialchars((string)($periodos ?? ''), ENT_QUOTES, 'UTF-8') ?>" />
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
 
-    <input type="text" placeholder="dia" name="dia" id="dia" value="<?= htmlspecialchars((string)$dia, ENT_QUOTES, 'UTF-8') ?>" style="margin-bottom:2px;" /><BR />
-    <input type="text" name="sala" value="<?= htmlspecialchars((string)$sala, ENT_QUOTES, 'UTF-8') ?>" disabled style="margin-bottom:2px;" />
-    <input type="text" name="periodo" value="<?= (isset($periodos) && substr_count((string)$periodos, ',') > 0) ? 'Multiplos' : htmlspecialchars((string)$periodo, ENT_QUOTES, 'UTF-8') ?>" disabled style="margin-bottom:2px;" />
+    <input type="text" placeholder="dia" name="dia" id="dia" value="<?= htmlspecialchars((string)$dia, ENT_QUOTES, 'UTF-8') ?>" class="mb-2" /><BR />
+    <input type="text" name="sala" value="<?= htmlspecialchars((string)$sala, ENT_QUOTES, 'UTF-8') ?>" disabled class="mb-2" />
+    <input type="text" name="periodo" value="<?= (isset($periodos) && substr_count((string)$periodos, ',') > 0) ? 'Multiplos' : htmlspecialchars((string)$periodo, ENT_QUOTES, 'UTF-8') ?>" disabled class="mb-2" />
 
-    <input type="text" placeholder="Entidade" name="entidade" id="entidade" value="<?= htmlspecialchars((string)$entidade_desc, ENT_QUOTES, 'UTF-8') ?>" required style="margin-bottom:2px;" /><BR />
+    <input type="text" placeholder="Entidade" name="entidade" id="entidade" value="<?= htmlspecialchars((string)$entidade_desc, ENT_QUOTES, 'UTF-8') ?>" required class="mb-2" /><BR />
 
-    <select name="uso_id" id="uso_id" required style="margin-top:0; margin-bottom:2px;">
+    <select name="uso_id" id="uso_id" required class="mt-0 mb-2">
         <option value="">-- selecione uso --</option>
         <?php foreach (($usos ?? []) as $u): ?>
             <option value="<?= (int) $u['id'] ?>" <?= ((int)($u['id']) === (int)($uso_id ?? 0) ? 'selected' : '') ?>><?= htmlspecialchars((string) $u['nome'], ENT_QUOTES, 'UTF-8') ?></option>
@@ -43,23 +43,23 @@ use Salas\Core\Validation\Validator;
 
 
 
-    <input type="text" placeholder="Observação" name="observacao" id="observacao" value="<?= htmlspecialchars((string)$observacao, ENT_QUOTES, 'UTF-8') ?>" style="margin-bottom:2px;" /><BR />
+    <input type="text" placeholder="Observação" name="observacao" id="observacao" value="<?= htmlspecialchars((string)$observacao, ENT_QUOTES, 'UTF-8') ?>" class="mb-2" /><BR />
     <br />
 
-    <select name="status" id="status" style="margin-bottom:2px;">
+    <select name="status" id="status" class="mb-2">
         <?php foreach ($options_status as $option): ?>
             <option value="<?= (int) $option['value'] ?>" <?= $option['selected'] ? 'selected' : '' ?>><?= htmlspecialchars($option['nome'], ENT_QUOTES, 'UTF-8') ?></option>
         <?php endforeach; ?>
     </select><BR />
 
     <h3>Repetir semanalmente até</h3>
-    <input type="text" placeholder="data final" name="data_final" id="data_final" value="" style="margin-bottom:2px;" /><BR />
+    <input type="text" placeholder="data final" name="data_final" id="data_final" value="" class="mb-2" /><BR />
 
-    <input type="button" name="Fechar" value="Fechar" class="btn1" style="width:80px" onClick="fecharForm()" >
-    <input type="button" name="Excluir" value="Excluir" class="btn1" style="width:80px" onclick="excluirFormularioReserva(<?= (int) $id ?>)">
-    <input type="submit" name="salvar" value="Salvar" class="btn1" style="width:80px">
+    <input type="button" name="Fechar" value="Fechar" class="btn1 w-80" onClick="fecharForm()" >
+    <input type="button" name="Excluir" value="Excluir" class="btn1 w-80" onclick="excluirFormularioReserva(<?= (int) $id ?>)">
+    <input type="submit" name="salvar" value="Salvar" class="btn1 w-80">
     <br><br>
     <Label for="user">Registado por: </Label>
-    <input type="text" placeholder="User" name="user" id="user" value="<?= htmlspecialchars((string)$usuario, ENT_QUOTES, 'UTF-8') ?>" style="width:50%; margin-bottom:2px;" disabled><BR />
+    <input type="text" placeholder="User" name="user" id="user" value="<?= htmlspecialchars((string)$usuario, ENT_QUOTES, 'UTF-8') ?>" class="w-50 mb-2" disabled><BR />
 
 </form>

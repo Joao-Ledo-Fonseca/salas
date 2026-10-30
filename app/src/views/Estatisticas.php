@@ -31,7 +31,20 @@ use Salas\Core\Validation\Validator;
   <script src="<?= app_url('/js/jquery.datetimepicker.full.js') ?>"></script>
   <script src="<?= app_url('/js/dateformat.js') ?>"></script>
 
-  <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
+   <script>window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+   <script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+   <script src="<?= app_url('/js/theme.js') ?>"></script>
+
+   <?php if (!empty($cfg) && isset($cfg->theme)): ?>
+   <style>
+     :root {
+       <?= $cfg->theme->toCssVariables() ?>
+     }
+     html { font-size: var(--font-size-base, 14px); }
+   </style>
+   <?php endif; ?>
+
+   <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
   <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
   <script src="<?= app_url('/js/lib.js') ?>"></script>
 
@@ -135,8 +148,8 @@ use Salas\Core\Validation\Validator;
               
 <!-- Coluna Direita: Alinha a Box verticalmente ao CENTRO do gráfico -->
               <td style="border: none; background: transparent; padding: 0; vertical-align: middle; padding-left: 20px;">
-                <div class="info-box" style="width: 100%; max-width: 350px; padding: 15px; border: 1px solid #ccc; border-radius: 4px; background-color: #f5f5f5; font-family: inherit; font-size: 13px; color: #333; box-sizing: border-box; text-align: left; margin: 0;">
-                  <strong style="display: block; margin-bottom: 8px; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Informação do Período:</strong>
+                <div class="info-box">
+                  <strong class="info-box-title">Informação do Período:</strong>
                   <ul style="margin: 0; padding-left: 20px; line-height: 22px; list-style-type: square;">
                     <li><strong>Filtro Ativo:</strong> <?= htmlspecialchars($tipo === 'w' ? 'Semanal' : ($tipo === 'p' ? 'Período' : 'Mensal'), ENT_QUOTES, 'UTF-8') ?></li>
                     <li><strong>Data/Intervalo:</strong> <?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?></li>

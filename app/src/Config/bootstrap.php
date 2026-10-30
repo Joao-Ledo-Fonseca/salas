@@ -23,19 +23,17 @@ namespace Salas\Config {
 		(string) ($_SERVER['SCRIPT_NAME'] ?? '/')
 	);
 
-	// Mantém disponíveis apenas as cores usadas pela vista do dashboard.
+	$GLOBALS['appConfig'] = $appConfig;
+
+	$themesDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'themes';
+	$requestedTheme = $_GET['theme'] ?? $appConfig->theme() ?? null;
+
+	// Mantém disponíveis as cores usadas pela vista do dashboard.
 	global $cfg;
 	$cfg = new \stdClass();
-	$cfg->dashboard_colors = (object) [
-		'reservado' => '#FBFABB',
-		'confirmado' => '#BFF9B9',
-		'cancelado' => '#FCC5C5',
-		'disponivel' => '#FFFFFF',
-		'disponivel_hover' => '#DFDFDF',
-		'selected' => '#BFF9B9',
-		'cell_border' => '#E6E6E6',
-		'cell_text' => '#333333',
-	];
+	$cfg->theme = \Salas\Core\Theme\ThemeLoader::load($themesDir, $requestedTheme);
+	$cfg->dashboard_colors = (object) $cfg->theme->dashboard;
+	$cfg->availableThemes = \Salas\Core\Theme\ThemeLoader::availableThemes($themesDir);
 
 	setlocale(LC_TIME, 'portuguese');
 	date_default_timezone_set('Europe/Lisbon');

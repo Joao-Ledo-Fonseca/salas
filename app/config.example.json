@@ -4,5 +4,6 @@
   "db_senha": "substituir-por-uma-palavra-passe-forte",
   "db_banco": "sgreserva",
   "db_porta": 3306,
-  "url_base_path": "auto"
+  "url_base_path": "auto",
+  "theme": "light"
 }

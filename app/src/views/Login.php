@@ -27,6 +27,18 @@ use Salas\Core\Validation\Validator;
     <script src="<?= app_url('/js/jquery.js') ?>"></script>
     <script src="<?= app_url('/js/lib.js') ?>"></script>
 
+    <script>window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+    <script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+    <script src="<?= app_url('/js/theme.js') ?>"></script>
+
+    <?php if (!empty($cfg) && isset($cfg->theme)): ?>
+    <style>
+        :root {
+            <?= $cfg->theme->toCssVariables() ?>
+        }
+    </style>
+    <?php endif; ?>
+
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>" />
 
     
@@ -60,14 +72,14 @@ use Salas\Core\Validation\Validator;
                     <br />
                     versão <strong>1.3</strong>&nbsp;<br />
                 </div>
-                <!-- <span style="color:#900"><?php echo $loginView['errormsg'] ?? ''; ?></span><br /> -->
+                <!-- <span class="text-error"><?php echo $loginView['errormsg'] ?? ''; ?></span><br /> -->
 
                 <div id="direito_log">
 
                     <form action="<?= app_url('?acao=login') ?>" method="post" name="Formulario">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
 
-                        <span style="color:#900"><?= $loginView['errormsg'] ?></span><br /><br />
+                        <span class="text-error"><?= $loginView['errormsg'] ?></span><br /><br />
 
                         <input type="text" name="email_l" id="email" placeholder="Nome de utilizador ou e-mail" autocomplete="on" /><br /><br />
                         <input type="password" name="senha_l" id="senha" placeholder="Senha"
@@ -109,7 +121,7 @@ use Salas\Core\Validation\Validator;
                     <form action="<?= app_url('?acao=login') ?>" method="post" name="Formulario2">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
 
-                        <span style="color:#900"><?= $loginView['errormsg'] ?></span><br /><br/>
+                        <span class="text-error"><?= $loginView['errormsg'] ?></span><br /><br/>
 
                         <input type="hidden" name="id" value=0 />
                         <input type="text" name="nome" id="nome" placeholder="Nome de Utilizador" required />

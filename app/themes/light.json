@@ -1,0 +1,40 @@
+{
+    "name": "Claro",
+    "fontFamily": "Inter, Segoe UI, Roboto, Arial, sans-serif",
+    "fontSizeBase": "8px",
+    "colors": {
+        "bg": "#FFFFFF",
+        "surface": "#F7F7F7",
+        "surfaceAlt": "#F0F0F0",
+        "text": "#4E4E4E",
+        "textStrong": "#333333",
+        "textMuted": "#666666",
+        "border": "#E6E6E6",
+        "borderStrong": "#999999",
+        "primary": "#2C73A8",
+        "primaryDark": "#1f5a85",
+        "primaryLight": "#7aa9dd",
+        "success": "#D4F7C4",
+        "warning": "#FBFABB",
+        "danger": "#FCC5C5",
+        "dangerDark": "#9b1c1c",
+        "dangerLight": "#ffecec",
+        "dangerBorder": "#f2c6c6",
+        "menuBg": "#464646",
+        "menuItem": "#575757",
+        "menuHoverBg": "#D4D4D4",
+        "menuHoverText": "#3B3B3B",
+        "overlay": "#222222",
+        "menuText": "#FFFFFF"
+    },
+    "dashboard": {
+        "reservado": "#FBFABB",
+        "confirmado": "#BFF9B9",
+        "cancelado": "#FCC5C5",
+        "disponivel": "#FFFFFF",
+        "disponivelHover": "#DFDFDF",
+        "selected": "#BFF9B9",
+        "cellBorder": "#E6E6E6",
+        "cellText": "#333333"
+    }
+}
