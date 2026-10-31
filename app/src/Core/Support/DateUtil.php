@@ -1,8 +1,17 @@
 <?php
 namespace Salas\Core\Support;
 
+/**
+ * Classe DateUtil.
+ */
 class DateUtil
 {
+    /**
+     * Método traduz_data.
+     * @param string $date
+     * @param string $lang
+     * @return string
+     */
     public static function traduz_data(string $date, string $lang = 'en'): string
     {
         $meses_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
@@ -10,6 +19,11 @@ class DateUtil
         return ($lang === 'en') ? str_replace($meses_pt, $meses_en, $date) : str_replace($meses_en, $meses_pt, $date);
     }
 
+    /**
+     * Método parseDataPt.
+     * @param string $data
+     * @return ?\DateTime
+     */
     public static function parseDataPt(string $data): ?\DateTime
     {
         $data = trim($data);
@@ -25,6 +39,12 @@ class DateUtil
         return \DateTime::createFromFormat('d/m/Y', $data) ?: null;
     }
 
+    /**
+     * Método calcularDiaAdjacente.
+     * @param \DateTime $baseDate
+     * @param int $dias
+     * @return string
+     */
     public static function calcularDiaAdjacente(\DateTime $baseDate, int $dias): string
     {
         $dia = \DateTime::createFromFormat('d/m/Y', $baseDate->format('d/m/Y')) ?: clone $baseDate;
@@ -32,6 +52,14 @@ class DateUtil
         return self::traduz_data($dia->format('D d/m/Y'), 'pt');
     }
 
+    /**
+     * Método calcularDiaController.
+     * @param \DateTime $baseDate
+     * @param callable $callback
+     * @param int $categoria
+     * @param int $usuario_id
+     * @return string
+     */
     public static function calcularDiaController(\DateTime $baseDate, callable $callback, int $categoria, int $usuario_id = 0): string
     {
         $dia = \DateTime::createFromFormat('d/m/Y', $baseDate->format('d/m/Y')) ?: clone $baseDate;

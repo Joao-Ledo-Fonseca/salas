@@ -1,21 +1,33 @@
+</rfl:parameter>
 <?php
 namespace Salas\Controllers;
 
 use Salas\Models\Categoria;
 use Salas\Core\Persistence\Database;
-use Salas\Core\Support\DateUtil;
 use Salas\Core\Support\ImageUtil;
 use Salas\Core\Validation\Validator;
 
+/**
+ * Classe CategoriaController.
+ */
 class CategoriaController
 {
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Método salvar.
+     * @return bool
+     */
     public function salvar(): bool
     {
         if (!isset($_POST['salvar'])) {
@@ -36,6 +48,10 @@ class CategoriaController
         exit();
     }
 
+    /**
+     * Método excluir.
+     * @return bool
+     */
     public function excluir(): bool
     {
         if (!isset($_POST['excluir'])) {
@@ -57,6 +73,10 @@ class CategoriaController
         exit();
     }
 
+    /**
+     * Método cancelar.
+     * @return bool
+     */
     public function cancelar(): bool
     {
         if (isset($_POST['cancelar'])) {
@@ -67,6 +87,10 @@ class CategoriaController
         return false;
     }
 
+    /**
+     * Método abrir.
+     * @return array|false
+     */
     public function abrir(): array|false
     {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
@@ -78,17 +102,31 @@ class CategoriaController
         return false;
     }
 
+    /**
+     * Método listarController.
+     * @return array
+     */
     public function listarController(): array
     {
         $categoria = new Categoria($this->db);
         return $categoria->listar();
     }
 
+    /**
+     * Método listarOpcoesController.
+     * @return array
+     */
     public function listarOpcoesController(): array
     {
         $categoria = new Categoria($this->db);
         return $categoria->listar();
     }
+    /**
+     * Método categoriaForm.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function categoriaForm(array $query, array $post = []): array
     {
         $controller = $this;

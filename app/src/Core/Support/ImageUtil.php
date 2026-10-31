@@ -1,8 +1,16 @@
 <?php
 namespace Salas\Core\Support;
 
+/**
+ * Classe ImageUtil.
+ */
 class ImageUtil
 {
+    /**
+     * Método imagemUpload.
+     * @param mixed $img_file
+     * @return mixed
+     */
     public static function imagemUpload($img_file)
     {
         if ($img_file == "") {

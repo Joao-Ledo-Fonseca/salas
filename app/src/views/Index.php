@@ -73,6 +73,12 @@ use Salas\Core\Validation\Validator;
 			});
 		});
 
+		/**
+		 * Método buildDashboardUrl.
+		 * @param data_ar $g
+		 * @param categori $a
+		 * @return mixed
+		 */
 		function buildDashboardUrl(data_arg, categoria) {
 			var url = 'index.php?data=' + encodeURIComponent(data_arg);
 			if (categoria && categoria !== 0) {
@@ -85,22 +91,42 @@ use Salas\Core\Validation\Validator;
 			return url;
 		}
 
+		/**
+		 * Método atualizaTela.
+		 * @param mixed $o
+		 * @return mixed
+		 */
 		function atualizaTela(o) {
 			var categoria = document.getElementById('categoria_filter') ? document.getElementById('categoria_filter').value : categoria_id;
 			window.location.href = buildDashboardUrl($(o).val(), categoria);
 		}
 
+		/**
+		 * Método alteraData.
+		 * @param data_ar $g
+		 * @return mixed
+		 */
 		function alteraData(data_arg) {
 			var categoria = document.getElementById('categoria_filter') ? document.getElementById('categoria_filter').value : categoria_id;
 			window.location.href = buildDashboardUrl(data_arg, categoria);
 		}
 
+		/**
+		 * Método mudaUsuario.
+		 * @param selec $t
+		 * @return mixed
+		 */
 		function mudaUsuario(select) {
 			var usuario = select.value;
 			var data_atual = document.getElementById('data') ? document.getElementById('data').value : data;
 			window.location.href = buildDashboardUrl(data_atual, categoria_id);
 		}
 
+		/**
+		 * Método mudaCategoria.
+		 * @param selec $t
+		 * @return mixed
+		 */
 		function mudaCategoria(select) {
 			var categoria = select.value;
 			var data_atual = document.getElementById('data') ? document.getElementById('data').value : data;

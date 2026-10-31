@@ -1,6 +1,9 @@
 <?php
 namespace Salas\Core\Theme;
 
+/**
+ * Classe Theme.
+ */
 final class Theme
 {
     public string $key;
@@ -28,6 +31,12 @@ final class Theme
         $this->dashboard = $dashboard;
     }
 
+    /**
+     * Método fromArray.
+     * @param string $key
+     * @param array $data
+     * @return self
+     */
     public static function fromArray(string $key, array $data): self
     {
         foreach (['name', 'fontFamily', 'fontSizeBase', 'colors', 'dashboard'] as $field) {
@@ -48,6 +57,10 @@ final class Theme
         );
     }
 
+    /**
+     * Método toCssVariables.
+     * @return string
+     */
     public function toCssVariables(): string
     {
         $vars = [];
@@ -62,6 +75,11 @@ final class Theme
         return implode("\n    ", $vars);
     }
 
+    /**
+     * Método kebab.
+     * @param string $key
+     * @return string
+     */
     private function kebab(string $key): string
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $key));

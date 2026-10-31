@@ -1,8 +1,17 @@
 <?php
 namespace Salas\Core\Theme;
 
+/**
+ * Classe ThemeLoader.
+ */
 final class ThemeLoader
 {
+    /**
+     * Método load.
+     * @param string $themesDir
+     * @param ?string $requested
+     * @return Theme
+     */
     public static function load(string $themesDir, ?string $requested = null): Theme
     {
         $manifestPath = $themesDir . DIRECTORY_SEPARATOR . 'themes.json';
@@ -54,6 +63,11 @@ final class ThemeLoader
         }
         return Theme::fromArray($key, $data);
     }
+	/**
+	 * Método availableThemes.
+	 * @param string $themesDir
+	 * @return array
+	 */
 	public static function availableThemes(string $themesDir): array
 	{
 		$manifestPath = $themesDir . DIRECTORY_SEPARATOR . 'themes.json';

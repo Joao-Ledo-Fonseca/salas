@@ -4,15 +4,26 @@ namespace Salas\Core\Support;
 
 use Salas\Core\Auth\SessionManager;
 
+/**
+ * Classe Csrf.
+ */
 class Csrf
 {
     private const SESSION_KEY = 'csrf_token';
 
+    /**
+     * Método sessions.
+     * @return SessionManager
+     */
     private static function sessions(): SessionManager
     {
         return new SessionManager();
     }
 
+    /**
+     * Método token.
+     * @return string
+     */
     public static function token(): string
     {
         $sessions = self::sessions();
@@ -25,6 +36,11 @@ class Csrf
         return $stored;
     }
 
+    /**
+     * Método validate.
+     * @param ?string $token
+     * @return bool
+     */
     public static function validate(?string $token): bool
     {
         $sessions = self::sessions();
@@ -36,6 +52,10 @@ class Csrf
         return hash_equals($stored, $token);
     }
 
+    /**
+     * Método field.
+     * @return string
+     */
     public static function field(): string
     {
         return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(self::token(), ENT_QUOTES, 'UTF-8') . '" />';

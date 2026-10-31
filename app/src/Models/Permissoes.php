@@ -3,16 +3,29 @@ namespace Salas\Models;
 
 use Salas\Core\Persistence\Database;
 
+/**
+ * Classe Permissoes.
+ */
 class Permissoes
 {
 	
 	private $db = null;
 
+	/**
+	 * Método __construct.
+	 * @param Database $db
+	 * @return void
+	 */
 	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
+	/**
+	 * Método listar.
+	 * @param mixed $tipo
+	 * @return mixed
+	 */
 	public function listar($tipo = 't')
 	{
 		//  Permissoes são tipo do tipo 
@@ -28,6 +41,16 @@ class Permissoes
     }
 
 
+    /**
+     * Método salvar.
+     * @param mixed $seq
+     * @param mixed $nome
+     * @param mixed $tipo
+     * @param mixed $uexterno
+     * @param mixed $uinterno
+     * @param mixed $admin
+     * @return mixed
+     */
     public function salvar($seq, $nome, $tipo, $uexterno, $uinterno, $admin)
     {
         // inserir nova permissao
@@ -35,6 +58,17 @@ class Permissoes
         return $this->db->query_insert($sql, [$seq, $nome, $tipo, (int) $uexterno, (int) $uinterno, (int) $admin]);
     }
 
+    /**
+     * Método update.
+     * @param mixed $seq
+     * @param mixed $nome
+     * @param mixed $tipo
+     * @param mixed $uexterno
+     * @param mixed $uinterno
+     * @param mixed $admin
+     * @param mixed $comando
+     * @return mixed
+     */
     public function update($seq, $nome, $tipo, $uexterno, $uinterno, $admin, $comando)
     {
         // atualizar permissao existente
@@ -50,6 +84,12 @@ class Permissoes
 
     }
 
+    /**
+     * Método renumerar.
+     * @param mixed $seq
+     * @param mixed $nome
+     * @return mixed
+     */
     public function renumerar($seq, $nome)
     {		
         // actualizar apenas sequência		
@@ -57,6 +97,11 @@ class Permissoes
         return $this->db->query_update($sql, [$seq, $nome]);
     }
 
+    /**
+     * Método excluir.
+     * @param mixed $nome
+     * @return mixed
+     */
     public function excluir($nome)
     {
         $sql = 'delete from permissoes where nome = ?';
@@ -82,6 +127,10 @@ class Permissoes
         "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"],
     ];
 
+    /**
+     * Método ensureDefaults.
+     * @return void
+     */
     public function ensureDefaults(): void
     {
         $linhas = $this->listar();

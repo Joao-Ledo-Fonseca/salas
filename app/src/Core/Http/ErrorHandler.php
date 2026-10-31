@@ -4,14 +4,26 @@ declare(strict_types=1);
 
 namespace Salas\Core\Http;
 
+/**
+ * Classe ErrorHandler.
+ */
 class ErrorHandler
 {
+    /**
+     * Método register.
+     * @return void
+     */
     public static function register(): void
     {
         set_exception_handler([self::class, 'handleException']);
         set_error_handler([self::class, 'handleError']);
     }
 
+    /**
+     * Método handleException.
+     * @param \Throwable $exception
+     * @return void
+     */
     public static function handleException(\Throwable $exception): void
     {
         $isAjax = strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
@@ -45,6 +57,14 @@ class ErrorHandler
         echo '</body></html>';
     }
 
+    /**
+     * Método handleError.
+     * @param int $severity
+     * @param string $message
+     * @param string $file
+     * @param int $line
+     * @return bool
+     */
     public static function handleError(int $severity, string $message, string $file, int $line): bool
     {
         $maskEnv = getenv('APP_ERROR_LEVEL');

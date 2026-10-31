@@ -13,24 +13,43 @@ use Salas\Models\Uso;
 use Salas\Models\Usuario;
 use Salas\Core\Support\DateUtil;
 
+/**
+ * Classe DashboardController.
+ */
 class DashboardController
 {
     private Database $db;
 
     public $reserva;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
         $this->reserva = new Reserva($db);
     }
 
+    /**
+     * Método listarPeriodosPainel.
+     * @return mixed
+     */
     public function listarPeriodosPainel()
     {
         $periodo = new Periodo($this->db);
         return $periodo->listar();
     }
 
+    /**
+     * Método listarSalasPainel.
+     * @param mixed $hoje
+     * @param mixed $categoria_id
+     * @param mixed $usuario_id
+     * @return mixed
+     */
     public function listarSalasPainel($hoje, $categoria_id = 0, $usuario_id = 0)
     {
         $sl = new Sala($this->db);
@@ -129,21 +148,44 @@ class DashboardController
         return $linhas;
     }
 
+    /**
+     * Método listarCategoriasController.
+     * @return mixed
+     */
     public function listarCategoriasController()
     {
         $categoria = new Categoria($this->db);
         return $categoria->listar();
     }
 
+    /**
+     * Método prevController.
+     * @param mixed $dia
+     * @param mixed $categoria_id
+     * @param mixed $usuario_id
+     * @return mixed
+     */
     public function prevController($dia, $categoria_id, $usuario_id = 0)
     {
         return $this->reserva->prev($dia, $categoria_id, $usuario_id);
     }
 
+    /**
+     * Método nextController.
+     * @param mixed $dia
+     * @param mixed $categoria_id
+     * @param mixed $usuario_id
+     * @return mixed
+     */
     public function nextController($dia, $categoria_id, $usuario_id = 0)
     {
         return $this->reserva->next($dia, $categoria_id, $usuario_id);
     }
+    /**
+     * Método index.
+     * @param array $query
+     * @return array
+     */
     public function index(array $query): array
     {
         $date = isset($query['data']) && is_string($query['data'])

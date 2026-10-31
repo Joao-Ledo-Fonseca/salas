@@ -5,15 +5,27 @@ use Salas\Core\Persistence\Database;
 use Salas\Models\Periodo;
 use Salas\Core\Validation\Validator;
 
+/**
+ * Classe PeriodoController.
+ */
 class PeriodoController
 {
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Método salvar.
+     * @return bool
+     */
     public function salvar(): bool
     {
         if (!isset($_POST['salvar'])) {
@@ -32,6 +44,10 @@ class PeriodoController
         exit();
     }
 
+    /**
+     * Método cancelar.
+     * @return bool
+     */
     public function cancelar(): bool
     {
         if (isset($_POST['cancelar'])) {
@@ -42,6 +58,10 @@ class PeriodoController
         return false;
     }
 
+    /**
+     * Método excluir.
+     * @return bool
+     */
     public function excluir(): bool
     {
         if (!isset($_POST['excluir'])) {
@@ -61,12 +81,21 @@ class PeriodoController
         exit();
     }
 
+    /**
+     * Método nomePeriodo.
+     * @param mixed $periodo_id
+     * @return string
+     */
     public function nomePeriodo($periodo_id): string
     {
         $periodo = new Periodo($this->db);
         return $periodo->name((int) $periodo_id);
     }
 
+    /**
+     * Método abrir.
+     * @return array
+     */
     public function abrir(): array
     {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
@@ -78,11 +107,21 @@ class PeriodoController
         return [];
     }
 
+    /**
+     * Método listarController.
+     * @return array
+     */
     public function listarController(): array
     {
         $periodo = new Periodo($this->db);
         return $periodo->listar();
     }
+    /**
+     * Método periodoForm.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function periodoForm(array $query, array $post = []): array
     {
         $controller = $this;

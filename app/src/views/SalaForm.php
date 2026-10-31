@@ -167,6 +167,11 @@ $cancelUrl = (($return_to ?? '') !== '')
 
 
 <script>
+    /**
+     * Método readURL.
+     * @param inpu $t
+     * @return mixed
+     */
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -183,6 +188,10 @@ $cancelUrl = (($return_to ?? '') !== '')
 
     // Move overlay to body to escape .corpo overflow clipping
     (function() {
+        /**
+         * Método moveOverlay.
+         * @return mixed
+         */
         function moveOverlay() {
             var overlay = document.getElementById('overlayImagens');
             if (overlay && overlay.parentNode !== document.body) {
@@ -215,6 +224,10 @@ $cancelUrl = (($return_to ?? '') !== '')
     var imagensPage = 0;
     var imagensHasMore = true;
     var imagensLoading = false;
+    /**
+     * Método abrirOverlayImagens.
+     * @return mixed
+     */
     function abrirOverlayImagens() {
         var overlay = document.getElementById('overlayImagens');
         overlay.style.display = 'block';
@@ -224,6 +237,10 @@ $cancelUrl = (($return_to ?? '') !== '')
             carregarMaisImagens();
         }
     }
+    /**
+     * Método carregarMaisImagens.
+     * @return mixed
+     */
     function carregarMaisImagens() {
         if (imagensLoading || !imagensHasMore) return;
         imagensLoading = true;
@@ -305,9 +322,18 @@ $cancelUrl = (($return_to ?? '') !== '')
             return;
         }
     });
+    /**
+     * Método fecharOverlayImagens.
+     * @return mixed
+     */
     function fecharOverlayImagens() {
         document.getElementById('overlayImagens').style.display = 'none';
     }
+    /**
+     * Método selecionarImagem.
+     * @param e $l
+     * @return mixed
+     */
     function selecionarImagem(el) {
         var id = el.getAttribute('data-id');
         var b64 = el.getAttribute('data-base64');
@@ -319,6 +345,11 @@ $cancelUrl = (($return_to ?? '') !== '')
         if (ph) { ph.style.display = 'none'; }
         fecharOverlayImagens();
     }
+    /**
+     * Método excluirImagemOverlay.
+     * @param imageI $d
+     * @return mixed
+     */
     function excluirImagemOverlay(imageId) {
         var params = new URLSearchParams();
         params.append('id', '<?= (int) $id ?>');
@@ -339,6 +370,10 @@ $cancelUrl = (($return_to ?? '') !== '')
         });
     }
 
+    /**
+     * Método semImagem.
+     * @return mixed
+     */
     function semImagem() {
         document.getElementById('imagem_id').value = '';
         document.getElementById('imagem').style.display = 'none';
@@ -346,10 +381,18 @@ $cancelUrl = (($return_to ?? '') !== '')
         if (ph) { ph.style.display = 'flex'; }
         fecharOverlayImagens();
     }
+    /**
+     * Método carregarNovaImagem.
+     * @return mixed
+     */
     function carregarNovaImagem() {
         fecharOverlayImagens();
         document.getElementById('newimagem').click();
     }
+    /**
+     * Método renderizaNovaImagem.
+     * @return mixed
+     */
     function renderizaNovaImagem() {
         var input = document.getElementById('newimagem');
         if (input.files && input.files[0]) {

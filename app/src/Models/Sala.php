@@ -3,15 +3,29 @@ namespace Salas\Models;
 
 use Salas\Core\Persistence\Database;
 
+/**
+ * Classe Sala.
+ */
 class Sala
 {
 	private $db = null;
 
+	/**
+	 * Método __construct.
+	 * @param Database $db
+	 * @return void
+	 */
 	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
+	/**
+	 * Método listar.
+	 * @param mixed $filtro_categorias
+	 * @param mixed $filtro_activas
+	 * @return mixed
+	 */
 	public function listar($filtro_categorias = 0, $filtro_activas = 'todas')
 	{
 		switch ($filtro_activas) {
@@ -32,6 +46,11 @@ class Sala
 		return $this->db->query($sql, [$filtro_categorias, $filtro_categorias]);
 	}
 
+	/**
+	 * Método abrir.
+	 * @param mixed $id
+	 * @return mixed
+	 */
 	public function abrir($id)
 	{
 		$rows = $this->db->query('select * from sala where id = ?', [$id]);
@@ -49,6 +68,18 @@ class Sala
 		return [array_merge($image, $rows[0])];
 	}
 
+	/**
+	 * Método salvar.
+	 * @param mixed $id
+	 * @param mixed $nome
+	 * @param mixed $descricao
+	 * @param mixed $categoria_id
+	 * @param mixed $lugares
+	 * @param mixed $activa
+	 * @param mixed $imagem_id
+	 * @param mixed $uploadedImage
+	 * @return mixed
+	 */
 	public function salvar($id, $nome, $descricao, $categoria_id, $lugares, $activa, $imagem_id, $uploadedImage = false)
 	{
 		if (is_array($uploadedImage)) {
@@ -86,6 +117,12 @@ class Sala
 		}
 	}
 
+	/**
+	 * Método excluir.
+	 * @param mixed $id
+	 * @param mixed $imageId
+	 * @return mixed
+	 */
 	public function excluir($id, $imageId = '')
 	{
 		try {
@@ -100,24 +137,43 @@ class Sala
 		return true;
 	}
 
+	/**
+	 * Método listarPorCategoria.
+	 * @param mixed $categoria_id
+	 * @return mixed
+	 */
 	public function listarPorCategoria($categoria_id)
 {
     $sql = 'select id, nome, descricao, lugares, activa from sala where categoria_id = ? order by nome;';
     return $this->db->query($sql, [$categoria_id]);
 }
 
+/**
+ * Método name.
+ * @param mixed $id
+ * @return mixed
+ */
 public function name($id)
 {
 	$rows = $this->db->query('select * from sala where id = ?', [$id]);
 	return isset($rows[0]['nome']) ? (string) $rows[0]['nome'] : '';
 }
 
+/**
+ * Método total.
+ * @return mixed
+ */
 public function total()
 {
 	$sql = 'select count(id) as total from sala';
 	return $this->db->query($sql);
 }
 
+/**
+ * Método nullifyImageId.
+ * @param mixed $imageId
+ * @return mixed
+ */
 public function nullifyImageId($imageId)
 {
 	$sql = 'update sala set imagem_id = null where imagem_id = ?';

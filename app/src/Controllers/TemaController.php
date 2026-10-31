@@ -6,17 +6,31 @@ use Salas\Core\Persistence\Database;
 use Salas\Core\Support\Csrf;
 use Salas\Core\Validation\Validator;
 
+/**
+ * Classe TemaController.
+ */
 class TemaController
 {
     private Database $db;
     private string $themesDir;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
         $this->themesDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'themes';
     }
 
+    /**
+     * Método temasForm.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function temasForm(array $query, array $post = []): array
     {
         global $cfg;
@@ -138,6 +152,11 @@ class TemaController
         ];
     }
 
+    /**
+     * Método writeConfigTheme.
+     * @param string $themeKey
+     * @return void
+     */
     private function writeConfigTheme(string $themeKey): void
     {
         $configPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config.json';

@@ -1,8 +1,18 @@
 <?php
 namespace Salas\Core\Http;
 
+/**
+ * Classe ViewRenderer.
+ */
 class ViewRenderer
 {
+    /**
+     * Método render.
+     * @param string $view
+     * @param array $data
+     * @param ?string $layout
+     * @return void
+     */
     public static function render(string $view, array $data = [], ?string $layout = null): void
     {
         if (!array_key_exists('cfg', $data)) {

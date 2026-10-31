@@ -10,15 +10,28 @@ use Salas\Models\Usuario;
 use Salas\Core\Validation\Validator;
 
 
+/**
+ * Classe UsuarioController.
+ */
 class UsuarioController
 	{
 	private Database $db;
 
+	/**
+	 * Método __construct.
+	 * @param Database $db
+	 * @return void
+	 */
 	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
+	/**
+	 * Método salvar.
+	 * @param ?array $post
+	 * @return mixed
+	 */
 	public function salvar(?array $post = null)
 		{
 		$post = $post ?? $_POST;
@@ -75,6 +88,10 @@ class UsuarioController
 			}
 		}
 
+		/**
+		 * Método excluir.
+		 * @return mixed
+		 */
 		public function excluir()
 	{
 		if (isset($_POST['excluir'])) {
@@ -102,6 +119,10 @@ class UsuarioController
 		return false;
 	}
 
+	/**
+	 * Método cancelar.
+	 * @return mixed
+	 */
 	public function cancelar()
 		{
 		if (isset($_POST['cancelar'])) {
@@ -112,6 +133,10 @@ class UsuarioController
 		return false;
 		}
 
+	/**
+	 * Método abrir.
+	 * @return mixed
+	 */
 	public function abrir()
 		{
 
@@ -123,18 +148,31 @@ class UsuarioController
 		}
 
 	// listagem
+	/**
+	 * Método listarController.
+	 * @return mixed
+	 */
 	public function listarController()
 		{
 		$usuario = new Usuario($this->db);
 		return $usuario->listar();
 		}
 
+	/**
+	 * Método startSession.
+	 * @param array $r
+	 * @return mixed
+	 */
 	public function startSession(array $r)
 		{
 		$this->sessionAdapter()->updateIdentity($r);
 		}
 
 	//  NOVO MÉTODO CENTRALIZADO DE LOGOUT
+	/**
+	 * Método logout.
+	 * @return mixed
+	 */
 	public function logout()
 		{
 		$this->sessionAdapter()->logout();
@@ -144,24 +182,44 @@ class UsuarioController
 		exit;
 		}
 
+	/**
+	 * Método sessionAdapter.
+	 * @return \Salas\Core\Auth\SalasSessionAdapter
+	 */
 	private function sessionAdapter(): \Salas\Core\Auth\SalasSessionAdapter
 		{
 		return new \Salas\Core\Auth\SalasSessionAdapter();
 		}
 
 
+	    /**
+	     * Método listarReservasPorUsuario.
+	     * @param int $id
+	     * @return array
+	     */
 	    public function listarReservasPorUsuario(int $id): array
     {
         $reserva = new Reserva($this->db);
         return $reserva->listarPorUsuario($id);
     }
 
+    /**
+     * Método excluirReservasPorUsuario.
+     * @param int $id
+     * @return int
+     */
     public function excluirReservasPorUsuario(int $id): int
     {
         $reserva = new Reserva($this->db);
         return (int) $reserva->excluirPorUsuario($id);
     }
 
+    /**
+     * Método usuarioForm.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function usuarioForm(array $query, array $post): array
     {
         $controller = $this;

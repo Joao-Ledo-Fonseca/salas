@@ -19,6 +19,9 @@ use Salas\Controllers\UsoController;
 use Salas\Controllers\UsuarioController;
 
 
+/**
+ * Classe Router.
+ */
 class Router
 {
     private const ROUTES = [
@@ -42,11 +45,23 @@ class Router
 
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Método dispatch.
+     * @param string $action
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function dispatch(string $action, array $query, array $post): array
     {
         if ($post !== [] && !Csrf::validate($post['csrf_token'] ?? null)) {
@@ -107,6 +122,11 @@ class Router
         return ['view' => $routes[$action], 'data' => $data];
     }
 
+    /**
+     * Método dashboard.
+     * @param array $query
+     * @return array
+     */
     public function dashboard(array $query): array
     {
         (new AuthorizationMiddleware($this->db))->authorize('dashboard', $query, []);
@@ -116,6 +136,10 @@ class Router
         ];
     }
 
+    /**
+     * Método menuData.
+     * @return array
+     */
     private function menuData(): array
     {
         $permissions = new AuthorizationService($this->db);
@@ -146,11 +170,20 @@ class Router
             'adminItems' => $visibleItems,
         ];
     }
+    /**
+     * Método logout.
+     * @return void
+     */
     public function logout(): void
     {
         (new UsuarioController($this->db))->logout();
     }
 
+    /**
+     * Método login.
+     * @param \Salas\Core\Http\Request $request
+     * @return void
+     */
     public function login(\Salas\Core\Http\Request $request): void
     {
         $loginView = (new LoginController($this->db))->handle($request->allQuery(), $request->allPost());
@@ -161,6 +194,11 @@ class Router
         \Salas\Core\Http\ViewRenderer::render('Login.php', ['loginView' => $loginView]);
     }
 
+    /**
+     * Método imagensList.
+     * @param \Salas\Core\Http\Request $request
+     * @return void
+     */
     public function imagensList(\Salas\Core\Http\Request $request): void
     {
         $ctrl = new SalaController($this->db);

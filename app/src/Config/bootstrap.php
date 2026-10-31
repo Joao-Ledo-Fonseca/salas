@@ -41,6 +41,11 @@ namespace Salas\Config {
 
 namespace {
 	if (!function_exists('app_url')) {
+		/**
+		 * Método app_url.
+		 * @param string $path
+		 * @return string
+		 */
 		function app_url(string $path = ''): string
 		{
 			global $appConfig;

@@ -7,16 +7,31 @@ use Salas\Models\Periodo;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 
+/**
+ * Classe RelatorioController.
+ */
 class RelatorioController
 {
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
     // Lista de todas as reservas 
+    /**
+     * Método listarReservasController.
+     * @param mixed $hoje
+     * @param mixed $tipo
+     * @param mixed $fim
+     * @return mixed
+     */
     public function listarReservasController($hoje = null, $tipo = 'm', $fim = null)
     {
         $reserva = new Reserva($this->db);
@@ -28,6 +43,13 @@ class RelatorioController
     }
 
     // relatorio de disciplina com mais reservas
+    /**
+     * Método usoMaisReservasController.
+     * @param mixed $hoje
+     * @param mixed $tipo
+     * @param mixed $fim
+     * @return mixed
+     */
     public function usoMaisReservasController($hoje = null, $tipo = 'm', $fim = null)
     {
         if ($hoje === null) {
@@ -41,6 +63,13 @@ class RelatorioController
     }
 
     // UNIFORMIZAÇÃO DOS HORÁRIOS: Ajusta o multiplicador baseado no intervalo real de dias
+    /**
+     * Método totalHorariosController.
+     * @param mixed $tipo
+     * @param mixed $hoje
+     * @param mixed $fim
+     * @return mixed
+     */
     public function totalHorariosController($tipo = 'm', $hoje = null, $fim = null)
     {
         $sala = new Sala($this->db);
@@ -67,6 +96,13 @@ class RelatorioController
     }
 
     // UNIFORMIZAÇÃO DO GRÁFICO: Agora recebe e consome os mesmos dados que a listagem
+    /**
+     * Método totalReservasController.
+     * @param mixed $hoje
+     * @param mixed $tipo
+     * @param mixed $fim
+     * @return mixed
+     */
     public function totalReservasController($hoje = null, $tipo = 'm', $fim = null)
     {
         if ($hoje === null) {
@@ -80,6 +116,11 @@ class RelatorioController
 
         return count($rows);
     }
+    /**
+     * Método reportDates.
+     * @param array $query
+     * @return array
+     */
     public function reportDates(array $query): array
     {
         $type = in_array($query['tipo'] ?? 'm', ['m', 'w', 'p'], true) ? ($query['tipo'] ?? 'm') : 'm';
@@ -109,6 +150,11 @@ class RelatorioController
         ];
     }
 
+    /**
+     * Método reportSummary.
+     * @param array $query
+     * @return array
+     */
     public function reportSummary(array $query): array
     {
         $data = $this->reportDates($query);
@@ -129,6 +175,11 @@ class RelatorioController
         ];
     }
 
+    /**
+     * Método reportReservations.
+     * @param array $query
+     * @return array
+     */
     public function reportReservations(array $query): array
     {
         $data = $this->reportDates($query);
@@ -140,6 +191,11 @@ class RelatorioController
         return $data;
     }
 
+    /**
+     * Método parseCompactDate.
+     * @param mixed $value
+     * @return ?\DateTime
+     */
     private function parseCompactDate($value): ?\DateTime
     {
         if (!is_string($value) || !preg_match('/^\d{8}$/', $value)) {

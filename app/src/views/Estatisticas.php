@@ -173,6 +173,10 @@ use Salas\Core\Validation\Validator;
         'callback': drawChart
       });
 
+      /**
+       * Método drawChart.
+       * @return mixed
+       */
       function drawChart() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Topping');
@@ -209,11 +213,21 @@ use Salas\Core\Validation\Validator;
   jQuery.datetimepicker.setLocale('pt');
 
   //  CORREÇÃO: Como os Chevrons estão ocultos no período, a função apenas muda a data base semanal/mensal
+  /**
+   * Método alteraData.
+   * @param novaDat $a
+   * @return mixed
+   */
   function alteraData(novaData) {
     window.location.href = appBaseUrl + "?acao=estatisticas&data=" + novaData + "&tipo=" + tipo;
   }
 
   // Função que alterna os botões Semanal/Mensal/Período
+  /**
+   * Método toogletipo.
+   * @param tipoBota $o
+   * @return mixed
+   */
   function toogletipo(tipoBotao) {
     if (tipoBotao === 'p') {
       var url = appBaseUrl + '?acao=estatisticas&tipo=p';

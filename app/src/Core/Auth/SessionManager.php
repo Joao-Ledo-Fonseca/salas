@@ -3,11 +3,18 @@
 namespace Salas\Core\Auth;
 
 
+/**
+ * Classe SessionManager.
+ */
 class SessionManager
 {
 	private const IDENTITY_KEY = 'auth_identity';
 	private const ACTIVITY_KEY = 'auth_last_activity';
 
+	/**
+	 * Método start.
+	 * @return void
+	 */
 	public function start(): void
 	{
 		if (session_status() === PHP_SESSION_NONE) {
@@ -15,6 +22,10 @@ class SessionManager
 		}
 	}
 
+	/**
+	 * Método identity.
+	 * @return ?array
+	 */
 	public function identity(): ?array
 	{
 		$this->start();
@@ -24,6 +35,11 @@ class SessionManager
 			: null;
 	}
 
+	/**
+	 * Método login.
+	 * @param array $identity
+	 * @return void
+	 */
 	public function login(array $identity): void
 	{
 		$this->start();
@@ -35,11 +51,20 @@ class SessionManager
 		$this->setIdentity($identity);
 	}
 
+	/**
+	 * Método updateIdentity.
+	 * @param array $identity
+	 * @return void
+	 */
 	public function updateIdentity(array $identity): void
 	{
 		$this->setIdentity($identity);
 	}
 
+	/**
+	 * Método touch.
+	 * @return void
+	 */
 	public function touch(): void
 	{
 		$this->start();
@@ -49,6 +74,10 @@ class SessionManager
 		}
 	}
 
+	/**
+	 * Método lastActivity.
+	 * @return ?int
+	 */
 	public function lastActivity(): ?int
 	{
 		$this->start();
@@ -82,6 +111,10 @@ class SessionManager
 		return false;
 	}
 
+	/**
+	 * Método logout.
+	 * @return void
+	 */
 	public function logout(): void
 	{
 		$this->start();
@@ -103,6 +136,12 @@ class SessionManager
 		session_destroy();
 	}
 
+    /**
+     * Método get.
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
     public function get(string $key, mixed $default = null): mixed
     {
         $this->start();
@@ -110,6 +149,12 @@ class SessionManager
         return $_SESSION[$key] ?? $default;
     }
 
+    /**
+     * Método set.
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
     public function set(string $key, mixed $value): void
     {
         $this->start();
@@ -117,6 +162,11 @@ class SessionManager
     }
 
 
+	/**
+	 * Método setIdentity.
+	 * @param array $identity
+	 * @return void
+	 */
 	private function setIdentity(array $identity): void
 	{
 		$this->start();

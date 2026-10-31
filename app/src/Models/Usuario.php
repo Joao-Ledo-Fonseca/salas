@@ -3,21 +3,39 @@ namespace Salas\Models;
 
 use Salas\Core\Persistence\Database;
 
+/**
+ * Classe Usuario.
+ */
 class Usuario implements \Salas\Core\Auth\UserCredentialRepository 
 {
 	private $db = null;
 
+	/**
+	 * Método __construct.
+	 * @param Database $db
+	 * @return void
+	 */
 	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
+	/**
+	 * Método findByLoginIdentifier.
+	 * @param string $identifier
+	 * @return ?array
+	 */
 	public function findByLoginIdentifier(string $identifier): ?array
 	{
 		$sql = 'select id, nome, nivel, email, senha from usuario where (email = ? or nome = ?)';
 		return $this->db->query($sql, array($identifier, $identifier));
 	}
 
+	/**
+	 * Método findByIdentifier.
+	 * @param string $identifier
+	 * @return ?array
+	 */
 	public function findByIdentifier(string $identifier): ?array
 	{
 		$rows = $this->findByLoginIdentifier($identifier);
@@ -39,6 +57,12 @@ class Usuario implements \Salas\Core\Auth\UserCredentialRepository
 		];
 	}
 
+	/**
+	 * Método autenticar.
+	 * @param mixed $identifier
+	 * @param mixed $password
+	 * @return mixed
+	 */
 	public function autenticar($identifier, $password = null)
 	{
 		if (is_null($password)) {
@@ -52,24 +76,50 @@ class Usuario implements \Salas\Core\Auth\UserCredentialRepository
 		return $identity === null ? [] : [$identity];
 	}
 
+	/**
+	 * Método updatePasswordHash.
+	 * @param int|string $id
+	 * @param string $passwordHash
+	 * @return int
+	 */
 	public function updatePasswordHash(int|string $id, string $passwordHash): int
 	{
 		$sql = 'update usuario set senha = ? where id = ?';
 		return $this->db->query_update($sql, array($passwordHash, $id));
 	}
 
+	/**
+	 * Método listar.
+	 * @return mixed
+	 */
 	public function listar()
 	{   
 		$sql = 'select * from usuario order by nivel desc;';
 		return $this->db->query($sql);
 	}
 
+	/**
+	 * Método abrir.
+	 * @param mixed $id
+	 * @return mixed
+	 */
 	public function abrir($id)
 	{   
 		$sql = 'select * from usuario where id = ?';
 		return $this->db->query($sql, array($id));
 	}
 
+	/**
+	 * Método salvar.
+	 * @param mixed $id
+	 * @param mixed $nome
+	 * @param mixed $email
+	 * @param mixed $senha
+	 * @param mixed $telefone
+	 * @param mixed $NIF
+	 * @param mixed $nivel
+	 * @return mixed
+	 */
 	public function salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel)
 	{       
 		if ($id == 0) {
@@ -93,12 +143,22 @@ class Usuario implements \Salas\Core\Auth\UserCredentialRepository
 		}
 	}
 
+	/**
+	 * Método excluir.
+	 * @param mixed $id
+	 * @return mixed
+	 */
 	public function excluir($id)
 	{
 		$sql = 'delete from usuario where id = ?';
 		return $this->db->query_update($sql, array($id));
 	}
 
+	/**
+	 * Método seedSuperAdmin.
+	 * @param Database $db
+	 * @return void
+	 */
 	public static function seedSuperAdmin(Database $db): void
 	{
 		$result = $db->query('select count(*) as total from usuario');

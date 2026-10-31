@@ -1,8 +1,17 @@
 <?php
 namespace Salas\Core\Validation;
 
+/**
+ * Classe Validator.
+ */
 class Validator
 {
+    /**
+     * Método string.
+     * @param mixed $value
+     * @param int $maxLength
+     * @return string
+     */
     public static function string(mixed $value, int $maxLength = 255): string
     {
         $value = trim((string) $value);
@@ -13,6 +22,12 @@ class Validator
         return $value;
     }
 
+    /**
+     * Método int.
+     * @param mixed $value
+     * @param int $default
+     * @return int
+     */
     public static function int(mixed $value, int $default = 0): int
     {
         if (is_bool($value)) {
@@ -23,6 +38,11 @@ class Validator
         return $filtered === false ? $default : (int) $filtered;
     }
 
+    /**
+     * Método email.
+     * @param mixed $value
+     * @return string
+     */
     public static function email(mixed $value): string
     {
         $value = trim((string) $value);
@@ -30,6 +50,12 @@ class Validator
         return $filtered === false ? '' : (string) $filtered;
     }
 
+    /**
+     * Método date.
+     * @param mixed $value
+     * @param string $format
+     * @return ?\DateTime
+     */
     public static function date(mixed $value, string $format = 'd/m/Y'): ?\DateTime
     {
         if (!is_string($value) || trim($value) === '') {
@@ -43,6 +69,11 @@ class Validator
         return $date;
     }
 
+    /**
+     * Método url.
+     * @param mixed $value
+     * @return string
+     */
     public static function url(mixed $value): string
     {
         $value = trim((string) $value);
@@ -50,6 +81,11 @@ class Validator
         return $filtered === false ? '' : (string) $filtered;
     }
 
+    /**
+     * Método escape.
+     * @param mixed $value
+     * @return string
+     */
     public static function escape(mixed $value): string
     {
         return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');

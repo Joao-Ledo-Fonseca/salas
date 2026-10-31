@@ -451,7 +451,6 @@ table td {
 }
 
 table td:nth-child(1) {
-	font-size: 0.8571rem;
 	font-weight: 600;
 	max-width: 8.5714rem;
 }

@@ -72,10 +72,18 @@ use Salas\Core\Validation\Validator;
 
 <script>
 // O código JavaScript permanece exatamente igual
+/**
+ * Método openNav.
+ * @return mixed
+ */
 function openNav() {
    var menu = document.getElementsByClassName("menu")[0];
    menu.classList.add("open");
 }
+/**
+ * Método closeNav.
+ * @return mixed
+ */
 function closeNav() {
    var menu = document.getElementsByClassName("menu")[0];
    menu.classList.remove("open");

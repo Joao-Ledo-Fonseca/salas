@@ -11,15 +11,31 @@ use Salas\Core\Validation\Validator;
 use Salas\Core\Auth\AuthContext;
 use Salas\Core\Auth\AuthorizationService;
 
+/**
+ * Classe SalaController.
+ */
 class SalaController
 {
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Método salvar.
+     * @param mixed $categoria_filtro
+     * @param mixed $activas_filtro
+     * @param mixed $returnTo
+     * @param mixed $returnId
+     * @return bool
+     */
     public function salvar($categoria_filtro, $activas_filtro, $returnTo = '', $returnId = 0): bool
     {
         if (!isset($_POST['salvar'])) {
@@ -46,6 +62,14 @@ class SalaController
         exit();
     }
 
+    /**
+     * Método excluir.
+     * @param mixed $categoria_filtro
+     * @param mixed $activas_filtro
+     * @param mixed $returnTo
+     * @param mixed $returnId
+     * @return bool
+     */
     public function excluir($categoria_filtro, $activas_filtro, $returnTo = '', $returnId = 0): bool
     {
         if (!isset($_POST['excluir'])) {
@@ -70,6 +94,14 @@ class SalaController
         exit();
     }
 
+    /**
+     * Método cancelar.
+     * @param mixed $categoria_filtro
+     * @param mixed $activas_filtro
+     * @param mixed $returnTo
+     * @param mixed $returnId
+     * @return bool
+     */
     public function cancelar($categoria_filtro, $activas_filtro, $returnTo = '', $returnId = 0): bool
     {
         if (isset($_POST['cancelar'])) {
@@ -84,12 +116,21 @@ class SalaController
         return false;
     }
 
+    /**
+     * Método nomeSala.
+     * @param mixed $sala_id
+     * @return string
+     */
     public function nomeSala($sala_id): string
     {
         $sala = new Sala($this->db);
         return $sala->name((int) $sala_id);
     }
 
+    /**
+     * Método abrir.
+     * @return array
+     */
     public function abrir(): array
     {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
@@ -101,30 +142,56 @@ class SalaController
         return [];
     }
 
+    /**
+     * Método listarController.
+     * @param mixed $filtro_categoria_id
+     * @param mixed $filtro_activas
+     * @return array
+     */
     public function listarController($filtro_categoria_id = 0, $filtro_activas = 'activas'): array
     {
         $sala = new Sala($this->db);
         return $sala->listar((int) $filtro_categoria_id, (string) $filtro_activas);
     }
 
+    /**
+     * Método listarReservasPorSala.
+     * @param int $id
+     * @return array
+     */
     public function listarReservasPorSala(int $id): array
     {
         $reserva = new Reserva($this->db);
         return $reserva->listarPorSala($id);
     }
 
+    /**
+     * Método excluirReservasPorSala.
+     * @param int $id
+     * @return int
+     */
     public function excluirReservasPorSala(int $id): int
     {
         $reserva = new Reserva($this->db);
         return (int) $reserva->excluirPorSala($id);
     }
 
+    /**
+     * Método listarSalasPorCategoria.
+     * @param int $id
+     * @return array
+     */
     public function listarSalasPorCategoria(int $id): array
     {
         $sala = new Sala($this->db);
         return $sala->listarPorCategoria($id);
     }
 
+    /**
+     * Método excluirImagem.
+     * @param int $imageId
+     * @return bool
+     */
     public function excluirImagem(int $imageId): bool
     {
         if ($imageId <= 0) {
@@ -137,12 +204,21 @@ class SalaController
         return true;
     }
 
+    /**
+     * Método listarImagensController.
+     * @return array
+     */
     public function listarImagensController(): array
     {
         $image = new Imagem($this->db);
         return $image->listar();
     }
 
+    /**
+     * Método listarImagensJson.
+     * @param array $query
+     * @return string
+     */
     public function listarImagensJson(array $query): string
     {
         $page = isset($query['page']) ? max(1, (int) $query['page']) : 1;
@@ -162,6 +238,12 @@ class SalaController
         $hasMore = ($offset + count($rows)) < $total;
         return json_encode(['images' => $images, 'hasMore' => $hasMore], JSON_UNESCAPED_UNICODE);
     }
+    /**
+     * Método salaList.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function salaList(array $query, array $post): array
     {
         $categoryId = (int) Validator::string($post['categoria_id'] ?? $query['categoria_id'] ?? 0);
@@ -174,6 +256,12 @@ class SalaController
         ];
     }
 
+    /**
+     * Método salaForm.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function salaForm(array $query, array $post): array
     {
         header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');

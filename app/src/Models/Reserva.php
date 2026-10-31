@@ -3,17 +3,30 @@ namespace Salas\Models;
 
 use Salas\Core\Persistence\Database;
 
+/**
+ * Classe Reserva.
+ */
 class Reserva
 	{
 
 	private $db = null;
 
+	/**
+	 * Método __construct.
+	 * @param Database $db
+	 * @return void
+	 */
 	public function __construct(Database $db)
 		{
 		$this->db = $db;
 		}
 
 
+	/**
+	 * Método abrir.
+	 * @param mixed $id
+	 * @return mixed
+	 */
 	public function abrir($id)
 		{
 		$sql = ' select 
@@ -48,6 +61,13 @@ class Reserva
 
 
 
+	/**
+	 * Método verificar.
+	 * @param mixed $data
+	 * @param mixed $sala
+	 * @param mixed $periodo
+	 * @return mixed
+	 */
 	public function verificar($data, $sala, $periodo)
 		{
 
@@ -62,6 +82,13 @@ class Reserva
 		}
 
 
+	/**
+	 * Método verificarCompleto.
+	 * @param mixed $data
+	 * @param mixed $sala
+	 * @param mixed $periodo
+	 * @return mixed
+	 */
 	public function verificarCompleto($data, $sala, $periodo)
 		{
 		$sql = 'select * from reserva where sala_id = ? and periodo_id = ? and dia = ?';
@@ -70,6 +97,13 @@ class Reserva
 		return $resultado;
 		}
 
+	/**
+	 * Método listarPorDia.
+	 * @param \DateTime $hoje
+	 * @param int $categoria_id
+	 * @param int $usuario_id
+	 * @return array
+	 */
 	public function listarPorDia(\DateTime $hoje, int $categoria_id = 0, int $usuario_id = 0): array
 		{
 		$sql = 'select r.*, s.nome as sala_nome, s.categoria_id, p.nome as periodo_nome, u.nome as uso_nome
@@ -91,6 +125,11 @@ class Reserva
 		}
 
 
+	/**
+	 * Método excluir.
+	 * @param mixed $id
+	 * @return mixed
+	 */
 	public function excluir($id)
 		{
 		$sql = 'delete from reserva where id = ?';
@@ -99,6 +138,20 @@ class Reserva
 		return 0;
 		}
 
+	/**
+	 * Método salvar.
+	 * @param mixed $id
+	 * @param mixed $dia
+	 * @param mixed $entidade
+	 * @param mixed $data
+	 * @param mixed $observacao
+	 * @param mixed $status
+	 * @param mixed $sala
+	 * @param mixed $periodo
+	 * @param mixed $usuario
+	 * @param mixed $uso_id
+	 * @return mixed
+	 */
 	public function salvar($id, $dia, $entidade, $data, $observacao, $status, $sala, $periodo, $usuario, $uso_id = null)
 		{
 
@@ -139,6 +192,13 @@ class Reserva
 		}
 
 
+	/**
+	 * Método next.
+	 * @param mixed $hoje
+	 * @param mixed $categoria
+	 * @param mixed $usuario_id
+	 * @return mixed
+	 */
 	public function next($hoje, $categoria, $usuario_id = 0)
 		{
 
@@ -159,6 +219,13 @@ class Reserva
 		}
 
 
+	/**
+	 * Método prev.
+	 * @param mixed $hoje
+	 * @param mixed $categoria
+	 * @param mixed $usuario_id
+	 * @return mixed
+	 */
 	public function prev($hoje, $categoria, $usuario_id = 0)
 		{
 
@@ -178,6 +245,12 @@ class Reserva
 		return $prev;
 		}
 
+	/**
+	 * Método listarReservas.
+	 * @param mixed $dia
+	 * @param mixed $tipo
+	 * @return mixed
+	 */
 	public function listarReservas($dia = null, $tipo = 'm')
 		{
 
@@ -252,6 +325,13 @@ class Reserva
 		return $reservas;
 		}
 
+	/**
+	 * Método listarReservasParaRelatorio.
+	 * @param mixed $hoje
+	 * @param mixed $tipo
+	 * @param mixed $fim
+	 * @return mixed
+	 */
 	public function listarReservasParaRelatorio($hoje, $tipo, $fim = null)
 		{
 		if ($tipo === 'p' && $fim !== null) {
@@ -276,6 +356,13 @@ class Reserva
 		return $this->db->query($sql, [$mes, $ano]);
 		}
 
+		/**
+		 * Método usoMaisReservas.
+		 * @param mixed $hoje
+		 * @param mixed $tipo
+		 * @param mixed $fim
+		 * @return mixed
+		 */
 		public function usoMaisReservas($hoje, $tipo, $fim = null)
 		{
 
@@ -321,6 +408,11 @@ class Reserva
 		}
 
 
+	/**
+	 * Método totalReservasMes.
+	 * @param mixed $hoje
+	 * @return mixed
+	 */
 	public function totalReservasMes($hoje)
 		{
 
@@ -330,24 +422,44 @@ class Reserva
 		}
 
 
+	    /**
+	     * Método listarPorUsuario.
+	     * @param mixed $usuario_id
+	     * @return mixed
+	     */
 	    public function listarPorUsuario($usuario_id)
     {
         $sql = "select a.id, c.nome as sala, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.entidade_desc, u.nome as uso, a.status from reserva a inner join periodo b on a.periodo_id = b.id inner join sala c on a.sala_id = c.id left join uso u on a.uso_id = u.id where a.usuario_id = ? order by a.dia, c.nome, b.seq";
         return $this->db->query($sql, [$usuario_id]);
     }
 
+    /**
+     * Método excluirPorUsuario.
+     * @param mixed $usuario_id
+     * @return mixed
+     */
     public function excluirPorUsuario($usuario_id)
     {
         $sql = 'delete from reserva where usuario_id = ?';
         return $this->db->query_update($sql, [$usuario_id]);
     }
 
+    /**
+     * Método listarPorSala.
+     * @param mixed $sala_id
+     * @return mixed
+     */
     public function listarPorSala($sala_id)
     {
         $sql = "select a.id, b.nome as periodo, date_format(a.dia, '%d/%m/%Y') as dia, a.entidade_desc, u.nome as uso, a.status, d.nome as usuario from reserva a inner join periodo b on a.periodo_id = b.id inner join usuario d on a.usuario_id = d.id left join uso u on a.uso_id = u.id where a.sala_id = ? order by a.dia, b.seq";
         return $this->db->query($sql, [$sala_id]);
     }
 
+    /**
+     * Método excluirPorSala.
+     * @param mixed $sala_id
+     * @return mixed
+     */
     public function excluirPorSala($sala_id)
     {
         $sql = 'delete from reserva where sala_id = ?';

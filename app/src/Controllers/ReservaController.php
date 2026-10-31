@@ -9,22 +9,40 @@ use Salas\Models\Reserva;
 use Salas\Models\Uso;
 use Salas\Core\Validation\Validator;
 
+/**
+ * Classe ReservaController.
+ */
 class ReservaController
 	{
 	private Database $db;
 
+	/**
+	 * Método __construct.
+	 * @param Database $db
+	 * @return void
+	 */
 	public function __construct(Database $db)
 	{
 		$this->db = $db;
 	}
 
 
+	/**
+	 * Método abrirController.
+	 * @param mixed $id
+	 * @return mixed
+	 */
 	public function abrirController($id)
 		{
 		$reserva = new Reserva($this->db);
 		return $reserva->abrir($id);
 		}
 
+	/**
+	 * Método salvar.
+	 * @param array $post
+	 * @return string
+	 */
 	public function salvar(array $post): string
 	{
 		$id = (int) Validator::string($post['id'] ?? '0');
@@ -111,6 +129,11 @@ class ReservaController
 		return (string) $id;
 	}
 
+	/**
+	 * Método excluir.
+	 * @param array $post
+	 * @return string
+	 */
 	public function excluir(array $post): string
 	{
 		$id = (int) Validator::string($post['id'] ?? '0');
@@ -122,12 +145,22 @@ class ReservaController
 	public $a_nomes_status = array("Reservado", "Confirmado", "Cancelado");
 
 
+	/**
+	 * Método nomeStatus.
+	 * @param mixed $status
+	 * @return mixed
+	 */
 	public function nomeStatus($status)
 		{
 		return $this->a_nomes_status[$status - 1];
 		}
 
 
+	/**
+	 * Método options_status.
+	 * @param mixed $select
+	 * @return mixed
+	 */
 	public function options_status($select)
 		{
 		$options_status = [];
@@ -142,6 +175,11 @@ class ReservaController
 		}
 
 
+    /**
+     * Método reservaForm.
+     * @param array $query
+     * @return array
+     */
     public function reservaForm(array $query): array
     {
         $controller = $this;

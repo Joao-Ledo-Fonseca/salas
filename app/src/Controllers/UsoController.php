@@ -6,15 +6,27 @@ use Salas\Core\Persistence\Database;
 use Salas\Models\Uso;
 use Salas\Core\Validation\Validator;
 
+/**
+ * Classe UsoController.
+ */
 class UsoController
 {
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Método salvar.
+     * @return bool
+     */
     public function salvar(): bool
     {
         if (!isset($_POST['salvar'])) {
@@ -34,6 +46,10 @@ class UsoController
         exit();
     }
 
+    /**
+     * Método excluir.
+     * @return bool
+     */
     public function excluir(): bool
     {
         if (!isset($_POST['excluir'])) {
@@ -48,6 +64,10 @@ class UsoController
         exit();
     }
 
+    /**
+     * Método cancelar.
+     * @return bool
+     */
     public function cancelar(): bool
     {
         if (isset($_POST['cancelar'])) {
@@ -57,6 +77,10 @@ class UsoController
         return false;
     }
 
+    /**
+     * Método abrir.
+     * @return array|false
+     */
     public function abrir(): array|false
     {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
@@ -66,17 +90,31 @@ class UsoController
         return false;
     }
 
+    /**
+     * Método listarController.
+     * @return array
+     */
     public function listarController(): array
     {
         $uso = new Uso($this->db);
         return $uso->listar();
     }
 
+    /**
+     * Método listarOpcoesController.
+     * @return array
+     */
     public function listarOpcoesController(): array
     {
         $uso = new Uso($this->db);
         return $uso->listar();
     }
+    /**
+     * Método usoForm.
+     * @param array $query
+     * @param array $post
+     * @return array
+     */
     public function usoForm(array $query, array $post = []): array
     {
         $controller = $this;

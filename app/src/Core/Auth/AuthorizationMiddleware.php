@@ -6,6 +6,9 @@ use Salas\Core\Auth\AuthorizationService;
 use Salas\Core\Persistence\Database;
 
 
+/**
+ * Classe AuthorizationMiddleware.
+ */
 class AuthorizationMiddleware
 {
 	private const PAGE_PERMISSIONS = [
@@ -27,11 +30,23 @@ class AuthorizationMiddleware
 
     private Database $db;
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Método authorize.
+     * @param string $action
+     * @param array $query
+     * @param array $post
+     * @return void
+     */
     public function authorize(string $action, array $query, array $post): void
     {
         $auth = new AuthContext();

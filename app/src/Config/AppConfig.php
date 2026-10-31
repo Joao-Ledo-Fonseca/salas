@@ -1,6 +1,9 @@
 <?php
 namespace Salas\Config;
 
+/**
+ * Classe AppConfig.
+ */
 final class AppConfig
 {
 	private string $dbHost;
@@ -29,14 +32,48 @@ final class AppConfig
 		$this->theme = $theme;
 	}
 
+	/**
+	 * Método dbHost.
+	 * @return string
+	 */
 	public function dbHost(): string { return $this->dbHost; }
+	/**
+	 * Método dbUser.
+	 * @return string
+	 */
 	public function dbUser(): string { return $this->dbUser; }
+	/**
+	 * Método dbPassword.
+	 * @return string
+	 */
 	public function dbPassword(): string { return $this->dbPassword; }
+	/**
+	 * Método dbName.
+	 * @return string
+	 */
 	public function dbName(): string { return $this->dbName; }
+	/**
+	 * Método dbPort.
+	 * @return int
+	 */
 	public function dbPort(): int { return $this->dbPort; }
+	/**
+	 * Método urlBasePath.
+	 * @return string
+	 */
 	public function urlBasePath(): string { return $this->urlBasePath; }
+	/**
+	 * Método theme.
+	 * @return ?string
+	 */
 	public function theme(): ?string { return $this->theme; }
 
+	/**
+	 * Método fromFile.
+	 * @param string $path
+	 * @param string $scriptName
+	 * @return self
+	 */
 	public static function fromFile(string $path, string $scriptName): self
 	{
 		// Carregar .env se existir (no mesmo diretório do config.json)

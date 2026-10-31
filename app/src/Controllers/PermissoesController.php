@@ -5,6 +5,9 @@ namespace Salas\Controllers;
 use Salas\Core\Persistence\Database;
 use Salas\Models\Permissoes;
 
+/**
+ * Classe PermissoesController.
+ */
 class PermissoesController
     {
 	private Database $db;
@@ -45,6 +48,11 @@ class PermissoesController
     ];
 
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
@@ -57,6 +65,12 @@ class PermissoesController
         }
     }
 
+    /**
+     * Método validaPermissao.
+     * @param mixed $permissao
+     * @param mixed $nivel
+     * @return mixed
+     */
     public function validaPermissao($permissao, $nivel)
         {
         $validade = ($this->niveis[$nivel][0] == "superadmin") || (array_key_exists($permissao, $this->permissions) && $this->permissions[$permissao][$nivel]);
@@ -64,6 +78,12 @@ class PermissoesController
         return $validade;
         }
 
+    /**
+     * Método nomeNivel.
+     * @param mixed $nivel
+     * @param mixed $tipoNome
+     * @return mixed
+     */
     public function nomeNivel($nivel, $tipoNome = 0)
         {
         if (array_key_exists($nivel, $this->niveis)) {
@@ -81,6 +101,11 @@ class PermissoesController
         return "N/A";
         }
 
+    /**
+     * Método requirePermission.
+     * @param mixed $permissao
+     * @return mixed
+     */
     public function requirePermission($permissao)
         {
         if (!isset($_SESSION['user_nivel']) || !$this->validaPermissao($permissao, $_SESSION['user_nivel'])) {
@@ -90,6 +115,10 @@ class PermissoesController
         }
 
     //  NOVO MÉTODO: Retorna ao Dashboard Inicial
+    /**
+     * Método cancelar.
+     * @return mixed
+     */
     public function cancelar()
         {
         if (isset($_POST['cancelar'])) {
@@ -99,6 +128,10 @@ class PermissoesController
         return false;
         }
 
+    /**
+     * Método salvar.
+     * @return mixed
+     */
     public function salvar()
         {
         $permissoes = new Permissoes($this->db);
@@ -156,12 +189,21 @@ class PermissoesController
         return false;
         }
     // Preencher e verificar base de dados
+    /**
+     * Método validarTabelaPermissoes.
+     * @return mixed
+     */
     public function validarTabelaPermissoes()
     {
         (new Permissoes($this->db))->ensureDefaults();
     }
 
     // listagem
+    /**
+     * Método listar.
+     * @param mixed $tipo
+     * @return mixed
+     */
     public function listar($tipo)
         {
 
@@ -192,6 +234,11 @@ class PermissoesController
         }
 
 
+    /**
+     * Método permissoesForm.
+     * @param array $post
+     * @return array
+     */
     public function permissoesForm(array $post = []): array
     {
         $controller = $this;

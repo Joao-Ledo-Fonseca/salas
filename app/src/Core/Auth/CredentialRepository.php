@@ -3,6 +3,9 @@
 namespace Salas\Core\Auth;
 
 
+/**
+ * Interface CredentialRepository.
+ */
 interface CredentialRepository
 {
 	/**
@@ -12,5 +15,11 @@ interface CredentialRepository
 	 */
 	public function findByIdentifier(string $identifier): ?array;
 
+	/**
+	 * Método updatePasswordHash.
+	 * @param int|string $id
+	 * @param string $passwordHash
+	 * @return int
+	 */
 	public function updatePasswordHash(int|string $id, string $passwordHash): int;
 }

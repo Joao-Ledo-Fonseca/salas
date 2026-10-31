@@ -3,16 +3,28 @@ namespace Salas\Models;
 
 use Salas\Core\Persistence\Database;
 
+/**
+ * Classe Categoria.
+ */
 class Categoria 
 {
 
 private $db = null;
 
+/**
+ * Método __construct.
+ * @param Database $db
+ * @return void
+ */
 public function __construct(Database $db)
 {
 $this->db = $db;
 }
 
+/**
+ * Método listar.
+ * @return mixed
+ */
 public function listar()
 {
 
@@ -20,6 +32,11 @@ $sql = ' select id, nome, descricao from categoria order by nome;';
 return $this->db->query($sql);
 }
 
+/**
+ * Método abrir.
+ * @param mixed $id
+ * @return mixed
+ */
 public function abrir($id)
 {
 $rows = $this->db->query('select * from categoria where categoria.id = ?', [$id]);
@@ -37,6 +54,15 @@ $image = $found[0];
 return [array_merge($image, $rows[0])];
 }
 
+/**
+ * Método salvar.
+ * @param mixed $id
+ * @param mixed $nome
+ * @param mixed $descricao
+ * @param mixed $imagem_id
+ * @param mixed $uploadedImage
+ * @return mixed
+ */
 public function salvar($id, $nome, $descricao, $imagem_id, $uploadedImage = false)
 {
 
@@ -76,6 +102,12 @@ return $id;
 }
 }
 
+/**
+ * Método excluir.
+ * @param mixed $id
+ * @param mixed $imagemId
+ * @return mixed
+ */
 public function excluir($id, $imagemId = '')
 {
 try {
@@ -90,6 +122,10 @@ if ($imagemId !== 0 && $imagemId !== '' && $imagemId !== null) {
 return true;
 }
 
+/**
+ * Método total.
+ * @return mixed
+ */
 public function total()
 {
 

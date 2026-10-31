@@ -5,6 +5,9 @@ namespace Salas\Core\Auth;
 use Salas\Core\Persistence\Database;
 use Salas\Models\Permissoes;
 
+/**
+ * Classe AuthorizationService.
+ */
 class AuthorizationService
 {
     private Database $db;
@@ -17,6 +20,11 @@ class AuthorizationService
         3 => ['superadmin', 'sa', 'SuperAdmin'],
     ];
 
+    /**
+     * Método __construct.
+     * @param Database $db
+     * @return void
+     */
     public function __construct(Database $db)
     {
         $this->db = $db;
@@ -42,6 +50,10 @@ class AuthorizationService
 
         $_SESSION['auth_permissions'] = $this->permissions;
     }
+    /**
+     * Método niveis.
+     * @return array
+     */
     public function niveis(): array
     {
         return $this->niveis;
@@ -49,12 +61,24 @@ class AuthorizationService
 
 
 
+    /**
+     * Método validaPermissao.
+     * @param string $permissao
+     * @param int $nivel
+     * @return bool
+     */
     public function validaPermissao(string $permissao, int $nivel): bool
     {
         return ($this->niveis[$nivel][0] ?? '') === 'superadmin'
             || (array_key_exists($permissao, $this->permissions) && !empty($this->permissions[$permissao][$nivel]));
     }
 
+    /**
+     * Método nomeNivel.
+     * @param int $nivel
+     * @param int $tipoNome
+     * @return string
+     */
     public function nomeNivel(int $nivel, int $tipoNome = 0): string
     {
         if (!array_key_exists($nivel, $this->niveis)) {
@@ -69,6 +93,11 @@ class AuthorizationService
         };
     }
 
+    /**
+     * Método maxLevel.
+     * @param int $userLevel
+     * @return int
+     */
     public function maxLevel(int $userLevel): int
     {
         return min(count($this->niveis) - 1, $userLevel);

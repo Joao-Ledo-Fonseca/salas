@@ -220,15 +220,30 @@ switch ($tipo) {
   jQuery.datetimepicker.setLocale('pt');
 
   // 2. Funções Globais de Navegação e Cliques
+  /**
+   * Método atualizaTela.
+   * @param mixed $o
+   * @return mixed
+   */
   function atualizaTela(o) {
     var dataVal = $(o).val();
     window.location.href = appBaseUrl + "?acao=relatorios&data=" + dataVal + "&tipo=" + tipo;
   }
 
+  /**
+   * Método alteraData.
+   * @param novaDat $a
+   * @return mixed
+   */
   function alteraData(novaData) {
     window.location.href = appBaseUrl + "?acao=relatorios&data=" + novaData + "&tipo=" + tipo;
   }
 
+  /**
+   * Método toogletipo.
+   * @param tipoBota $o
+   * @return mixed
+   */
   function toogletipo(tipoBotao) {
     if (tipoBotao === 'p') {
       var url = appBaseUrl + '?acao=relatorios&tipo=p';

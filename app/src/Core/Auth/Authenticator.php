@@ -4,15 +4,29 @@ namespace Salas\Core\Auth;
 
 use Salas\Core\Auth\CredentialRepository;
 
+/**
+ * Classe Authenticator.
+ */
 class Authenticator
 {
 	private UserCredentialRepository $credentials;
 
+	/**
+	 * Método __construct.
+	 * @param UserCredentialRepository $credentials
+	 * @return void
+	 */
 	public function __construct(UserCredentialRepository $credentials)
 	{
 		$this->credentials = $credentials;
 	}
 
+	/**
+	 * Método authenticate.
+	 * @param string $identifier
+	 * @param string $password
+	 * @return ?array
+	 */
 	public function authenticate(string $identifier, string $password): ?array
 	{
 		$credential = $this->credentials->findByIdentifier($identifier);

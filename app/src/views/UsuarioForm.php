@@ -24,6 +24,14 @@ use Salas\Core\Validation\Validator;
     nomeEditar = <?= json_encode((string) $nome) ?>;
     nivelEditar = <?= (int) $nivel ?>;
 
+    /**
+     * Método user_self_edit.
+     * @param uSessa $o
+     * @param nSessa $o
+     * @param uEdita $r
+     * @param nEdita $r
+     * @return mixed
+     */
     function user_self_edit(uSessao, nSessao, uEditar, nEditar) {
         if (uEditar == uSessao || nEditar > nSessao || nSessao == 0) {
             document.getElementById("permissoes").style.display = "none";

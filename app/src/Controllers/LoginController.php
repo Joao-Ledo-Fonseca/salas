@@ -7,15 +7,29 @@ use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
 use Salas\Core\Validation\Validator;
 
+/**
+ * Classe LoginController.
+ */
 class LoginController
 {
 private Database $db;
 
+/**
+ * Método __construct.
+ * @param Database $db
+ * @return void
+ */
 public function __construct(Database $db)
 {
 $this->db = $db;
 }
 
+/**
+ * Método handle.
+ * @param array $query
+ * @param array $post
+ * @return array
+ */
 public function handle(array $query, array $post): array
 {
 $errormsg = '';
@@ -47,6 +61,11 @@ return [
 ];
 }
 
+/**
+ * Método authenticate.
+ * @param array $post
+ * @return string
+ */
 private function authenticate(array $post): string
 {
 if (
