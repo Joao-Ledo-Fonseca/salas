@@ -40,8 +40,9 @@ class Sala
 				break;
 		}
 
-		$sql = 'select sala.*, categoria.nome as categoria from sala 
+		$sql = 'select sala.*, categoria.nome as categoria, imagem.tipo_imagem, imagem.imagem from sala 
 			 left join categoria on sala.categoria_id = categoria.id
+			 left join imagem on sala.imagem_id = imagem.id
 			 where (categoria.id = ? or ? = 0) and ' . $filtro_activas . ' order by categoria.nome, sala.nome;';
 		return $this->db->query($sql, [$filtro_categorias, $filtro_categorias]);
 	}

@@ -1,7 +1,8 @@
 {
     "name": "Escuro",
     "fontFamily": "Inter, Segoe UI, Roboto, Arial, sans-serif",
-    "fontSizeBase": "14px",
+    "fontSizeBase": "12px",
+    "baseColor": "#4C4C4C",
     "colors": {
         "bg": "#4C4C4C",
         "surface": "#2a2a2a",

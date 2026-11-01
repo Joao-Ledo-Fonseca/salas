@@ -68,6 +68,7 @@ class TemaController
                 }
                 $name = Validator::string($post['name'] ?? ($original['name'] ?? $editKey));
                 $fontFamily = Validator::string($post['fontFamily'] ?? ($original['fontFamily'] ?? ''));
+                $baseColor = Validator::string($post['baseColor'] ?? ($original['baseColor'] ?? '#FFFFFF'));
                 $fontSizeBase = Validator::string($post['fontSizeBase'] ?? ($original['fontSizeBase'] ?? '14px'));
                 if (is_numeric($fontSizeBase)) {
                     $n = (int)$fontSizeBase;
@@ -108,6 +109,7 @@ class TemaController
                     'name' => $name,
                     'fontFamily' => $fontFamily,
                     'fontSizeBase' => $fontSizeBase,
+                    'baseColor' => $baseColor,
                     'colors' => $colors,
                     'dashboard' => $dashboard,
                 ];

@@ -80,6 +80,11 @@ function abreReserva(o) {
 						format: 'd/m/Y'
 					});
 
+					$('#data_final_diario').datetimepicker({
+						timepicker: false,
+						format: 'd/m/Y'
+					});
+
 				});
 			}
 

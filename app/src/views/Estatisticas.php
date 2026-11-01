@@ -51,7 +51,7 @@ use Salas\Core\Validation\Validator;
 
 </head>
 
-<body>
+<body style="overflow: hidden;">
 
   <!-- menu esquerdo -->
   <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
@@ -65,7 +65,7 @@ use Salas\Core\Validation\Validator;
 
           <!-- Chevron Esquerdo: Só aparece se NÃO for período -->
           <?php if ($tipo != 'p'): ?>
-            <img src="<?= app_url('/img/chevron_left.png') ?>" width="26" height="26" style="width:26px;height:26px;" alt="Anterior" class="nav-button" onclick="alteraData(dia_anterior)" />
+            <img src="<?= app_url('/img/chevron_left.png') ?>" alt="Anterior" class="nav-button" onclick="alteraData(dia_anterior)" />
           <?php endif; ?>
 
           <div class="date-center" style="<?= $tipo == 'p' ? 'margin-left: 0; padding-left: 0;' : '' ?>">
@@ -78,13 +78,13 @@ use Salas\Core\Validation\Validator;
                 $fim_pt = isset($fim) ? $fim->format('d/m/Y') : date('d/m/Y');
                 ?>
                 <span class="date-range">
-                  <input type="text" name="data_inicio_pt" id="data_inicio_pt" class="date-input date-range-input" style="height:26px; font-size:13px; width:120px; padding:0 8px;" value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                  <input type="text" name="data_fim_pt" id="data_fim_pt" class="date-input date-range-input" style="height:26px; font-size:13px; width:120px; padding:0 8px;" value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
+                  <input type="text" name="data_inicio_pt" id="data_inicio_pt" class="date-input date-range-input" value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
+                  <input type="text" name="data_fim_pt" id="data_fim_pt" class="date-input date-range-input" value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
                 </span>
                 <input type="hidden" name="data_inicio" id="data_inicio" value="<?= isset($inicio) ? $inicio->format('dmY') : date('dmY') ?>" />
                 <input type="hidden" name="data_fim" id="data_fim" value="<?= isset($fim) ? $fim->format('dmY') : date('dmY') ?>" />
               <?php else: ?>
-                <input type="text" name="data_pt" id="data_pt" class="date-input" style="height:26px; font-size:13px; width:160px; padding:0 8px;" value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
+                <input type="text" name="data_pt" id="data_pt" class="date-input" value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
                 <input type="hidden" name="data" id="data" value="<?= $hoje->format("dmY") ?>" />
               <?php endif; ?>
             </form>
@@ -92,7 +92,7 @@ use Salas\Core\Validation\Validator;
 
           <!-- Chevron Direito: Só aparece se NÃO for período -->
           <?php if ($tipo != 'p'): ?>
-            <img src="<?= app_url('/img/chevron_right.png') ?>" width="26" height="26" style="width:26px;height:26px;" class="nav-button" alt="Próximo" onclick="alteraData(dia_posterior)" />
+            <img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" alt="Próximo" onclick="alteraData(dia_posterior)" />
           <?php endif; ?>
 
         </div>
@@ -111,54 +111,109 @@ use Salas\Core\Validation\Validator;
     <div class="zona-scroll">
       <div class="container">
 
-        <!-- 1. Bloco de Cima: Listagem por Disciplina -->
-        <div class="apar">
-          <h3> Total de reservas por uso </h3>
-          <table class="lista_comum" cellpadding="4" cellspacing="4">
-            <tr>
-              <th></th>
-              <th width="300"> Nome </th>
-              <th> Total</th>
-            </tr>
-            <?php if (empty($resumo_reservas)): ?>
-              <tr><td></td><td colspan="2">Nenhum registo encontrado para este período.</td></tr>
-            <?php else: ?>
-              <?php foreach ($resumo_reservas as $resumo): ?>
-                <tr>
-                  <td></td>
-                  <td width="300"><?= htmlspecialchars((string) $resumo['uso'], ENT_QUOTES, 'UTF-8') ?></td>
-                  <td><?= (int) $resumo['total'] ?></td>
-                </tr>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </table>
+        <!-- Gráficos e tabela dinâmica -->
+
+        <!-- 2. Grelha de gráficos 2x2 -->
+        <div class="charts-grid" style="margin-top: 30px;">
+          <div class="chart-box" data-chart="ocupacao">
+            <h3>Taxa de ocupação das salas</h3>
+            <div class="chart-toggle">
+              <label><input type="radio" name="view_ocupacao" value="chart" checked> Gráfico</label>
+              <label><input type="radio" name="view_ocupacao" value="table"> Tabela</label>
+            </div>
+            <div class="chart-view">
+              <div id="chart_ocupacao" style="width: 100%; height: 300px;"></div>
+            </div>
+            <div class="table-view" style="display:none;">
+              <table class="chart-table">
+                <thead><tr><th>Estado</th><th>Total</th></tr></thead>
+                <tbody>
+                  <tr><td>Ocupado</td><td><?= (int) $total_reservas ?></td></tr>
+                  <tr><td>Desocupado</td><td><?= (int) $total_horarios ?></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="chart-box" data-chart="uso">
+            <h3>Reservas por uso</h3>
+            <div class="chart-toggle">
+              <label><input type="radio" name="view_uso" value="chart" checked> Gráfico</label>
+              <label><input type="radio" name="view_uso" value="table"> Tabela</label>
+            </div>
+            <div class="chart-view">
+              <div id="chart_uso" style="width: 100%; height: 300px;"></div>
+            </div>
+            <div class="table-view" style="display:none;">
+              <table class="chart-table">
+                <thead><tr><th>Uso</th><th>Total</th></tr></thead>
+                <tbody>
+                  <?php if (empty($resumo_reservas)): ?>
+                    <tr><td colspan="2">Sem dados.</td></tr>
+                  <?php else: ?>
+                    <?php foreach ($resumo_reservas as $r): ?>
+                      <tr><td><?= htmlspecialchars((string)($r['uso'] ?? 'Sem uso'), ENT_QUOTES, 'UTF-8') ?></td><td><?= (int)($r['total'] ?? 0) ?></td></tr>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="chart-box" data-chart="data">
+            <h3>Reservas por data</h3>
+            <div class="chart-toggle">
+              <label><input type="radio" name="view_data" value="chart" checked> Gráfico</label>
+              <label><input type="radio" name="view_data" value="table"> Tabela</label>
+            </div>
+            <div class="chart-view">
+              <div id="chart_data" style="width: 100%; height: 300px;"></div>
+            </div>
+            <div class="table-view" style="display:none;">
+              <table class="chart-table">
+                <thead><tr><th>Data</th><th>Total</th></tr></thead>
+                <tbody>
+                  <?php if (empty($reservas_por_data)): ?>
+                    <tr><td colspan="2">Sem dados.</td></tr>
+                  <?php else: ?>
+                    <?php foreach ($reservas_por_data as $r): ?>
+                      <tr><td><?= htmlspecialchars((string)($r['data'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td><td><?= (int)($r['total'] ?? 0) ?></td></tr>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="chart-box" data-chart="sala">
+            <h3>Reservas por sala</h3>
+            <div class="chart-toggle">
+              <label><input type="radio" name="view_sala" value="chart" checked> Gráfico</label>
+              <label><input type="radio" name="view_sala" value="table"> Tabela</label>
+            </div>
+            <div class="chart-view">
+              <div id="chart_sala" style="width: 100%; height: 300px;"></div>
+            </div>
+            <div class="table-view" style="display:none;">
+              <table class="chart-table">
+                <thead><tr><th>Sala</th><th>Total</th></tr></thead>
+                <tbody>
+                  <?php if (empty($reservas_por_sala)): ?>
+                    <tr><td colspan="2">Sem dados.</td></tr>
+                  <?php else: ?>
+                    <?php foreach ($reservas_por_sala as $r): ?>
+                      <tr><td><?= htmlspecialchars((string)($r['sala'] ?? 'Sem sala'), ENT_QUOTES, 'UTF-8') ?></td><td><?= (int)($r['total'] ?? 0) ?></td></tr>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        <!-- 2. Bloco de Baixo: Gráfico + Box de Informação Permanente (Isolado por Estilos Fixos) -->
+        <!-- 3. Tabela dinâmica -->
         <div class="apar" style="margin-top: 30px; text-align: left;">
-          <h3> Taxa de ocupação das salas </h3>
-          
-          <!-- Usamos uma tabela pura sem classes para o CSS global não interferir nas colunas -->
-          <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 900px; border: none; background: transparent; border-collapse: collapse;">
-            <tr>
-              <!-- Coluna Esquerda: Trancada milimetricamente para o Gráfico de 500px respirar -->
-              <td style="width: 520px; min-width: 520px; max-width: 520px; border: none; background: transparent; text-align: left; padding: 0; vertical-align: top;">
-                <div id="chart_div" style="width: 500px; height: 400px; overflow: hidden;"></div>
-              </td>
-              
-<!-- Coluna Direita: Alinha a Box verticalmente ao CENTRO do gráfico -->
-              <td style="border: none; background: transparent; padding: 0; vertical-align: middle; padding-left: 20px;">
-                <div class="info-box">
-                  <strong class="info-box-title">Informação do Período:</strong>
-                  <ul style="margin: 0; padding-left: 20px; line-height: 22px; list-style-type: square;">
-                    <li><strong>Filtro Ativo:</strong> <?= htmlspecialchars($tipo === 'w' ? 'Semanal' : ($tipo === 'p' ? 'Período' : 'Mensal'), ENT_QUOTES, 'UTF-8') ?></li>
-                    <li><strong>Data/Intervalo:</strong> <?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?></li>
-                    <li><strong>Total de Reservas:</strong> <?= (int)$total_reservas ?></li>
-                    <li><strong>Total de Horários Disponíveis:</strong> <?= (int)$total_horarios ?></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
+          <h3 id="tabela_titulo">Dados do gráfico selecionado</h3>
+          <table id="tabela_estatisticas" class="lista_comum" cellpadding="4" cellspacing="4" style="width:100%;">
+            <thead></thead>
+            <tbody></tbody>
           </table>
         </div>
 
@@ -170,31 +225,129 @@ use Salas\Core\Validation\Validator;
     <script type="text/javascript">
       google.charts.load('current', {
         'packages': ['corechart'],
-        'callback': drawChart
+        'callback': drawAll
       });
 
-      /**
-       * Método drawChart.
-       * @return mixed
-       */
-      function drawChart() {
+      var chartOcupacao, chartUso, chartData, chartSala;
+
+      function drawAll() {
+        drawOcupacao();
+        drawUso();
+        drawData();
+        drawSala();
+        showTable('ocupacao');
+      }
+
+      function drawOcupacao() {
+        var container = document.getElementById('chart_ocupacao');
+        if (!container) return;
         var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
+        data.addColumn('string', 'Estado');
+        data.addColumn('number', 'Total');
         data.addRows([
           ['Ocupado', <?= (int) $total_reservas ?>],
           ['Desocupado', <?= (int) $total_horarios ?>]
         ]);
-
-        var options = {
-          'title': 'Taxa de ocupação da sala',
-          'width': 500,
-          'height': 400
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
+        var options = { 'title': 'Taxa de ocupação da sala', 'height': 300, 'backgroundColor': 'transparent', 'legend': { 'position': 'bottom' } };
+        chartOcupacao = new google.visualization.PieChart(container);
+        google.visualization.events.addListener(chartOcupacao, 'select', function () { showTable('ocupacao'); });
+        chartOcupacao.draw(data, options);
+        container.addEventListener('click', function () { showTable('ocupacao'); });
       }
+
+      function drawUso() {
+        var container = document.getElementById('chart_uso');
+        if (!container) return;
+        if (!reservasPorUso || reservasPorUso.length === 0) { container.innerHTML = 'Sem dados.'; return; }
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Uso');
+        data.addColumn('number', 'Reservas');
+        var rows = reservasPorUso.map(function (r) { return [String(r.uso || 'Sem uso'), Number(r.total) || 0]; });
+        data.addRows(rows);
+        var options = { 'title': 'Reservas por uso', 'height': 300, 'backgroundColor': 'transparent', 'legend': { 'position': 'none' }, 'hAxis': { 'title': 'Uso' }, 'vAxis': { 'title': 'Reservas', 'minValue': 0 } };
+        chartUso = new google.visualization.ColumnChart(container);
+        google.visualization.events.addListener(chartUso, 'select', function () { showTable('uso'); });
+        chartUso.draw(data, options);
+        container.addEventListener('click', function () { showTable('uso'); });
+      }
+
+      function drawData() {
+        var container = document.getElementById('chart_data');
+        if (!container) return;
+        if (!reservasPorData || reservasPorData.length === 0) { container.innerHTML = 'Sem dados.'; return; }
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Data');
+        data.addColumn('number', 'Reservas');
+        var rows = reservasPorData.map(function (r) { return [String(r.data || ''), Number(r.total) || 0]; });
+        data.addRows(rows);
+        var options = { 'title': 'Reservas por data', 'height': 300, 'backgroundColor': 'transparent', 'legend': { 'position': 'none' }, 'hAxis': { 'title': 'Data' }, 'vAxis': { 'title': 'Reservas', 'minValue': 0 } };
+        chartData = new google.visualization.ColumnChart(container);
+        google.visualization.events.addListener(chartData, 'select', function () { showTable('data'); });
+        chartData.draw(data, options);
+        container.addEventListener('click', function () { showTable('data'); });
+      }
+
+      function drawSala() {
+        var container = document.getElementById('chart_sala');
+        if (!container) return;
+        if (!reservasPorSala || reservasPorSala.length === 0) { container.innerHTML = 'Sem dados.'; return; }
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Sala');
+        data.addColumn('number', 'Reservas');
+        var rows = reservasPorSala.map(function (r) { return [String(r.sala || 'Sem sala'), Number(r.total) || 0]; });
+        data.addRows(rows);
+        var options = { 'title': 'Reservas por sala', 'height': 300, 'backgroundColor': 'transparent', 'legend': { 'position': 'none' }, 'hAxis': { 'title': 'Sala' }, 'vAxis': { 'title': 'Reservas', 'minValue': 0 } };
+        chartSala = new google.visualization.ColumnChart(container);
+        google.visualization.events.addListener(chartSala, 'select', function () { showTable('sala'); });
+        chartSala.draw(data, options);
+        container.addEventListener('click', function () { showTable('sala'); });
+      }
+
+      function showTable(key) {
+        var title = 'Dados do gráfico selecionado';
+        var headers = [];
+        var rows = [];
+        if (key === 'ocupacao') {
+          title = 'Taxa de ocupação';
+          headers = ['Estado', 'Total'];
+          rows = [['Ocupado', <?= (int) $total_reservas ?>], ['Desocupado', <?= (int) $total_horarios ?>]];
+        } else if (key === 'uso') {
+          title = 'Reservas por uso';
+          headers = ['Uso', 'Total'];
+          rows = (reservasPorUso || []).map(function (r) { return [String(r.uso || 'Sem uso'), Number(r.total) || 0]; });
+        } else if (key === 'data') {
+          title = 'Reservas por data';
+          headers = ['Data', 'Total'];
+          rows = (reservasPorData || []).map(function (r) { return [String(r.data || ''), Number(r.total) || 0]; });
+        } else if (key === 'sala') {
+          title = 'Reservas por sala';
+          headers = ['Sala', 'Total'];
+          rows = (reservasPorSala || []).map(function (r) { return [String(r.sala || 'Sem sala'), Number(r.total) || 0]; });
+        }
+        document.getElementById('tabela_titulo').textContent = title;
+        document.querySelectorAll('.chart-box').forEach(function (box) { box.classList.remove('selected'); });
+        var selectedBox = document.querySelector('.chart-box[data-chart="' + key + '"]');
+        if (selectedBox) selectedBox.classList.add('selected');
+        var thead = document.querySelector('#tabela_estatisticas thead');
+        var tbody = document.querySelector('#tabela_estatisticas tbody');
+        thead.innerHTML = '<tr>' + headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+        tbody.innerHTML = rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('');
+      }
+
+      document.querySelectorAll('.chart-box').forEach(function (box) {
+        box.addEventListener('click', function (e) {
+          if (e.target.closest('.chart-toggle')) return;
+          if (box.dataset.chart) showTable(box.dataset.chart);
+        });
+      });
+      document.querySelectorAll('.chart-toggle input[type="radio"]').forEach(function (r) {
+        r.addEventListener('change', function () {
+          var box = r.closest('.chart-box');
+          var showTable = r.value === 'table';
+          box.querySelector('.chart-view').style.display = showTable ? 'none' : 'block';
+          box.querySelector('.table-view').style.display = showTable ? 'block' : 'none';
+        });
+      });
     </script>
   </div>
 
@@ -203,6 +356,9 @@ use Salas\Core\Validation\Validator;
 
 <script>
   var appBaseUrl = <?= json_encode(app_url()) ?>;
+  var reservasPorUso = <?= json_encode(isset($resumo_reservas) ? $resumo_reservas : [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+  var reservasPorData = <?= json_encode(isset($reservas_por_data) ? $reservas_por_data : [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+  var reservasPorSala = <?= json_encode(isset($reservas_por_sala) ? $reservas_por_sala : [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 
   // Variáveis PHP passadas para o JavaScript
   var data = '<?= $hoje->format("dmY"); ?>';
@@ -261,7 +417,7 @@ use Salas\Core\Validation\Validator;
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChange\DateTime: function (dp, $input) {
+        onChangeDateTime: function (dp, $input) {
           var value = $input.val();
           var parts = value.split('/');
           if (parts.length === 3) {
@@ -281,7 +437,7 @@ use Salas\Core\Validation\Validator;
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChange\DateTime: function (dp, $input) {
+        onChangeDateTime: function (dp, $input) {
           var parts = $input.val().split('/');
           if (parts.length === 3) {
             var dmY = parts.join('');
@@ -302,7 +458,7 @@ use Salas\Core\Validation\Validator;
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChange\DateTime: function (dp, $input) {
+        onChangeDateTime: function (dp, $input) {
           var parts = $input.val().split('/');
           if (parts.length === 3) {
             var dmY = parts.join('');

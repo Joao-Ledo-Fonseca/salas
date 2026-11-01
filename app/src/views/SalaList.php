@@ -70,7 +70,7 @@ use Salas\Core\Validation\Validator;
                 <?php $categoriaAtual = (string) $sala['categoria']; ?>
                 <tr>
                     <td style="border:none"><?= $categoriaAtual === $categoriaAnterior ? '' : htmlspecialchars($categoriaAtual, ENT_QUOTES, 'UTF-8') ?></td>
-                    <td><a href="<?= htmlspecialchars(app_url('?acao=sala_form&id=' . (int) $sala['id'] . '&categoria_filtro=' . rawurlencode((string) $categoria_id) . '&activas=' . rawurlencode((string) $activas)), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $sala['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                    <td><a class="sala-nome" data-room-index="<?= (int) $sala['id'] ?>" href="<?= htmlspecialchars(app_url('?acao=sala_form&id=' . (int) $sala['id'] . '&categoria_filtro=' . rawurlencode((string) $categoria_id) . '&activas=' . rawurlencode((string) $activas)), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $sala['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
                     <td><?= htmlspecialchars((string) $sala['descricao'], ENT_QUOTES, 'UTF-8') ?></td>
                     <td><?= (int) $sala['lugares'] ?></td>
                     <td><?= !empty($sala['activa']) ? '&#10003;' : '-' ?></td>
@@ -82,3 +82,48 @@ use Salas\Core\Validation\Validator;
         </tbody>
     </table>
 </div>
+
+<script>
+var salaInfos = {
+<?php foreach ($lista as $sala): ?>
+  <?= (int) $sala['id'] ?>: {
+    nome: <?= json_encode((string) $sala['nome'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    descricao: <?= json_encode((string) $sala['descricao'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    capacidade: <?= (int) $sala['lugares'] ?>,
+    img: <?= json_encode(!empty($sala['imagem']) ? ('data:' . (($sala['tipo_imagem'] ?? '') ?: 'image/jpeg') . ';base64,' . base64_encode($sala['imagem'])) : '', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
+  },
+<?php endforeach; ?>
+};
+$(function () {
+  var card = $('<div id="sala-card" class="sala-card"></div>').appendTo('body');
+  function escapeHtml(text) {
+    return $('<div>').text(text == null ? '' : String(text)).html();
+  }
+  var hoverTimer = null;
+  $(document).on('mouseenter', '.sala-nome', function () {
+    var $el = $(this);
+    hoverTimer = setTimeout(function () {
+      var idx = $el.data('room-index');
+      var info = salaInfos[idx] || {};
+      var html = '<strong class="sala-card-title">' + escapeHtml(info.nome || '') + '</strong>';
+      if (info.descricao) {
+        html += '<p class="sala-card-desc">' + escapeHtml(info.descricao) + '</p>';
+      }
+      html += '<p class="sala-card-cap"><strong>Capacidade:</strong> ' + (info.capacidade || 0) + '</p>';
+      if (info.img) {
+        html += '<img src="' + info.img + '" class="sala-card-img" alt="" />';
+      }
+      card.html(html).show();
+      var offset = $el.offset();
+      card.css({
+        top: offset.top + $el.outerHeight() + 4,
+        left: offset.left
+      });
+    }, 1000);
+  });
+  $(document).on('mouseleave', '.sala-nome', function () {
+    if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+    card.hide();
+  });
+});
+</script>

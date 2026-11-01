@@ -194,6 +194,7 @@ class Reserva
 
 	/**
 	 * Método next.
+	/**
 	 * @param mixed $hoje
 	 * @param mixed $categoria
 	 * @param mixed $usuario_id
@@ -409,7 +410,102 @@ class Reserva
 
 
 	/**
-	 * Método totalReservasMes.
+	 * Método reservasPorData.
+	 * @param mixed $hoje
+	 * @param mixed $tipo
+	 * @param mixed $fim
+	 * @return mixed
+	 */
+	public function reservasPorData($hoje, $tipo, $fim = null)
+	{
+		if ($tipo === 'p' && $fim !== null) {
+			$inicio = $hoje->format('Y-m-d');
+			$fim_str = $fim->format('Y-m-d');
+
+			$sql = "SELECT DATE_FORMAT(MIN(r.dia), '%d/%m/%Y') as data, COUNT(*) as total
+                FROM reserva r
+                WHERE r.dia BETWEEN ? AND ? AND r.status IN (1, 2)
+                GROUP BY YEARWEEK(r.dia, 1)
+                ORDER BY MIN(r.dia) ASC";
+
+			return $this->db->query($sql, [$inicio, $fim_str]);
+		}
+
+		if ($tipo === 'w') {
+			$data_base = $hoje->format('Y-m-d');
+
+			$sql = "SELECT DATE_FORMAT(r.dia, '%d/%m/%Y') as data, COUNT(*) as total
+                FROM reserva r
+                WHERE YEARWEEK(r.dia, 1) = YEARWEEK(?, 1) AND r.status IN (1, 2)
+                GROUP BY r.dia
+                ORDER BY r.dia ASC";
+
+			return $this->db->query($sql, [$data_base]);
+		}
+
+		$mes = (int) $hoje->format('m');
+		$ano = (int) $hoje->format('Y');
+
+		$sql = "SELECT DATE_FORMAT(r.dia, '%d/%m/%Y') as data, COUNT(*) as total
+            FROM reserva r
+            WHERE MONTH(r.dia) = ? AND YEAR(r.dia) = ? AND r.status IN (1, 2)
+            GROUP BY r.dia
+            ORDER BY r.dia ASC";
+
+		return $this->db->query($sql, [$mes, $ano]);
+	}
+
+	/**
+	 * Método reservasPorSala.
+	 * @param mixed $hoje
+	 * @param mixed $tipo
+	 * @param mixed $fim
+	 * @return mixed
+	 */
+	public function reservasPorSala($hoje, $tipo, $fim = null)
+	{
+		if ($tipo === 'p' && $fim !== null) {
+			$inicio = $hoje->format('Y-m-d');
+			$fim_str = $fim->format('Y-m-d');
+
+			$sql = "SELECT COALESCE(s.nome, 'Sem sala') as sala, COUNT(*) as total
+                FROM reserva r
+                LEFT JOIN sala s ON r.sala_id = s.id
+                WHERE r.dia BETWEEN ? AND ? AND r.status IN (1, 2)
+                GROUP BY s.nome
+                ORDER BY total DESC";
+
+			return $this->db->query($sql, [$inicio, $fim_str]);
+		}
+
+		if ($tipo === 'w') {
+			$data_base = $hoje->format('Y-m-d');
+
+			$sql = "SELECT COALESCE(s.nome, 'Sem sala') as sala, COUNT(*) as total
+                FROM reserva r
+                LEFT JOIN sala s ON r.sala_id = s.id
+                WHERE YEARWEEK(r.dia, 1) = YEARWEEK(?, 1) AND r.status IN (1, 2)
+                GROUP BY s.nome
+                ORDER BY total DESC";
+
+			return $this->db->query($sql, [$data_base]);
+		}
+
+		$mes = (int) $hoje->format('m');
+		$ano = (int) $hoje->format('Y');
+
+		$sql = "SELECT COALESCE(s.nome, 'Sem sala') as sala, COUNT(*) as total
+            FROM reserva r
+            LEFT JOIN sala s ON r.sala_id = s.id
+            WHERE MONTH(r.dia) = ? AND YEAR(r.dia) = ? AND r.status IN (1, 2)
+            GROUP BY s.nome
+            ORDER BY total DESC";
+
+		return $this->db->query($sql, [$mes, $ano]);
+	}
+
+
+	/**
 	 * @param mixed $hoje
 	 * @return mixed
 	 */

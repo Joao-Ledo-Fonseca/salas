@@ -52,8 +52,21 @@ use Salas\Core\Validation\Validator;
         <?php endforeach; ?>
     </select><BR />
 
-    <h3>Repetir semanalmente até</h3>
-    <input type="text" placeholder="data final" name="data_final" id="data_final" value="" class="mb-2" /><BR />
+    <div class="repeat-box">
+      <h3>Repetir</h3>
+
+      <div class="repeat-item">
+        <label for="data_final">Data final</label><br />
+        <input type="text" placeholder="data final" name="data_final" id="data_final" value="" class="mb-2" /><br />
+        <label class="repeat-label">Semanalmente</label>
+      </div>
+
+      <div class="repeat-item">
+        <label for="data_final_diario">Data final</label><br />
+        <input type="text" placeholder="data final" name="data_final_diario" id="data_final_diario" value="" class="mb-2" /><br />
+        <label class="repeat-label">Diariamente</label>
+      </div>
+    </div>
 
     <input type="button" name="Fechar" value="Fechar" class="btn1 w-80" onClick="fecharForm()" >
     <input type="button" name="Excluir" value="Excluir" class="btn1 w-80" onclick="excluirFormularioReserva(<?= (int) $id ?>)">

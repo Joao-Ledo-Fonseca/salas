@@ -84,6 +84,7 @@ function abrirFormMulti(o, periodos, selected) {
                 $('.form').html(response);
                 $('#dia').datetimepicker({ timepicker: false, format: 'd/m/Y' });
                 $('#data_final').datetimepicker({ timepicker: false, format: 'd/m/Y' });
+                $('#data_final_diario').datetimepicker({ timepicker: false, format: 'd/m/Y' });
             });
             // manter colorido após abrir o form
             if (selected && selected.length) {

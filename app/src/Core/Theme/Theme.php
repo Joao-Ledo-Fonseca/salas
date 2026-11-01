@@ -10,6 +10,7 @@ final class Theme
     public string $name;
     public string $fontFamily;
     public string $fontSizeBase;
+    public string $baseColor;
     /** @var array<string,string> */
     public array $colors;
     /** @var array<string,string> */
@@ -20,6 +21,7 @@ final class Theme
         string $name,
         string $fontFamily,
         string $fontSizeBase,
+        string $baseColor,
         array $colors,
         array $dashboard
     ) {
@@ -27,6 +29,7 @@ final class Theme
         $this->name = $name;
         $this->fontFamily = $fontFamily;
         $this->fontSizeBase = $fontSizeBase;
+        $this->baseColor = $baseColor;
         $this->colors = $colors;
         $this->dashboard = $dashboard;
     }
@@ -41,17 +44,18 @@ final class Theme
     {
         foreach (['name', 'fontFamily', 'fontSizeBase', 'colors', 'dashboard'] as $field) {
             if (!isset($data[$field])) {
-                throw new \RuntimeException("Tema invÃ¡lido: falta '$field'.");
+                throw new \RuntimeException("Tema inválido: falta '$field'.");
             }
         }
         if (!is_array($data['colors']) || !is_array($data['dashboard'])) {
-            throw new \RuntimeException('Tema invÃ¡lido: colors/dashboard tÃªm de ser objetos.');
+            throw new \RuntimeException('Tema inválido: colors/dashboard têm de ser objetos.');
         }
         return new self(
             $key,
             (string)$data['name'],
             (string)$data['fontFamily'],
             (string)$data['fontSizeBase'],
+            (string)($data['baseColor'] ?? $data['colors']['bg'] ?? '#FFFFFF'),
             $data['colors'],
             $data['dashboard']
         );
@@ -66,6 +70,7 @@ final class Theme
         $vars = [];
         $vars[] = '--font-family-base: ' . $this->fontFamily . ';';
         $vars[] = '--font-size-base: ' . $this->fontSizeBase . ';';
+        $vars[] = '--color-base: ' . $this->baseColor . ';';
         foreach ($this->colors as $k => $v) {
             $vars[] = '--color-' . $this->kebab($k) . ': ' . $v . ';';
         }

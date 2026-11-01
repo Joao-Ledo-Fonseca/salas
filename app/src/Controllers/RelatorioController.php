@@ -162,6 +162,8 @@ class RelatorioController
         $bookings = $this->usoMaisReservasController($data['hoje'], $data['tipo'], $end);
         $totalBookings = $this->totalReservasController($data['hoje'], $data['tipo'], $end);
         $totalSlots = $this->totalHorariosController($data['tipo'], $data['hoje'], $end);
+        $reservasPorData = (new Reserva($this->db))->reservasPorData($data['hoje'], $data['tipo'], $end);
+        $reservasPorSala = (new Reserva($this->db))->reservasPorSala($data['hoje'], $data['tipo'], $end);
         if ($totalSlots >= $totalBookings) {
             $totalSlots -= $totalBookings;
         }
@@ -172,6 +174,8 @@ class RelatorioController
             'resumo_reservas' => $bookings,
             'total_reservas' => $totalBookings,
             'total_horarios' => $totalSlots,
+            'reservas_por_data' => $reservasPorData,
+            'reservas_por_sala' => $reservasPorSala,
         ];
     }
 

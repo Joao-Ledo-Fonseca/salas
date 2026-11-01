@@ -1,4 +1,3 @@
-</rfl:parameter>
 <?php
 namespace Salas\Controllers;
 

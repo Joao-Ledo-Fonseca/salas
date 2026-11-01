@@ -114,7 +114,7 @@ $cancelUrl = (($return_to ?? '') !== '')
                 <input type="hidden" name="categoria_filtro" value="<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>" />
                 <input type="hidden" name="activas" value="<?= htmlspecialchars((string) $activas_filtro, ENT_QUOTES, 'UTF-8') ?>" />
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
-                <input type="submit" name="eliminar_reservas" value="Eliminar Reservas" class="btn1" style="height:1.57rem; padding:0 0.71rem; font-size:0.79rem; width:auto;" />
+                <input type="submit" name="eliminar_reservas" value="Eliminar Reservas" class="btn1 btn-compact" />
             </form>
         <?php endif; ?>
     </div>
@@ -122,28 +122,28 @@ $cancelUrl = (($return_to ?? '') !== '')
         <p>Nenhuma reserva encontrada.</p>
     <?php else: ?>
         <?php $statusNomes = [1 => 'Reservado', 2 => 'Confirmado', 3 => 'Cancelado']; ?>
-        <div style="width:100%; max-height:55vh; overflow-y:auto; overflow-x:auto;">
+        <div class="scroll-xy">
             <table class="tabela_comum table-compact" cellpadding="0" cellspacing="0">
-                <tr style="border-bottom:1px solid #999;">
-                    <th style="padding:0 3px;">ID</th>
-                    <th style="padding:0 3px;">Período</th>
-                    <th style="padding:0 3px;">Dia</th>
-                    <th style="padding:0 3px;">Entidade</th>
-                    <th style="padding:0 3px;">Uso</th>
-                    <th style="padding:0 3px;">Status</th>
-                    <th style="padding:0 3px;">Utilizador</th>
-                    <th style="padding:0 3px;">Eliminar</th>
+                <tr class="border-bottom-999">
+                    <th class="p-0-3">ID</th>
+                    <th class="p-0-3">Período</th>
+                    <th class="p-0-3">Dia</th>
+                    <th class="p-0-3">Entidade</th>
+                    <th class="p-0-3">Uso</th>
+                    <th class="p-0-3">Status</th>
+                    <th class="p-0-3">Utilizador</th>
+                    <th class="p-0-3">Eliminar</th>
                 </tr>
                 <?php foreach ($reservasSala as $reserva): ?>
-                    <tr style="line-height:1.0;">
-                        <td style="padding:0 3px;"><?= (int) $reserva['id'] ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['entidade_desc'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;"><?= htmlspecialchars((string) $reserva['usuario'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td style="padding:0 3px;">
+                    <tr class="lh-1">
+                        <td class="p-0-3"><?= (int) $reserva['id'] ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['entidade_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['usuario'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="p-0-3">
                             <?php if ($podeEliminarReservas): ?>
                                 <form method="post" action="<?= htmlspecialchars(app_url('?acao=sala_form&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)), ENT_QUOTES, 'UTF-8') ?>" class="inline-form">
                                     <input type="hidden" name="id" value="<?= (int) $id ?>" />
@@ -159,7 +159,7 @@ $cancelUrl = (($return_to ?? '') !== '')
                     </tr>
                 <?php endforeach; ?>
             </table>
-            <hr style="border:0; border-top:1px solid #999; margin:0;" />
+            <hr class="hr-compact" />
         </div>
     <?php endif; ?>
 </div>

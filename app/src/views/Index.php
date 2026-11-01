@@ -63,8 +63,47 @@ use Salas\Core\Validation\Validator;
 		var dia_next = <?= json_encode($dashboardView['nextReservation']) ?>;
 		var categoria_id = <?= json_encode($dashboardView['categoryId']) ?>;
 		var usuario_id = <?= json_encode($dashboardView['usuarioId']) ?>;
+		var salaInfos = <?= json_encode(array_values(array_map(function ($r) {
+			return [
+				'nome' => (string) ($r['nome'] ?? ''),
+				'descricao' => (string) ($r['descricao'] ?? ''),
+				'capacidade' => (int) ($r['capacidade'] ?? 0),
+				'img' => !empty($r['imagem_base64']) ? ('data:' . (($r['imagem_tipo'] ?? '') ?: 'image/jpeg') . ';base64,' . $r['imagem_base64']) : '',
+			];
+		}, $dashboardView['rooms'])), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 
-		jQuery.datetimepicker.setLocale('pt');
+		$(function () {
+			var card = $('<div id="sala-card" class="sala-card"></div>').appendTo('body');
+			function escapeHtml(text) {
+				return $('<div>').text(text == null ? '' : String(text)).html();
+			}
+			var hoverTimer = null;
+			$(document).on('mouseenter', '.sala-nome', function () {
+				var $el = $(this);
+				hoverTimer = setTimeout(function () {
+					var idx = $el.data('room-index');
+					var info = (typeof salaInfos !== 'undefined' && salaInfos[idx]) ? salaInfos[idx] : {};
+					var html = '<strong class="sala-card-title">' + escapeHtml(info.nome || '') + '</strong>';
+					if (info.descricao) {
+						html += '<p class="sala-card-desc">' + escapeHtml(info.descricao) + '</p>';
+					}
+					html += '<p class="sala-card-cap"><strong>Capacidade:</strong> ' + (info.capacidade || 0) + '</p>';
+					if (info.img) {
+						html += '<img src="' + info.img + '" class="sala-card-img" alt="" />';
+					}
+					card.html(html).show();
+					var offset = $el.offset();
+					card.css({
+						top: offset.top + $el.outerHeight() + 4,
+						left: offset.left
+					});
+				}, 1000);
+			});
+			$(document).on('mouseleave', '.sala-nome', function () {
+				if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+				card.hide();
+			});
+		});
 		$(window).on('scroll resize load', getVisible);
 		$(window).on('load', function () {
 			$('#data').datetimepicker({
@@ -152,24 +191,23 @@ use Salas\Core\Validation\Validator;
 
 			<div class="toolbar-row">
 				<img src="<?= app_url('/img/double_arrow_left.png') ?>" width="26" height="26" alt="Reserva Anterior"
-					Title="Reserva Anterior" class="nav-button<?= ($dashboardView['previousReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>" style="width:26px;height:26px;"
+					Title="Reserva Anterior" class="nav-button<?= ($dashboardView['previousReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>"
 					onclick="alteraData(dia_prev)" />
-				<img src="<?= app_url('/img/chevron_left.png') ?>" class="nav-button" width="26" height="26" style="width:26px;height:26px;" alt="Dia anterior"
+				<img src="<?= app_url('/img/chevron_left.png') ?>" class="nav-button" width="26" height="26" alt="Dia anterior"
 					Title="Dia anterior" onclick="alteraData(dia_anterior)" />
 
-				<div class="date-center" style="min-width:160px;">
+				<div class="date-center">
 					<form method="get" action="index.php" target="_self" name="form1">
 						<input type="text" name="data" id="data"
 							value="<?= htmlspecialchars($dashboardView['dateLabel'], ENT_QUOTES, 'UTF-8') ?>" class="date-input"
-							style="height:26px; font-size:13px; width:160px; padding:0 8px;"
 							onchange="atualizaTela(this)" readonly />
 					</form>
 				</div>
 
-				<img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" width="26" height="26" style="width:26px;height:26px;" alt="Dia posterior"
+				<img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" width="26" height="26" alt="Dia posterior"
 					Title="Dia Seguinte" onclick="alteraData(dia_posterior)" />
 				<img src="<?= app_url('/img/double_arrow_right.png') ?>" width="26" height="26" alt="Reserva Seguinte"
-					Title="Reserva Seguinte" class="nav-button<?= ($dashboardView['nextReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>" style="width:26px;height:26px;"
+					Title="Reserva Seguinte" class="nav-button<?= ($dashboardView['nextReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>"
 					onclick="alteraData(dia_next)" />
 			</div>
 
@@ -233,9 +271,9 @@ use Salas\Core\Validation\Validator;
 
 				<tbody>
 
-					<?php foreach ($dashboardView['rooms'] as $room): ?>
+					<?php foreach ($dashboardView['rooms'] as $roomIndex => $room): ?>
 						<tr>
-							<td><?= htmlspecialchars($room['nome'], ENT_QUOTES, 'UTF-8') ?></td>
+							<td><span class="sala-nome" data-room-index="<?= (int) $roomIndex ?>"><?= htmlspecialchars($room['nome'], ENT_QUOTES, 'UTF-8') ?></span></td>
 							<?php foreach ($room['cells'] as $cell): ?>
 								<td <?= $cell['can_open'] ? 'onClick="abreReserva(this)"' : '' ?>
 									class="<?= htmlspecialchars($cell['classe'], ENT_QUOTES, 'UTF-8') ?><?= !empty($cell['tooltip']) ? ' reserva-has-tooltip' : '' ?>"

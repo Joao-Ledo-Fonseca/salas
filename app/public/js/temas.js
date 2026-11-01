@@ -15,10 +15,11 @@
         btn.style.border = '1px solid #ccc';
         btn.style.cursor = 'pointer';
         btn.style.verticalAlign = 'middle';
+        btn.style.display = 'inline-block';
         btn.style.marginLeft = '6px';
         var originalColor = input.value || '#000000';
         btn.style.background = originalColor;
-        input.parentNode.insertBefore(btn, input.nextSibling);
+        var cell = input.closest('tr').querySelector('.col-btn'); if (cell) { cell.appendChild(btn); } else { input.parentNode.insertBefore(btn, input.nextSibling); }
 
         var pickr = Pickr.create({
           el: btn,
@@ -83,7 +84,5 @@
     window.location.reload();
   };
 
-  document.addEventListener('DOMContentLoaded', function () {
-    initPickers();
-  });
+  window.initPickers = initPickers;
 })();

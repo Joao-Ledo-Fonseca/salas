@@ -1,7 +1,8 @@
 {
     "name": "Claro",
     "fontFamily": "Inter, Segoe UI, Roboto, Arial, sans-serif",
-    "fontSizeBase": "8px",
+    "fontSizeBase": "12px",
+    "baseColor": "#484848",
     "colors": {
         "bg": "#FFFFFF",
         "surface": "#F7F7F7",
@@ -35,6 +36,6 @@
         "disponivelHover": "#DFDFDF",
         "selected": "#BFF9B9",
         "cellBorder": "#E6E6E6",
-        "cellText": "#333333"
+        "cellText": "#4A4A4A"
     }
 }

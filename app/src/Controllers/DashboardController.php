@@ -141,6 +141,10 @@ class DashboardController
 
             $linhas[] = [
                 'nome' => $sala['nome'],
+                'descricao' => (string) ($sala['descricao'] ?? ''),
+                'capacidade' => (int) ($sala['lugares'] ?? 0),
+                'imagem_tipo' => (string) ($sala['tipo_imagem'] ?? ''),
+                'imagem_base64' => !empty($sala['imagem']) ? base64_encode($sala['imagem']) : '',
                 'cells' => $cells,
             ];
         }

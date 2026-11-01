@@ -126,6 +126,35 @@ class ReservaController
 			}
 		}
 
+		$repeatUntilDaily = trim((string) ($post['data_final_diario'] ?? ''));
+		if ($repeatUntilDaily !== '') {
+			$endDateDaily = \DateTime::createFromFormat('!d/m/Y', Validator::string($repeatUntilDaily));
+			$dateErrorsDaily = \DateTime::getLastErrors();
+			if ($endDateDaily !== false && ($dateErrorsDaily === false || ($dateErrorsDaily['warning_count'] === 0 && $dateErrorsDaily['error_count'] === 0))) {
+				foreach ($periodosArr as $pId) {
+					$repeatDate = clone $data;
+					$repeatDate->modify('+1 day');
+					while ($repeatDate <= $endDateDaily) {
+						if (!$reserva->verificar($repeatDate, $salaId, $pId)) {
+							$reserva->salvar(
+								0,
+								$repeatDate->format('d/m/Y'),
+								Validator::string($post['entidade'] ?? ''),
+								$repeatDate,
+								Validator::string($post['observacao'] ?? ''),
+								(int) Validator::string($post['status'] ?? '1'),
+								$salaId,
+								$pId,
+								$userId,
+								$usoId > 0 ? $usoId : null
+							);
+						}
+						$repeatDate->modify('+1 day');
+					}
+				}
+			}
+		}
+
 		return (string) $id;
 	}
 

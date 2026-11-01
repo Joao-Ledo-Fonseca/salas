@@ -89,7 +89,7 @@ use Salas\Core\Validation\Validator;
 
                         <!--  Chevron Esquerdo: Oculto no Modo Período -->
                         <?php if ($tipo != 'p'): ?>
-                            <img src="<?= app_url('/img/chevron_left.png') ?>" width="26" height="26" style="width:1.86rem;height:1.86rem;" alt="Anterior" class="nav-button"
+                            <img src="<?= app_url('/img/chevron_left.png') ?>" alt="Anterior" class="nav-button"
                                 onclick="alteraData(dia_anterior)" />
                         <?php endif; ?>
 
@@ -109,11 +109,11 @@ use Salas\Core\Validation\Validator;
                                     ?>
                                     <span class="date-range">
                                         <input type="text" name="data_inicio_pt" id="data_inicio_pt"
-                                            class="date-input date-range-input" style="height:26px; font-size:13px; width:120px; padding:0 8px;"
+                                            class="date-input date-range-input"
                                             value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>"
                                             readonly="readonly">
                                         <input type="text" name="data_fim_pt" id="data_fim_pt"
-                                            class="date-input date-range-input" style="height:26px; font-size:13px; width:120px; padding:0 8px;"
+                                            class="date-input date-range-input"
                                             value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>"
                                             readonly="readonly">
                                     </span>
@@ -122,7 +122,7 @@ use Salas\Core\Validation\Validator;
                                     <input type="hidden" name="data_fim" id="data_fim"
                                         value="<?= isset($fim) ? $fim->format('dmY') : date('dmY') ?>" />
                                 <?php else: ?>
-                                    <input type="text" name="data_pt" id="data_pt" class="date-input" style="height:26px; font-size:13px; width:160px; padding:0 8px;"
+                                    <input type="text" name="data_pt" id="data_pt" class="date-input"
                                         value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
                                     <input type="hidden" name="data" id="data" value="<?= $hoje->format("dmY") ?>" />
                                 <?php endif; ?>
@@ -131,7 +131,7 @@ use Salas\Core\Validation\Validator;
 
                         <!--  Chevron Direito: Oculto no Modo Período -->
                         <?php if ($tipo != 'p'): ?>
-                            <img src="<?= app_url('/img/chevron_right.png') ?>" width="26" height="26" style="width:1.86rem;height:1.86rem;" class="nav-button" alt="Próximo"
+                            <img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" alt="Próximo"
                                 onclick="alteraData(dia_posterior)" />
                         <?php endif; ?>
 
@@ -273,7 +273,7 @@ switch ($tipo) {
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChange\DateTime: function (dp, $input) {
+        onChangeDateTime: function (dp, $input) {
           var value = $input.val();
           var parts = value.split('/');
           if (parts.length === 3) {
@@ -293,7 +293,7 @@ switch ($tipo) {
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChange\DateTime: function (dp, $input) {
+        onChangeDateTime: function (dp, $input) {
           var parts = $input.val().split('/');
           if (parts.length === 3) {
             var dmY = parts.join('');
@@ -311,7 +311,7 @@ switch ($tipo) {
         closeOnDateSelect: true,
         appendTo: 'body',
         scrollInput: false,
-        onChange\DateTime: function (dp, $input) {
+        onChangeDateTime: function (dp, $input) {
           var parts = $input.val().split('/');
           if (parts.length === 3) {
             var dmY = parts.join('');

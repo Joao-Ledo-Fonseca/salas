@@ -244,19 +244,23 @@ class UsuarioController
             }
         }
 
-        $deleteResult = ($post !== [] && !$isSelf) ? $controller->excluir() : false;
-        $error = isset($post['excluir']) && is_string($deleteResult)
-            ? 'Utilizador não pode ser excluído. Existem reservas em seu nome.'
-            : $error;
+        $isElimination = isset($post['eliminar_reservas']) || isset($post['eliminar_reserva']);
 
-        if (isset($post['excluir']) && is_string($deleteResult)) {
-            $targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
-            $reservasUsuario = $controller->listarReservasPorUsuario($targetId);
+        if (!$isElimination) {
+            $deleteResult = ($post !== [] && !$isSelf) ? $controller->excluir() : false;
+            $error = isset($post['excluir']) && is_string($deleteResult)
+                ? 'Utilizador não pode ser excluído. Existem reservas em seu nome.'
+                : $error;
+
+            if (isset($post['excluir']) && is_string($deleteResult)) {
+                $targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
+                $reservasUsuario = $controller->listarReservasPorUsuario($targetId);
+            }
         }
-        if ($isSelf && $post !== []) {
+        if ($isSelf && $post !== [] && !$isElimination) {
             $post['nivel'] = (string) $auth->level();
         }
-        $saveResult = $post !== [] ? $controller->salvar($post) : null;
+        $saveResult = (!$isElimination && $post !== []) ? $controller->salvar($post) : null;
         if ($saveResult === 0) {
             $error = 'Não é possível criar/editar: Nome ou E-mail já existentes no sistema!';
         } elseif ($saveResult !== null && isset($post['salvar'])) {
@@ -264,25 +268,9 @@ class UsuarioController
             exit;
         }
 
-        $record = [];
         $targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
-        if (!isset($_GET['id']) && $targetId > 0) {
-            $_GET['id'] = $targetId;
-        }
-        if (!isset($post['salvar'])) {
-            $opened = $controller->abrir();
-            $record = $opened[0] ?? [];
-            if (empty($record) && isset($post['id'])) {
-                $record = [
-                    'id' => Validator::int($post['id'] ?? 0),
-                    'nome' => Validator::string($post['nome'] ?? ''),
-                    'email' => Validator::string($post['email'] ?? ''),
-                    'telefone' => Validator::string($post['telefone'] ?? ''),
-                    'NIF' => Validator::string($post['NIF'] ?? ''),
-                    'nivel' => Validator::int($post['nivel'] ?? 0),
-                ];
-            }
-        } else {
+        $record = [];
+        if (isset($post['salvar'])) {
             $record = [
                 'id' => (int) ($post['id'] ?? 0),
                 'nome' => Validator::string($post['nome'] ?? ''),
@@ -291,6 +279,10 @@ class UsuarioController
                 'NIF' => Validator::string($post['NIF'] ?? ''),
                 'nivel' => (int) ($post['nivel'] ?? 0),
             ];
+        } elseif ($targetId > 0) {
+            $usuarioModel = new Usuario($this->db);
+            $opened = $usuarioModel->abrir($targetId);
+            $record = is_array($opened) ? ($opened[0] ?? []) : [];
         }
 
         if ($targetId > 0) {
