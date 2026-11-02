@@ -57,53 +57,11 @@ use Salas\Core\Validation\Validator;
   <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
 
   <div class="corpo">
-
-    <!-- CABEÇALHO UNIFICADO COM FORMATO CONTAINER (Chevrons Ocultos no Modo Período) -->
-    <div class="container">
-      <div class="titulo_inicial">
-        <div class="toolbar-row">
-
-          <!-- Chevron Esquerdo: Só aparece se NÃO for período -->
-          <?php if ($tipo != 'p'): ?>
-            <img src="<?= app_url('/img/chevron_left.png') ?>" alt="Anterior" class="nav-button" onclick="alteraData(dia_anterior)" />
-          <?php endif; ?>
-
-          <div class="date-center" style="<?= $tipo == 'p' ? 'margin-left: 0; padding-left: 0;' : '' ?>">
-            <form id="relatorios_form" method="get" action="<?= app_url() ?>" target="_self" name="form1" style="display:inline;vertical-align: top;">
-              <input type="hidden" name="acao" value="estatisticas" />
-              <input type="hidden" name="tipo" id="tipo_input" value="<?= htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') ?>" />
-
-              <?php if ($tipo == 'p'):
-                $inicio_pt = isset($inicio) ? $inicio->format('d/m/Y') : date('d/m/Y');
-                $fim_pt = isset($fim) ? $fim->format('d/m/Y') : date('d/m/Y');
-                ?>
-                <span class="date-range">
-                  <input type="text" name="data_inicio_pt" id="data_inicio_pt" class="date-input date-range-input" value="<?= htmlspecialchars($inicio_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                  <input type="text" name="data_fim_pt" id="data_fim_pt" class="date-input date-range-input" value="<?= htmlspecialchars($fim_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                </span>
-                <input type="hidden" name="data_inicio" id="data_inicio" value="<?= isset($inicio) ? $inicio->format('dmY') : date('dmY') ?>" />
-                <input type="hidden" name="data_fim" id="data_fim" value="<?= isset($fim) ? $fim->format('dmY') : date('dmY') ?>" />
-              <?php else: ?>
-                <input type="text" name="data_pt" id="data_pt" class="date-input" value="<?= htmlspecialchars($hoje_pt, ENT_QUOTES, 'UTF-8') ?>" readonly="readonly">
-                <input type="hidden" name="data" id="data" value="<?= $hoje->format("dmY") ?>" />
-              <?php endif; ?>
-            </form>
-          </div>
-
-          <!-- Chevron Direito: Só aparece se NÃO for período -->
-          <?php if ($tipo != 'p'): ?>
-            <img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" alt="Próximo" onclick="alteraData(dia_posterior)" />
-          <?php endif; ?>
-
-        </div>
-
-        <span style="float:right">
-          <button type="button" id="semanal" class="btn1" onclick="toogletipo('w')">Semanal</button>
-          <button type="button" id="mensal" class="btn1" onclick="toogletipo('m')">Mensal</button>
-          <button type="button" id="periodo" class="btn1" onclick="toogletipo('p')">Período</button>
-        </span>
-      </div>
-    </div>
+  <?php
+  // Esta view usa o cabeçalho padrão A para estatísticas (cabecalho.php)
+  $acaoPagina = 'estatisticas';
+  include __DIR__ . "/cabecalho.php";
+  ?>
 
     <div id="mensagem"> </div>
 

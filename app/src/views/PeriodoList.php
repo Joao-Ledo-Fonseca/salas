@@ -16,9 +16,12 @@ use Salas\Controllers\PermissoesController;
 use Salas\Core\Validation\Validator;
 ?>
 
- <?php $title = 'Cadastro de Períodos'; ?>
+ <?php
+  $titulo = 'Cadastro de Períodos';
+  include __DIR__ . "/cabecalho2.php";
+  ?>
 
-<h3>Cadastro de Períodos</h3>
+
 
 <div class="container_top lista_comum" style="max-height:60vh; overflow-y:auto;">
     <div class="form_sel">

@@ -16,9 +16,12 @@ use Salas\Controllers\PermissoesController;
 use Salas\Core\Validation\Validator;
 ?>
 
- <?php $title = 'Cadastro de Salas'; ?>
+ <?php
+  $titulo = 'Cadastro de Salas';
+  include __DIR__ . "/cabecalho2.php";
+  ?>
 
-<h3>Cadastro de Salas</h3>
+
 
 <div class="lista_comum container_top" style="max-height:60vh; overflow-y:auto;">
     <form class="form_sel" name="form1" method="post" action="<?= app_url('?acao=sala_list') ?>">
@@ -30,12 +33,15 @@ use Salas\Core\Validation\Validator;
 
         <span style="float:right; margin-left: 15px;">
             <label for="categoria"><b>Categorias</b></label>
-            <select id="categoria" class="dashboard-category-select" style="width:160px;" name="categoria_id" onchange="this.form.submit()">
-                <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas</option>
+            <div class="filter-select-wrapper">
+                <select id="categoria" class="dashboard-category-select" style="width:160px;" name="categoria_id" onchange="this.form.submit()">
+                    <option value="0" <?= $categoria_id === 0 ? 'selected' : '' ?>>Todas</option>
                 <?php foreach ($categorias as $categoria): ?>
                     <option value="<?= (int) $categoria['id'] ?>" <?= ((int) $categoria['id'] === $categoria_id ? 'selected' : '') ?>><?= htmlspecialchars((string) $categoria['nome'], ENT_QUOTES, 'UTF-8') ?></option>
                 <?php endforeach; ?>
             </select>
+            <svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M 3,4 C 3,3.45 3.45,3 4,3 L 20,3 C 20,3 20.35,3.05 20.6,3.3 C 20.85,3.55 21,4 21,4 L 14,12 L 14,18 L 10,21 L 10,12 Z"/></svg>
+            </div>
         </span>
 
         <div style="float:right; width:140px">

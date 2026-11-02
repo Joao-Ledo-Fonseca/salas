@@ -15,25 +15,6 @@ class PermissoesController
     // conjunto de permissoes ativas carregadas da BD
     private array $permissions = [];
 
-    // valores default para as permissões da aplicação
-    // a aplicação cria-os na BD     
-    public $permissoes_defaults = [
-        // "nome" => [tipo, permissão User, permissão Gestor, Descrição] 
-        "M_Categorias" => ['n', false, true, false, "Autoriza acesso ao Menu de Categorias"],
-        "M_Usos" => ['n', false, true, false, "Autoriza a gestão de Usos"],
-        "M_Salas" => ['n', false, true, false, "Autoriza acesso ao Menu de Salas"],
-        "M_Periodos" => ['n', false, true, false, "Autoriza acesso ao Menu de Períodos"],
-        "M_Utilizadores" => ['n', false, true, false, "Autoriza acesso ao Menu de Utilizadores"],
-        "M_Permissoes" => ['n', false, true, false, "Autoriza acesso ao Menu de Permissões"],
-        "M_Estatisticas" => ['n', false, true, false, "Autoriza acesso ao Menu de Estatísticas"],
-        "M_Relatorios" => ['n', false, true, false, "Autoriza acesso ao Menu de Relatórios"],
-        "M_Temas" => ['n', false, true, true, "Autoriza acesso à gestão de temas"],
-        "M_Reservas" => ['n', true, true, true, "Autoriza acesso ao formulário de reservas e exclusão de reservas"],
-        "M_EliminarReservasUtilizador" => ['n', false, true, true, "Autoriza eliminar todas as reservas de um utilizador"],
-        "M_FiltroUtilizador" => ['n', false, true, true, "Autoriza o filtro por utilizador no dashboard"],
-        "A_RegNovoUtilizador" => ['s', true, null, null, "Activa o registo de novos utilizadores no ecrã de login. (não implementado)"],
-        "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"]
-    ];
 
 
     //valores fixos para os níveis de utilizador
@@ -139,7 +120,7 @@ class PermissoesController
         if (isset($_POST['salvar'])) {
 
             // Prepara um array $lista para recolher dados do $POST
-            foreach ($this->permissoes_defaults as $nome => $value) {
+            foreach (Permissoes::DEFAULTS as $nome => $value) {
 
                 $tipo = $value[0];
 
@@ -164,8 +145,11 @@ class PermissoesController
                 $post_nome = substr($post_nome, 0, strlen($post_nome) - 1);
 
                 // Se o nome de permissão existe nos defaults
-                if (array_key_exists($post_nome, $this->permissoes_defaults)) {
+                if (array_key_exists($post_nome, Permissoes::DEFAULTS)) {
 
+                    if (!isset($lista[$post_nome])) {
+                        $lista[$post_nome] = [false, false, false, false];
+                        }
                     if ($post_value == 0) {        // 0 é o utilizador externo
                         $lista[$post_nome][1] = true;
                         }

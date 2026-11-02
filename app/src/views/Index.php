@@ -224,6 +224,7 @@ use Salas\Core\Validation\Validator;
 
 
 				<div style="display:inline-block; vertical-align:top;">
+				<div class="filter-select-wrapper">
 				<select id="categoria_filter" class="dashboard-category-select" onchange="mudaCategoria(this)" title="Filtrar por categoria (sala)">
 					<option value="0" <?= $dashboardView['categoryId'] === 0 ? ' selected' : '' ?>>Todas</option>
 					<?php foreach ($dashboardView['categories'] as $categoria): ?>
@@ -232,11 +233,14 @@ use Salas\Core\Validation\Validator;
 							<?= htmlspecialchars($categoria['nome'], ENT_QUOTES, 'UTF-8') ?></option>
 						<?php endforeach; ?>
 				</select>
+				<svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M 3,4 C 3,3.45 3.45,3 4,3 L 20,3 C 20,3 20.35,3.05 20.6,3.3 C 20.85,3.55 21,4 21,4 L 14,12 L 14,18 L 10,21 L 10,12 Z"/></svg>
+				</div>
 				<div style="font-size:9px; text-align:left; margin-top:1px; line-height:1;">Salas</div>
 				</div>
 
 				<?php if (!empty($dashboardView['showUserFilter'])): ?>
 				<div style="display:inline-block; vertical-align:top;">
+				<div class="filter-select-wrapper">
 				<select id="usuario_filter" class="dashboard-category-select" onchange="mudaUsuario(this)" title="Filtrar por utilizador">
 					<option value="0" <?= $dashboardView['usuarioId'] === 0 ? ' selected' : '' ?>>Todos</option>
 					<?php foreach ($dashboardView['users'] as $u): ?>
@@ -245,6 +249,8 @@ use Salas\Core\Validation\Validator;
 							<?= htmlspecialchars($u['nome'], ENT_QUOTES, 'UTF-8') ?></option>
 						<?php endforeach; ?>
 				</select>
+				<svg class="filter-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M 3,4 C 3,3.45 3.45,3 4,3 L 20,3 C 20,3 20.35,3.05 20.6,3.3 C 20.85,3.55 21,4 21,4 L 14,12 L 14,18 L 10,21 L 10,12 Z"/></svg>
+				</div>
 				<div style="font-size:9px; text-align:left; margin-top:1px; line-height:1;">User</div>
 				</div>
 				<?php endif; ?>

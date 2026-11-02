@@ -1,0 +1,14 @@
+# Regras do Projeto - Salas (PHP MVC)
+
+## Ambiente do Sistema
+- Estás a operar num ambiente Windows com PowerShell moderno.
+- É ESTRITAMENTE PROIBIDO usar comandos Linux como 'head', 'cat', 'sed', 'grep' ou redirecionamentos '<<'.
+- Para ler ficheiros, usa SEMPRE o comando nativo do PowerShell: 'Get-Content <caminho>'.
+- Nunca envies arrays JSON ou parênteses retos [] para o terminal. Envia apenas comandos de texto limpo.
+
+## Arquitetura de UI (PHP Puro e MVC Regularizado)
+- O projeto usa estritamente PHP Puro (Vanilla PHP), HTML e CSS tradicional, sem frameworks (sem Laravel, sem Tailwind, sem HTMX).
+- O UI é estritamente modular e contentorizado. Os ficheiros .php na pasta de Views (como menus, cabeçalhos, listas) são fragmentos independentes incluídos quando necessário.
+- É PROIBIDO espalhar tags <script> particulares ou funções JavaScript ad-hoc pelos ficheiros de View (.php).
+- Qualquer necessidade de interatividade ou alteração deve respeitar a separação do MVC: a lógica fica no Controller/Model, e a View apenas exibe os dados finais.
+- Mantém as views focadas apenas em loops (foreach), condicionais simples (if) e exibição de variáveis escapadas.

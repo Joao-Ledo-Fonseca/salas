@@ -16,9 +16,12 @@ use Salas\Controllers\PermissoesController;
 use Salas\Core\Validation\Validator;
 ?>
 
- <?php $title = 'Cadastro de Usos'; ?>
+ <?php
+  $titulo = 'Cadastro de Usos';
+  include __DIR__ . "/cabecalho2.php";
+  ?>
 
-<h3>Cadastro de Usos</h3>
+
 
 <div class="container_top lista_comum" style="max-height:60vh; overflow-y:auto;">
     <form class="form_sel" name="form1" method="post" target="_self">

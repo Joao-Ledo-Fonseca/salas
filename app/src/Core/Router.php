@@ -38,7 +38,7 @@ class Router
         'permissoes_form' => [PermissoesController::class, 'permissoesForm', 'post', 'merge', true],
         'temas' => [TemaController::class, 'temasForm', 'query_post', 'merge', true],
         'estatisticas' => [RelatorioController::class, 'reportSummary', 'query', 'merge', false],
-        'relatorios' => [RelatorioController::class, 'reportReservations', 'query', 'merge', false],
+                'relatorios' => [RelatorioController::class, 'reportReservations', 'query', 'merge', false],
         'reserva_form' => [ReservaController::class, 'reservaForm', 'query', 'merge', false],
     ];
 
@@ -119,7 +119,22 @@ class Router
         }
 
         $routes = include __DIR__ . '/../config/routes.php';
-        return ['view' => $routes[$action], 'data' => $data];
+        // Extract view name from route if '_view' key exists, otherwise use the route array
+        $route = $routes[$action] ?? null;
+        $view = '';
+        if ($route !== null) {
+            if (isset($route['_view'])) {
+                $view = $route['_view'];
+            } elseif (is_string($route)) {
+                $view = $route;
+            }
+        }
+        if ($view === '') {
+            // Fallback: use the action name as view filename
+            $view = str_replace('_', '', $action) . '.php';
+        }
+
+        return ['view' => $view, 'data' => $data];
     }
 
     /**
@@ -152,7 +167,7 @@ class Router
             ['permission' => 'M_Periodos', 'label' => 'Períodos', 'url' => '?acao=periodo_list'],
             ['permission' => 'M_Utilizadores', 'label' => 'Utilizadores', 'url' => '?acao=usuario_list'],
             ['permission' => 'M_Permissoes', 'label' => 'Permissões', 'url' => '?acao=permissoes_form'],
-            ['permission' => 'M_Temas', 'label' => 'Temas', 'url' => '?acao=temas'],
+                        ['permission' => 'M_Temas', 'label' => 'Temas', 'url' => '?acao=temas'],
         ];
         $visibleItems = [];
         foreach ($items as $item) {

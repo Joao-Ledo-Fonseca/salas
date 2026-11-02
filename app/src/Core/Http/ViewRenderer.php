@@ -1,18 +1,8 @@
 <?php
 namespace Salas\Core\Http;
 
-/**
- * Classe ViewRenderer.
- */
 class ViewRenderer
 {
-    /**
-     * Método render.
-     * @param string $view
-     * @param array $data
-     * @param ?string $layout
-     * @return void
-     */
     public static function render(string $view, array $data = [], ?string $layout = null): void
     {
         if (!array_key_exists('cfg', $data)) {
@@ -20,9 +10,9 @@ class ViewRenderer
         }
         extract($data, EXTR_SKIP);
 
-        $viewPath = __DIR__ . '/../../views/' . ltrim($view, '/');
+        $viewPath = __DIR__ . '/../../views/' . ltrim($view, '/') . (substr(ltrim($view, '/'), -4) === '.php' ? '' : '.php');
         if (!is_file($viewPath)) {
-            throw new \RuntimeException('Vista não encontrada: ' . $view);
+            throw new \RuntimeException('Vista n�o encontrada: ' . $view);
         }
 
         if ($layout === null) {
@@ -34,9 +24,9 @@ class ViewRenderer
         require $viewPath;
         $content = ob_get_clean();
 
-        $layoutPath = __DIR__ . '/../../views/' . ltrim($layout, '/');
+        $layoutPath = __DIR__ . '/../../views/' . ltrim($layout, '/') . (substr(ltrim($layout, '/'), -4) === '.php' ? '' : '.php');
         if (!is_file($layoutPath)) {
-            throw new \RuntimeException('Layout não encontrado: ' . $layout);
+            throw new \RuntimeException('Layout n�o encontrado: ' . $layout);
         }
 
         require $layoutPath;

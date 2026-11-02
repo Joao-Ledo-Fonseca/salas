@@ -16,9 +16,12 @@ use Salas\Controllers\PermissoesController;
 use Salas\Core\Validation\Validator;
 ?>
 
- <?php $title = 'Lista de Utilizadores'; ?>
+ <?php
+  $titulo = 'Lista de Utilizadores';
+  include __DIR__ . "/cabecalho2.php";
+  ?>
 
-<h3>Lista de Utilizadores</h3>
+
 
 <div class="lista_comum container_top" style="max-height:60vh; overflow-y:auto;">
     <form class="form_sel" name="form1" method="post" target="_self">

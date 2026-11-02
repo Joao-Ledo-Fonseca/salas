@@ -1,5 +1,5 @@
 <?php
-use Salas\Core\Support\Csrf;
+
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 use Salas\Models\Categoria;
@@ -71,7 +71,7 @@ foreach (($menuData['adminItems'] ?? []) as $item) {
    <div class="menu-switchers">
       <?php if (count($adminSelectorItems) > 0): ?>
       <div class="admin-switcher">
-         <button type="button" id="admin-toggle" class="admin-toggle" aria-label="Administra��o" title="Configura��o" data-tooltip="Configura��o" aria-expanded="false" aria-controls="admin-popover">
+         <button type="button" id="admin-toggle" class="admin-toggle" aria-label="Administração" aria-expanded="false" aria-controls="admin-popover">
             <svg viewBox="0 0 24 24" width="1.716rem" height="1.716rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                <circle cx="12" cy="12" r="3"></circle>
                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -85,7 +85,7 @@ foreach (($menuData['adminItems'] ?? []) as $item) {
       </div>
       <?php endif; ?>
       <div class="theme-switcher">
-         <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Tema" title="Tema" data-tooltip="Tema" aria-expanded="false" aria-controls="theme-popover">
+         <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Tema" aria-expanded="false" aria-controls="theme-popover">
             <svg viewBox="0 0 24 24" width="1.716rem" height="1.716rem" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.52-4.48-10-10-10z"></path>
                <circle cx="7.5" cy="11.5" r="1.5"></circle>
@@ -241,3 +241,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 </script>
+

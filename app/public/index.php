@@ -17,8 +17,6 @@ use Salas\Core\Http\Response;
 use Salas\Core\Http\ErrorHandler;
 use Salas\Core\Http\ViewRenderer;
 use Salas\Core\Auth\SalasSessionAdapter;
-use Salas\Controllers\LoginController;
-use Salas\Controllers\UsuarioController;
 use Salas\Core\Router;
 
 $database = new Database($appConfig);
@@ -69,15 +67,6 @@ if ($request->action() === 'imagens_list') {
     (new Router($database))->imagensList($request);
     exit;
 }
-
-
-
-
-
-
-
-
-
 
 // 2. Sistema de distribuição de páginas baseado no Menu
 if ($request->action() !== null) {

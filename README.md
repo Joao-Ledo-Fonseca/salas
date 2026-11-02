@@ -78,6 +78,9 @@ Os redirecionamentos da lista de salas preservam os filtros na query string. A g
 
 As vistas não leem parâmetros do pedido nem chamam controllers: recebem dados já preparados, apresentam formulários e geram HTML. O `Router` encaminha os pedidos, o `AuthorizationMiddleware` valida acessos e o `ApplicationPageController` coordena as operações. Os controllers de domínio usam serviços e repositórios; os modelos e repositórios concentram o acesso à base de dados. A validação de entrada é feita por `Validator`, a autenticação e autorização são resolvidas antes de incluir qualquer vista, e a renderização é centralizada em `ViewRenderer`.
 
+### Cabeçalho de relatórios/estatísticas (`cabecalho.php`)
+As views de relatórios (`Relatorios.php`, `Estatisticas.php`) incluem o componente `app/src/views/cabecalho.php` para apresentar o título, navegação (semanal/mensal/período), filtros de data e botões de tipo. Este componente requer as variáveis `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`, `$titulo`, `$hoje`, `$inicio`, `$fim`, `$dia_anterior` e `$dia_posterior`. A view define `$acaoPagina` antes do `include`, garantindo que o formulário do cabeçalho envia a ação correta (`acao=relatorios` ou `acao=estatisticas`).
+
 ## Deployment de uma atualização
 
 1. Teste as alterações em `app/` no ambiente local e guarde-as no Git a partir de `C:\wamp64\dev\salas`.
