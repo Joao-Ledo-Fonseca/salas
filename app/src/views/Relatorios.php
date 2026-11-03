@@ -1,86 +1,23 @@
 <?php
-use Salas\Core\Support\Csrf;
-use Salas\Models\Reserva;
-use Salas\Models\Sala;
-use Salas\Models\Categoria;
-use Salas\Models\Usuario;
-use Salas\Models\Periodo;
-use Salas\Models\Uso;
-use Salas\Controllers\SalaController;
-use Salas\Controllers\CategoriaController;
-use Salas\Controllers\UsuarioController;
-use Salas\Controllers\ReservaController;
-use Salas\Controllers\PeriodoController;
-use Salas\Controllers\UsoController;
-use Salas\Controllers\PermissoesController;
-use Salas\Core\Validation\Validator;
+$title = 'Relatórios';
+$bodyStyle = 'overflow: hidden;';
+$contentStyle = 'overflow: scroll; height: 98%;';
+$extraHead = implode("\n", [
+    '<style>html { font-size: var(--font-size-base, 14px); }</style>',
+    '<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">',
+    '<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">',
+    '<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>',
+    '<script src="https://cdn.datatables.net/plug-ins/1.13.6/sorting/date-uk.js"></script>',
+    '<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>',
+    '<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.dataTables.min.js"></script>',
+    '<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>',
+    '<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>',
+    '<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>',
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>',
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>',
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>',
+]);
 ?>
-
-<!DOCTYPE html>
-<html lang="pt-PT">
-
-
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <!-- jQuery -->
-    <script src="<?= app_url('/js/jquery.js') ?>"></script>
-
-    <!-- DateTimePicker -->
-    <script src="<?= app_url('/js/jquery.datetimepicker.full.js') ?>"></script>
-
-    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
-
-    <script src="<?= app_url('/js/lib.js') ?>"></script>
-
-
-    <!-- DataTables (compatible versions) -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-    <!-- DataTables date plugin -->
-    <script src="https://cdn.datatables.net/plug-ins/1.13.6/sorting/date-uk.js"></script>
-
-    <!-- DataTables Buttons (compatible) -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
-    <script>window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
-    <script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
-    <script src="<?= app_url('/js/theme.js') ?>"></script>
-
-    <?php if (!empty($cfg) && isset($cfg->theme)): ?>
-    <style>
-        :root {
-            <?= $cfg->theme->toCssVariables() ?>
-        }
-        html { font-size: var(--font-size-base, 14px); }
-    </style>
-    <?php endif; ?>
-
-    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">   
-    <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
-
-    <title>Relatorios</title>
-
-</head>
-
-<body>
-
-    <!-- menu esquerdo -->
-    <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
-
-    <!-- conteudo -->
-    <div class="corpo" style="overflow: scroll; height: 98%;">
 
             <?php
             // Esta view usa o cabeçalho padrão A para relatórios (cabecalho.php)
@@ -129,10 +66,6 @@ use Salas\Core\Validation\Validator;
                     <div class="no-data-message">Sem reservas encontradas para o período selecionado.</div>
                 <?php endif; ?>
             </div>
-        </div>
-    </div>
-
-</body>
 
 <?PHP
 
@@ -336,5 +269,3 @@ switch ($tipo) {
     });
 
 </script>
-
-</html>

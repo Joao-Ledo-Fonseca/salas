@@ -25,10 +25,9 @@ use Salas\Core\Validation\Validator;
     <div class="a_par">
         <div class=aviso style="color:red"><?= htmlspecialchars((string)$errormsg, ENT_QUOTES, 'UTF-8') ?></div>
 
-        <form enctype="multipart/form-data" name="form1" method="post" action="<?= htmlspecialchars(app_url('?acao=sala_form&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)), ENT_QUOTES, 'UTF-8') ?>">
+        <form enctype="multipart/form-data" name="form1" id="sala-form" method="post" action="<?= htmlspecialchars(app_url('?acao=sala_form&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)), ENT_QUOTES, 'UTF-8') ?>">
 
             <input type="hidden" name="id" value="<?= (int) $id ?>" />
-            <input type="hidden" name="imagem_id" id="imagem_id" value="<?= htmlspecialchars((string) $imagem_id, ENT_QUOTES, 'UTF-8') ?>" />
             <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
             <input type="hidden" name="categoria_filtro" value="<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>" />
             <input type="hidden" name="activas" value="<?= htmlspecialchars((string) $activas_filtro, ENT_QUOTES, 'UTF-8') ?>" />
@@ -63,7 +62,6 @@ use Salas\Core\Validation\Validator;
                     <td width="100px">Activa</td>
                     <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?> ></td>
                 </tr>
-                <input name="imagem" id="newimagem" type="file" style="display:none;" />
             </table>
             <input type="submit" name="salvar" value="Salvar" class="btn1" />
             <input type="submit" name="excluir" value="Excluir" class="btn1" />
@@ -78,31 +76,8 @@ $cancelUrl = (($return_to ?? '') !== '')
     </div>
     <div class="apar">
         <?php
-        if (strlen($imagem) > 0) {
-            echo '<img id="imagem" src="data:image/jpeg;base64,' . base64_encode($imagem) . '" width=400px style="cursor:pointer;" onclick="abrirOverlayImagens()" />';
-        } else {
-            echo '<div id="imagemPlaceholder" style="width:400px; height:200px; border:1px solid #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; cursor:pointer;" onclick="abrirOverlayImagens()">Adicionar Imagem</div>';
-            echo '<img id="imagem" style="display:none; width:400px;" />';
-        }
+        include __DIR__ . '/components/SeletorImagemSala.php';
         ?>
-    </div>
-
-    <!-- Overlay de seleção de imagem (fora do container para evitar problemas de stacking) -->
-    <div id="overlayImagens" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; pointer-events:auto;">
-        <div style="position:absolute; right:20px; top:60px; width:320px; max-height:80vh; overflow-y:auto; background:#fff; border:1px solid #999; border-radius:6px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3); pointer-events:auto;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <h4 style="margin:0;">Selecionar imagem</h4>
-                <button type="button" onclick="fecharOverlayImagens()" style="background:none; border:none; font-size:1.29rem; cursor:pointer;">&times;</button>
-            </div>
-            <div style="display:flex; gap:6px; margin-bottom:10px;">
-                <button type="button" id="btnCarregar" class="btn1" onclick="carregarNovaImagem()" style="flex:1;">Carregar</button>
-                <button type="button" class="btn1" onclick="semImagem()" style="flex:1;">Sem Imagem</button>
-            </div>
-            <div id="gridImagens" style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;"></div>
-            <div style="margin-top:8px; text-align:center;">
-                <button type="button" id="btnCarregarMais" class="btn1" onclick="carregarMaisImagens()" style="display:none; width:100%;">Carregar mais</button>
-            </div>
-        </div>
     </div>
 </div>
 <div class="container_conteudo" style="width:100%; margin-top:10px; box-sizing:border-box;">
@@ -132,249 +107,4 @@ $cancelUrl = (($return_to ?? '') !== '')
     ?>
 </div>
 
-
-
-<script>
-    /**
-     * Método readURL.
-     * @param inpu $t
-     * @return mixed
-     */
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#imagem').attr('src', e.target.result);
-                $('#imagem').css('display', 'block');
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    $("#newimagem").change(function () {
-        readURL(this);
-    });
-
-    // Move overlay to body to escape .corpo overflow clipping
-    (function() {
-        /**
-         * Método moveOverlay.
-         * @return mixed
-         */
-        function moveOverlay() {
-            var overlay = document.getElementById('overlayImagens');
-            if (overlay && overlay.parentNode !== document.body) {
-                document.body.appendChild(overlay);
-            }
-            // Close overlay when clicking on the backdrop
-            if (overlay) {
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === overlay) {
-                        fecharOverlayImagens();
-                    }
-                });
-            }
-            // Ensure overlay and children are clickable
-            if (overlay) {
-                overlay.style.pointerEvents = 'auto';
-                var inner = overlay.querySelector('div');
-                if (inner) {
-                    inner.style.pointerEvents = 'auto';
-                }
-            }
-        }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', moveOverlay);
-        } else {
-            setTimeout(moveOverlay, 0);
-        }
-    })();
-
-    var imagensPage = 0;
-    var imagensHasMore = true;
-    var imagensLoading = false;
-    /**
-     * Método abrirOverlayImagens.
-     * @return mixed
-     */
-    function abrirOverlayImagens() {
-        var overlay = document.getElementById('overlayImagens');
-        overlay.style.display = 'block';
-        if (document.getElementById('gridImagens').children.length === 0) {
-            imagensPage = 0;
-            imagensHasMore = true;
-            carregarMaisImagens();
-        }
-    }
-    /**
-     * Método carregarMaisImagens.
-     * @return mixed
-     */
-    function carregarMaisImagens() {
-        if (imagensLoading || !imagensHasMore) return;
-        imagensLoading = true;
-        imagensPage++;
-        fetch('<?= htmlspecialchars(app_url('?acao=imagens_list'), ENT_QUOTES, 'UTF-8') ?>&page=' + imagensPage)
-            .then(function(r){ return r.json(); })
-            .then(function(data){
-                var grid = document.getElementById('gridImagens');
-                (data.images || []).forEach(function(img){
-                    var div = document.createElement('div');
-                    div.className = 'img-thumb';
-                    div.setAttribute('data-id', img.id);
-                    div.setAttribute('data-base64', img.base64);
-                    div.style.cssText = 'position:relative; cursor:pointer; border:1px solid #ccc; border-radius:4px; overflow:hidden; text-align:center;';
-                    div.onclick = function(){ selecionarImagem(this); };
-                    var image = document.createElement('img');
-                    image.src = 'data:image/jpeg;base64,' + img.base64;
-                    image.style.cssText = 'width:100%; height:60px; object-fit:cover;';
-                    div.appendChild(image);
-                    var label = document.createElement('div');
-                    label.style.cssText = 'font-size:9px; padding:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
-                    label.textContent = img.nome;
-                    div.appendChild(label);
-                    var btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:1.14rem; height:1.14rem; font-size:0.71rem; line-height:1rem; padding:0; cursor:pointer; z-index:10;';
-                    btn.title = 'Eliminar imagem';
-                    btn.innerHTML = '&times;';
-                    btn.onclick = function(e){ e.stopPropagation(); excluirImagemOverlay(img.id); return false; };
-                    div.appendChild(btn);
-                    grid.appendChild(div);
-                });
-                imagensHasMore = !!data.hasMore;
-                var btnMais = document.getElementById('btnCarregarMais');
-                if (btnMais) btnMais.style.display = imagensHasMore ? 'block' : 'none';
-                imagensLoading = false;
-            })
-            .catch(function(){ imagensLoading = false; });
-    }
-
-    // Event delegation for overlay clicks (fallback if inline onclick fails)
-    document.addEventListener('click', function(e) {
-        var target = e.target;
-        var overlay = document.getElementById('overlayImagens');
-        // Close overlay when clicking on backdrop
-        if (overlay && target === overlay) {
-            fecharOverlayImagens();
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-        // Check if clicked on a thumbnail
-        var thumb = target.closest ? target.closest('.img-thumb') : null;
-        if (thumb && thumb.getAttribute('data-id')) {
-            selecionarImagem(thumb);
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-        // Check if clicked on Carregar button
-        if (target.id === 'btnCarregar' || (target.textContent && target.textContent.trim() === 'Carregar')) {
-            carregarNovaImagem();
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-        // Check if clicked on Sem Imagem button
-        if (target.textContent && target.textContent.trim() === 'Sem Imagem') {
-            semImagem();
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-        // Check if clicked on close button
-        if (target.getAttribute && target.getAttribute('onclick') === 'fecharOverlayImagens()') {
-            fecharOverlayImagens();
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-    });
-    /**
-     * Método fecharOverlayImagens.
-     * @return mixed
-     */
-    function fecharOverlayImagens() {
-        document.getElementById('overlayImagens').style.display = 'none';
-    }
-    /**
-     * Método selecionarImagem.
-     * @param e $l
-     * @return mixed
-     */
-    function selecionarImagem(el) {
-        var id = el.getAttribute('data-id');
-        var b64 = el.getAttribute('data-base64');
-        document.getElementById('imagem_id').value = id;
-        var img = document.getElementById('imagem');
-        img.src = 'data:image/jpeg;base64,' + b64;
-        img.style.display = 'block';
-        var ph = document.getElementById('imagemPlaceholder');
-        if (ph) { ph.style.display = 'none'; }
-        fecharOverlayImagens();
-    }
-    /**
-     * Método excluirImagemOverlay.
-     * @param imageI $d
-     * @return mixed
-     */
-    function excluirImagemOverlay(imageId) {
-        var params = new URLSearchParams();
-        params.append('id', '<?= (int) $id ?>');
-        params.append('categoria_filtro', '<?= htmlspecialchars((string) $categoria_filtro, ENT_QUOTES, 'UTF-8') ?>');
-        params.append('activas', '<?= htmlspecialchars((string) $activas_filtro, ENT_QUOTES, 'UTF-8') ?>');
-        params.append('csrf_token', '<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>');
-        params.append('eliminar_imagem', '1');
-        params.append('imagem_id', String(imageId));
-
-        fetch('<?= htmlspecialchars(app_url('?acao=sala_form'), ENT_QUOTES, 'UTF-8') ?>', {
-            method: 'POST',
-            body: params,
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        }).then(function() {
-            window.location.reload();
-        }).catch(function() {
-            window.location.reload();
-        });
-    }
-
-    /**
-     * Método semImagem.
-     * @return mixed
-     */
-    function semImagem() {
-        document.getElementById('imagem_id').value = '';
-        document.getElementById('imagem').style.display = 'none';
-        var ph = document.getElementById('imagemPlaceholder');
-        if (ph) { ph.style.display = 'flex'; }
-        fecharOverlayImagens();
-    }
-    /**
-     * Método carregarNovaImagem.
-     * @return mixed
-     */
-    function carregarNovaImagem() {
-        fecharOverlayImagens();
-        document.getElementById('newimagem').click();
-    }
-    /**
-     * Método renderizaNovaImagem.
-     * @return mixed
-     */
-    function renderizaNovaImagem() {
-        var input = document.getElementById('newimagem');
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var img = document.getElementById('imagem');
-                img.src = e.target.result;
-                img.style.display = 'block';
-                var ph = document.getElementById('imagemPlaceholder');
-                if (ph) { ph.style.display = 'none'; }
-                document.getElementById('imagem_id').value = '';
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    document.getElementById('newimagem').addEventListener('change', renderizaNovaImagem);
-</script>
+<script src="<?= htmlspecialchars(app_url('/js/sala-imagens.js'), ENT_QUOTES, 'UTF-8') ?>"></script>

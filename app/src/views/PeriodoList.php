@@ -30,24 +30,12 @@ use Salas\Core\Validation\Validator;
 </div>
 
 <div class="container_conteudo lista_comum" style="max-height:60vh; overflow-y:auto;">
-    <table style="border-spacing: 4px; padding: 4px;">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Sequência</th>
-                <th>ID</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($lista as $periodo): ?>
-                <tr>
-                    <td><a href="<?= htmlspecialchars(app_url('?acao=periodo_form&id=' . (int) $periodo['id']), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $periodo['nome'], ENT_QUOTES, 'UTF-8') ?></a></td>
-                    <td><?= (int) $periodo['seq'] ?></td>
-                    <td><?= (int) $periodo['id'] ?></td>
-                    <td></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <?php
+    $colunas = [
+        ['chave' => 'nome', 'label' => 'Nome', 'url' => app_url('?acao=periodo_form&id=%id%')],
+        ['chave' => 'seq', 'label' => 'Sequência', 'formato' => 'int'],
+        ['chave' => 'id', 'label' => 'ID', 'formato' => 'int'],
+    ];
+    include __DIR__ . '/components/ListaComum.php';
+    ?>
 </div>

@@ -37,8 +37,8 @@ class Router
         'usuario_form' => [UsuarioController::class, 'usuarioForm', 'query_post', 'merge', true],
         'permissoes_form' => [PermissoesController::class, 'permissoesForm', 'post', 'merge', true],
         'temas' => [TemaController::class, 'temasForm', 'query_post', 'merge', true],
-        'estatisticas' => [RelatorioController::class, 'reportSummary', 'query', 'merge', false],
-                'relatorios' => [RelatorioController::class, 'reportReservations', 'query', 'merge', false],
+        'estatisticas' => [RelatorioController::class, 'reportSummary', 'query', 'merge', true],
+        'relatorios' => [RelatorioController::class, 'reportReservations', 'query', 'merge', true],
         'reserva_form' => [ReservaController::class, 'reservaForm', 'query', 'merge', false],
     ];
 

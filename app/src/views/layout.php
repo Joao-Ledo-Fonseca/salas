@@ -50,7 +50,7 @@ use Salas\Core\Validation\Validator;
 
     <title><?= htmlspecialchars($title ?? 'Reserva de Salas', ENT_QUOTES, 'UTF-8') ?></title>
 </head>
-<body>
+<body<?= !empty($bodyStyle) ? ' style="' . htmlspecialchars($bodyStyle, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
 
     <!-- menu esquerdo -->
     <?php
@@ -61,7 +61,7 @@ use Salas\Core\Validation\Validator;
     ?>
 
     <!-- conteudo -->
-    <div class="corpo">
+    <div class="corpo"<?= !empty($contentStyle) ? ' style="' . htmlspecialchars($contentStyle, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
         <?= $content ?? '' ?>
     </div>
 

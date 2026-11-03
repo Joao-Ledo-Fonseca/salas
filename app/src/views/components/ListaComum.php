@@ -3,12 +3,24 @@
  * Componente ListaComum.php
  *
  * Uso: incluir via include e passar:
- *  - $lista (array de arrays/objetos)
- *  - $colunas (array com 'chave', 'label', opcional 'largura')
- *  - $url_editar (opcional, string com pattern '%id%')
+ *  - $lista (array de linhas)
+ *  - $colunas (array com 'chave', 'label', opcionais 'largura', 'formato' e 'url')
+ *  - $url_editar (opcional, URL padrão para a primeira coluna, com pattern '%id%')
+ *  - $classe_tabela (opcional)
  */
 ?>
-<table cellpadding="4" cellspacing="4">
+<?php
+$temLinks = isset($url_editar);
+if (!$temLinks) {
+    foreach ($colunas as $coluna) {
+        if (isset($coluna['url'])) {
+            $temLinks = true;
+            break;
+        }
+    }
+}
+?>
+<table<?= !empty($classe_tabela) ? ' class="' . htmlspecialchars((string) $classe_tabela, ENT_QUOTES, 'UTF-8') . '"' : '' ?> cellpadding="4" cellspacing="4">
     <thead>
         <tr>
             <?php foreach ($colunas as $coluna): ?>
@@ -16,7 +28,7 @@
                     <?= htmlspecialchars((string)($coluna['label'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                 </th>
             <?php endforeach; ?>
-            <?php if (isset($url_editar)): ?>
+            <?php if ($temLinks): ?>
                 <th></th>
             <?php endif; ?>
         </tr>
@@ -26,23 +38,29 @@
             <tr>
                 <?php foreach ($colunas as $coluna): ?>
                     <?php $chave = $coluna['chave'] ?? null; ?>
+                    <?php
+                    $valor = $chave === null
+                        ? (is_array($item) ? ($item['nome'] ?? $item['id'] ?? '') : $item)
+                        : ($item[$chave] ?? '');
+                    if (($coluna['formato'] ?? '') === 'int') {
+                        $valor = (int) $valor;
+                    }
+                    $url = $coluna['url'] ?? (
+                        isset($url_editar) && $coluna === $colunas[0]
+                            ? $url_editar
+                            : null
+                    );
+                    $valorEscapado = htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
+                    ?>
                     <td>
-                        <?php if ($chave === null): ?>
-                            <?= htmlspecialchars((string)(is_array($item) ? ($item['nome'] ?? $item['id'] ?? '') : $item), ENT_QUOTES, 'UTF-8') ?>
-                        <?php elseif (isset($url_editar)): ?>
-                            <?php if ($coluna === $colunas[0]): ?>
-                                <a href="<?= htmlspecialchars(str_replace('%id%', (string)($item['id'] ?? 0), $url_editar), ENT_QUOTES, 'UTF-8') ?>">
-                                    <?= htmlspecialchars((string)($item[$chave] ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                                </a>
-                            <?php else: ?>
-                                <?= htmlspecialchars((string)($item[$chave] ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                            <?php endif; ?>
+                        <?php if ($url !== null): ?>
+                            <a href="<?= htmlspecialchars(str_replace('%id%', (string) (int) ($item['id'] ?? 0), (string) $url), ENT_QUOTES, 'UTF-8') ?>"><?= $valorEscapado ?></a>
                         <?php else: ?>
-                            <?= htmlspecialchars((string)($item[$chave] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                            <?= $valorEscapado ?>
                         <?php endif; ?>
                     </td>
                 <?php endforeach; ?>
-                <?php if (isset($url_editar)): ?>
+                <?php if ($temLinks): ?>
                     <td></td>
                 <?php endif; ?>
             </tr>

@@ -1,53 +1,10 @@
 <?php
-use Salas\Models\Reserva;
-use Salas\Models\Sala;
-use Salas\Models\Uso;
+$title = 'Estatísticas';
+$bodyStyle = 'overflow: hidden;';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-PT">
-
-
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-  <title>Relatórios</title>
-
-  <script src="<?= app_url('/js/jquery.js') ?>"></script>
-  <script src="<?= app_url('/js/jquery.datetimepicker.full.js') ?>"></script>
-  <script src="<?= app_url('/js/dateformat.js') ?>"></script>
-
-   <script>window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
-   <script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
-   <script src="<?= app_url('/js/theme.js') ?>"></script>
-
-   <?php if (!empty($cfg) && isset($cfg->theme)): ?>
-   <style>
-     :root {
-       <?= $cfg->theme->toCssVariables() ?>
-     }
-     html { font-size: var(--font-size-base, 14px); }
-   </style>
-   <?php endif; ?>
-
-   <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
-   <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
-  <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
-  <script src="<?= app_url('/js/lib.js') ?>"></script>
-
-
-</head>
-
-<body style="overflow: hidden;">
-
-  <!-- menu esquerdo -->
-  <?php include __DIR__ . "/MenuEsquerdo.php"; ?>
-
-  <div class="corpo">
   <?php
-  // Esta view usa o cabeçalho padrão A para estatísticas (cabecalho.php)
+  // Esta view usa o cabeçalho padrão A para estatísticas (cabecalho.php).
   $acaoPagina = 'estatisticas';
   include __DIR__ . "/components/cabecalho.php";
   ?>
@@ -58,101 +15,58 @@ use Salas\Models\Uso;
     <div class="zona-scroll">
       <div class="container">
 
-        <!-- Gráficos e tabela dinâmica -->
-
-        <!-- 2. Grelha de gráficos 2x2 -->
         <div class="charts-grid" style="margin-top: 30px;">
-          <div class="chart-box" data-chart="ocupacao">
-            <h3>Taxa de ocupação das salas</h3>
-            <div class="chart-toggle">
-              <label><input type="radio" name="view_ocupacao" value="chart" checked> Gráfico</label>
-              <label><input type="radio" name="view_ocupacao" value="table"> Tabela</label>
-            </div>
-            <div class="chart-view">
-              <div id="chart_ocupacao" style="width: 100%; height: 300px;"></div>
-            </div>
-            <div class="table-view" style="display:none;">
-              <table class="chart-table">
-                <thead><tr><th>Estado</th><th>Total</th></tr></thead>
-                <tbody>
-                  <tr><td>Ocupado</td><td><?= (int) $total_reservas ?></td></tr>
-                  <tr><td>Desocupado</td><td><?= (int) $total_horarios ?></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="chart-box" data-chart="uso">
-            <h3>Reservas por uso</h3>
-            <div class="chart-toggle">
-              <label><input type="radio" name="view_uso" value="chart" checked> Gráfico</label>
-              <label><input type="radio" name="view_uso" value="table"> Tabela</label>
-            </div>
-            <div class="chart-view">
-              <div id="chart_uso" style="width: 100%; height: 300px;"></div>
-            </div>
-            <div class="table-view" style="display:none;">
-              <table class="chart-table">
-                <thead><tr><th>Uso</th><th>Total</th></tr></thead>
-                <tbody>
-                  <?php if (empty($resumo_reservas)): ?>
-                    <tr><td colspan="2">Sem dados.</td></tr>
-                  <?php else: ?>
-                    <?php foreach ($resumo_reservas as $r): ?>
-                      <tr><td><?= htmlspecialchars((string)($r['uso'] ?? 'Sem uso'), ENT_QUOTES, 'UTF-8') ?></td><td><?= (int)($r['total'] ?? 0) ?></td></tr>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="chart-box" data-chart="data">
-            <h3>Reservas por data</h3>
-            <div class="chart-toggle">
-              <label><input type="radio" name="view_data" value="chart" checked> Gráfico</label>
-              <label><input type="radio" name="view_data" value="table"> Tabela</label>
-            </div>
-            <div class="chart-view">
-              <div id="chart_data" style="width: 100%; height: 300px;"></div>
-            </div>
-            <div class="table-view" style="display:none;">
-              <table class="chart-table">
-                <thead><tr><th>Data</th><th>Total</th></tr></thead>
-                <tbody>
-                  <?php if (empty($reservas_por_data)): ?>
-                    <tr><td colspan="2">Sem dados.</td></tr>
-                  <?php else: ?>
-                    <?php foreach ($reservas_por_data as $r): ?>
-                      <tr><td><?= htmlspecialchars((string)($r['data'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td><td><?= (int)($r['total'] ?? 0) ?></td></tr>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="chart-box" data-chart="sala">
-            <h3>Reservas por sala</h3>
-            <div class="chart-toggle">
-              <label><input type="radio" name="view_sala" value="chart" checked> Gráfico</label>
-              <label><input type="radio" name="view_sala" value="table"> Tabela</label>
-            </div>
-            <div class="chart-view">
-              <div id="chart_sala" style="width: 100%; height: 300px;"></div>
-            </div>
-            <div class="table-view" style="display:none;">
-              <table class="chart-table">
-                <thead><tr><th>Sala</th><th>Total</th></tr></thead>
-                <tbody>
-                  <?php if (empty($reservas_por_sala)): ?>
-                    <tr><td colspan="2">Sem dados.</td></tr>
-                  <?php else: ?>
-                    <?php foreach ($reservas_por_sala as $r): ?>
-                      <tr><td><?= htmlspecialchars((string)($r['sala'] ?? 'Sem sala'), ENT_QUOTES, 'UTF-8') ?></td><td><?= (int)($r['total'] ?? 0) ?></td></tr>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <?php
+          $cartoesGrafico = [
+              [
+                  'key' => 'ocupacao',
+                  'title' => 'Taxa de ocupação das salas',
+                  'radioName' => 'view_ocupacao',
+                  'containerId' => 'chart_ocupacao',
+                  'headers' => ['Estado', 'Total'],
+                  'rows' => [
+                      ['Ocupado', (int) $total_reservas],
+                      ['Desocupado', (int) $total_horarios],
+                  ],
+              ],
+              [
+                  'key' => 'uso',
+                  'title' => 'Reservas por uso',
+                  'radioName' => 'view_uso',
+                  'containerId' => 'chart_uso',
+                  'headers' => ['Uso', 'Total'],
+                  'rows' => array_map(
+                      static fn (array $row): array => [(string) ($row['uso'] ?? 'Sem uso'), (int) ($row['total'] ?? 0)],
+                      $resumo_reservas ?? []
+                  ),
+              ],
+              [
+                  'key' => 'data',
+                  'title' => 'Reservas por data',
+                  'radioName' => 'view_data',
+                  'containerId' => 'chart_data',
+                  'headers' => ['Data', 'Total'],
+                  'rows' => array_map(
+                      static fn (array $row): array => [(string) ($row['data'] ?? ''), (int) ($row['total'] ?? 0)],
+                      $reservas_por_data ?? []
+                  ),
+              ],
+              [
+                  'key' => 'sala',
+                  'title' => 'Reservas por sala',
+                  'radioName' => 'view_sala',
+                  'containerId' => 'chart_sala',
+                  'headers' => ['Sala', 'Total'],
+                  'rows' => array_map(
+                      static fn (array $row): array => [(string) ($row['sala'] ?? 'Sem sala'), (int) ($row['total'] ?? 0)],
+                      $reservas_por_sala ?? []
+                  ),
+              ],
+          ];
+          foreach ($cartoesGrafico as $chartCard):
+              include __DIR__ . '/components/CartaoGrafico.php';
+          endforeach;
+          ?>
         </div>
 
         <!-- 3. Tabela dinâmica -->
@@ -296,11 +210,6 @@ use Salas\Models\Uso;
         });
       });
     </script>
-  </div>
-
-</body>
-
-
 <script>
   var appBaseUrl = <?= json_encode(app_url()) ?>;
   var reservasPorUso = <?= json_encode(isset($resumo_reservas) ? $resumo_reservas : [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
@@ -420,5 +329,3 @@ use Salas\Models\Uso;
     }
   });
 </script>
-
-</html>
