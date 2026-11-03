@@ -80,6 +80,11 @@ final class Theme
         return implode("\n    ", $vars);
     }
 
+    public function googleFontsUrl(): ?string
+    {
+        return ThemeFontFamily::googleFontsUrlForStack($this->fontFamily);
+    }
+
     /**
      * Método kebab.
      * @param string $key

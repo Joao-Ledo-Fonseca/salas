@@ -581,7 +581,7 @@ table td:nth-child(1) {
 }
 
 table a {
-	color: var(--color-menu-bg, #2b2b2b);
+	color: var(--color-primary-link, var(--color-menu-bg, #2b2b2b));
 	font-weight: 600;
 	text-decoration: none;
 }
@@ -683,7 +683,7 @@ div.dt-container {
 	padding: 0.5714rem 0.7143rem;
 	border: 0.0714rem solid var(--color-border, #ccc);
 	border-radius: 0.4286rem;
-	background: white;
+	background: var(--color-surface, #FFFFFF);
 	font-size: 0.9286rem;
 	color: var(--color-text-strong, #333);
 	width: 10.7143rem;
@@ -837,7 +837,7 @@ body.pagina-login {
 
 .pagina-login .link {
 	text-decoration: none;
-	color: var(--color-primary, #2C73A8);
+	color: var(--color-primary-link, var(--color-primary, #2C73A8));
 	font-size: 1rem;
 	font-weight: 600;
 	text-align: right;
@@ -1034,7 +1034,7 @@ body.pagina-login {
 	line-height: 1.7143rem !important;
 	vertical-align: baseline !important;
 	box-sizing: border-box;
-	background: transparent !important;
+	background: var(--color-surface, var(--color-bg, #FFFFFF)) !important;
 	border: 0.0714rem solid var(--color-border, #ccc);
 	border-radius: 0.4286rem;
 	background-color: var(--color-bg, #FFFFFF);
@@ -1294,6 +1294,18 @@ img {
 .theme-toggle svg {
 	width: 100%;
 	height: 100%;
+}
+
+.theme-font-select {
+	min-width: 20rem;
+	max-width: 100%;
+}
+
+.theme-base-color-notice {
+	max-width: 32rem;
+	margin: 0.5rem 0 0;
+	color: var(--color-text-muted, #666666);
+	font-size: 0.85rem;
 }
 
 .scroll-y-perm {

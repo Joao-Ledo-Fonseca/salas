@@ -2,6 +2,7 @@
 namespace Salas\Controllers;
 
 use Salas\Core\Theme\ThemeLoader;
+use Salas\Core\Theme\ThemeFontFamily;
 use Salas\Core\Persistence\Database;
 use Salas\Core\Support\Csrf;
 use Salas\Core\Validation\Validator;
@@ -35,6 +36,7 @@ class TemaController
     {
         global $cfg;
         $available = ThemeLoader::availableThemes($this->themesDir);
+        $errormsg = (string)($query['errormsg'] ?? '');
 
         $activeKey = (string)($query['theme'] ?? '');
         if ($activeKey === '' && isset($cfg->theme)) {
@@ -67,7 +69,17 @@ class TemaController
                     }
                 }
                 $name = Validator::string($post['name'] ?? ($original['name'] ?? $editKey));
-                $fontFamily = Validator::string($post['fontFamily'] ?? ($original['fontFamily'] ?? ''));
+                $fontSelection = (string)($post['fontFamily'] ?? ThemeFontFamily::selectionFromStack((string)($original['fontFamily'] ?? '')));
+                $fontFamily = ThemeFontFamily::stackForSelection($fontSelection);
+                if ($fontFamily === null) {
+                    $error = 'A fonte selecionada não é válida.';
+                    header('Location: ' . app_url(
+                        '?acao=temas&theme=' . urlencode($activeKey)
+                        . '&edit_theme=' . urlencode($editKey)
+                        . '&errormsg=' . urlencode($error)
+                    ));
+                    exit();
+                }
                 $baseColor = Validator::string($post['baseColor'] ?? ($original['baseColor'] ?? '#FFFFFF'));
                 $fontSizeBase = Validator::string($post['fontSizeBase'] ?? ($original['fontSizeBase'] ?? '14px'));
                 if (is_numeric($fontSizeBase)) {
@@ -150,6 +162,10 @@ class TemaController
             'themeData' => $themeData,
             'colorKeys' => $colorKeys,
             'dashboardKeys' => $dashboardKeys,
+            'safeFontFamilies' => ThemeFontFamily::safeOptions(),
+            'googleFontFamilies' => ThemeFontFamily::googleOptions(),
+            'fontFamilySelection' => ThemeFontFamily::selectionFromStack((string)($themeData['fontFamily'] ?? '')),
+            'errormsg' => $errormsg,
             'csrfToken' => Csrf::token(),
         ];
     }

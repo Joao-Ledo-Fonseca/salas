@@ -33,6 +33,7 @@ use Salas\Models\Uso;
    <?php endif; ?>
 
    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
+   <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
   <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
   <script src="<?= app_url('/js/lib.js') ?>"></script>
 

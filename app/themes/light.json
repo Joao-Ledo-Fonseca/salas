@@ -1,6 +1,6 @@
 {
     "name": "Claro",
-    "fontFamily": "Inter, Segoe UI, Roboto, Arial, sans-serif",
+    "fontFamily": "'Inter', sans-serif",
     "fontSizeBase": "12px",
     "baseColor": "#484848",
     "colors": {
@@ -15,6 +15,7 @@
         "primary": "#2C73A8",
         "primaryDark": "#1f5a85",
         "primaryLight": "#7aa9dd",
+        "primaryLink": "#1f5a85",
         "success": "#D4F7C4",
         "warning": "#FBFABB",
         "danger": "#FCC5C5",

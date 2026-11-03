@@ -1,10 +1,12 @@
 <?php
 use Salas\Core\Support\Csrf;
-use Salas\Core\Theme\ThemeLoader;
 ?>
 <?php $title = 'Temas'; ?>
 
 <h3>Temas</h3>
+<?php if (!empty($errormsg)): ?>
+  <div class="form_sel lista_comum text-error"><?= htmlspecialchars($errormsg, ENT_QUOTES, 'UTF-8') ?></div>
+<?php endif; ?>
 
 <div class="container_conteudo">
 
@@ -71,7 +73,24 @@ use Salas\Core\Theme\ThemeLoader;
           </tr>
           <tr>
             <td><label>Família de fonte</label></td>
-            <td><input type="text" name="fontFamily" value="<?= htmlspecialchars((string)($themeData['fontFamily'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" class="w-320" /></td>
+            <td>
+              <select name="fontFamily" class="theme-font-select">
+                <optgroup label="Fontes seguras (instaladas no dispositivo)">
+                  <?php foreach ($safeFontFamilies as $fontName => $fontStack): ?>
+                    <option value="<?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>" data-font-stack="<?= htmlspecialchars($fontStack, ENT_QUOTES, 'UTF-8') ?>" <?= $fontName === $fontFamilySelection ? 'selected' : '' ?>>
+                      <?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                  <?php endforeach; ?>
+                </optgroup>
+                <optgroup label="Google Fonts (CDN)">
+                  <?php foreach ($googleFontFamilies as $fontName => $fontStack): ?>
+                    <option value="<?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>" data-font-stack="<?= htmlspecialchars($fontStack, ENT_QUOTES, 'UTF-8') ?>" data-font-url="<?= htmlspecialchars(\Salas\Core\Theme\ThemeFontFamily::googleFontsUrlForSelection($fontName) ?? '', ENT_QUOTES, 'UTF-8') ?>" <?= $fontName === $fontFamilySelection ? 'selected' : '' ?>>
+                      <?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                  <?php endforeach; ?>
+                </optgroup>
+              </select>
+            </td>
           </tr>
           <tr>
             <td><label>Tamanho base</label></td>
@@ -79,7 +98,10 @@ use Salas\Core\Theme\ThemeLoader;
         </tr>
         <tr>
             <td><label>Cor base</label></td>
-            <td><input type="text" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)($themeData['baseColor'] ?? '#FFFFFF'), ENT_QUOTES, 'UTF-8') ?>" data-var="--color-base" /></td>
+            <td>
+              <input type="text" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)($themeData['baseColor'] ?? '#FFFFFF'), ENT_QUOTES, 'UTF-8') ?>" data-var="--color-base" />
+              <p class="theme-base-color-notice">Ao alterar a cor base, as cores de fundo, texto, destaques, menu e dashboard são recalculadas automaticamente para manter a legibilidade. Pode rever e ajustar as cores geradas antes de gravar.</p>
+            </td>
           </tr>
         </table>
       </div>
@@ -137,7 +159,7 @@ use Salas\Core\Theme\ThemeLoader;
           <tr>
             <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($colorTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
             <td class="whitespace-nowrap col-input">
-              <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
+              <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="colors" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
             </td>
           </tr>
         <?php endforeach; ?>
@@ -157,7 +179,7 @@ use Salas\Core\Theme\ThemeLoader;
               <tr>
                 <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($colorTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
                 <td class="whitespace-nowrap col-input">
-                  <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
+                  <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="colors" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -175,7 +197,7 @@ use Salas\Core\Theme\ThemeLoader;
           <tr>
             <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($menuTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
             <td class="whitespace-nowrap col-input">
-              <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
+              <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="colors" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
             </td>
           </tr>
         <?php endforeach; ?>
@@ -205,7 +227,7 @@ use Salas\Core\Theme\ThemeLoader;
           <tr>
             <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($dashTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
             <td class="whitespace-nowrap col-input">
-              <input type="text" class="color-input color-input-compact" name="dashboard[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-var="--dashboard-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
+              <input type="text" class="color-input color-input-compact" name="dashboard[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="dashboard" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--dashboard-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
             </td>
           </tr>
         <?php endforeach; ?>
@@ -218,7 +240,8 @@ use Salas\Core\Theme\ThemeLoader;
 
 <link rel="stylesheet" type="text/css" href="<?= app_url('/css/pickr.min.css') ?>">
 <script src="<?= app_url('/js/pickr.min.js') ?>"></script>
-<script src="<?= app_url('/js/temas.js') ?>"></script>
+<script src="<?= app_url('/js/temas_fonts.js') ?>"></script>
+<script src="<?= app_url('/js/temas_base.js') ?>"></script>
 <script>
   function showTab(tabName) {
     document.querySelectorAll('.tema-tab').forEach(function(btn) {
@@ -257,4 +280,3 @@ use Salas\Core\Theme\ThemeLoader;
     });
   });
 </script>
-

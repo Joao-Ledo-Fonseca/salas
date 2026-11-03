@@ -40,6 +40,7 @@ use Salas\Core\Validation\Validator;
     <?php endif; ?>
 
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>" />
+    <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
 
     
     <title>Sistema de Reservas de Salas</title>

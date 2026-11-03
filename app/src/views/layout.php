@@ -42,6 +42,7 @@ use Salas\Core\Validation\Validator;
 
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
+    <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
 
     <?php if (!empty($extraHead)): ?>
         <?= $extraHead ?>
