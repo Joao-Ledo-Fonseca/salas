@@ -20,6 +20,10 @@ use Salas\Core\Validation\Validator;
 
 <h3>Cadastro de Períodos</h3>
 
+<?php if (!empty($errormsg)): ?>
+    <div class="form_sel lista_comum text-error"><?= htmlspecialchars((string) $errormsg, ENT_QUOTES, 'UTF-8') ?></div>
+<?php endif; ?>
+
 <div class="container_conteudo lista_comum scroll-y-60">
     <form name="form1" method="post" action="<?= app_url('?acao=periodo_form') ?>">
 

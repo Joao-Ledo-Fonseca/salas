@@ -103,6 +103,20 @@ class ViewComponentsTest extends TestCase
         );
     }
 
+    public function testPeriodoFormDisplaysEscapedDeleteError(): void
+    {
+        $html = $this->renderView('PeriodoForm.php', [
+            'title' => 'Cadastro de Períodos',
+            'id' => 14,
+            'nome' => 'Tarde 1',
+            'seq' => 5,
+            'errormsg' => '<Período> tem reservas associadas.',
+        ]);
+
+        $this->assertStringContainsString('&lt;Período&gt; tem reservas associadas.', $html);
+        $this->assertStringNotContainsString('<Período>', $html);
+    }
+
     private function render(string $component, array $data): string
     {
         extract($data, EXTR_SKIP);

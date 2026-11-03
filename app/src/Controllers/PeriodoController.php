@@ -131,7 +131,12 @@ class PeriodoController
             $controller->salvar();
         }
         $record = $controller->abrir();
-        return array_merge(['id' => 0, 'nome' => '', 'seq' => 0], isset($record[0]) ? $record[0] : []);
+        return array_merge([
+            'id' => 0,
+            'nome' => '',
+            'seq' => 0,
+            'errormsg' => (string) ($query['errormsg'] ?? ''),
+        ], isset($record[0]) ? $record[0] : []);
     }
 
 

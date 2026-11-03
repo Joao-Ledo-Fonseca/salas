@@ -76,8 +76,16 @@ class Periodo
 	 */
 	public function excluir($id)
 	{
-		$sql = 'delete from periodo where id = ?'; 
-		return $this->db->query_update($sql, array($id));
+		$sql = 'delete from periodo where id = ?';
+		try {
+			return $this->db->query_update($sql, [$id]);
+		} catch (\PDOException $exception) {
+			if ((int) ($exception->errorInfo[1] ?? 0) !== 1451) {
+				throw $exception;
+			}
+
+			return false;
+		}
 	}
 	
 	
