@@ -111,6 +111,7 @@ class Permissoes
 
 
     public const DEFAULTS = [
+        "M_Dashboard" => ['n', true, true, true, "Autoriza acesso ao dashboard"],
         "M_Categorias" => ['n', false, true, false, "Autoriza acesso ao Menu de Categorias"],
         "M_Usos" => ['n', false, true, false, "Autoriza a gestão de Usos"],
         "M_Salas" => ['n', false, true, false, "Autoriza acesso ao Menu de Salas"],
@@ -123,7 +124,7 @@ class Permissoes
         "M_Reservas" => ['n', true, true, true, "Autoriza acesso ao formulário de reservas e exclusão de reservas"],
         "M_EliminarReservasUtilizador" => ['n', false, true, true, "Autoriza eliminar todas as reservas de um utilizador"],
         "M_FiltroUtilizador" => ['n', false, true, true, "Autoriza o filtro por utilizador no dashboard"],
-        "A_RegNovoUtilizador" => ['s', true, null, null, "Activa o registo de novos utilizadores no ecrã de login. (não implementado)"],
+        "A_RegNovoUtilizador" => ['s', true, null, null, "Permite o registo público de novos utilizadores no ecrã de login"],
         "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"],
     ];
 

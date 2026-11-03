@@ -44,7 +44,6 @@ h3 {
 	line-height: 1.3;
 }
 
-
 /* ==========================================================================
    MÓDULO: MENU LATERAL
    ========================================================================== */
@@ -238,6 +237,7 @@ h3 {
 	.container_top .form_sel {
 		padding-left: 0;
 	}
+
 }
 
 
@@ -261,6 +261,26 @@ h3 {
 	padding: 1.4286rem;
 	float: left;
 	display: block;
+}
+
+.permission-route-warnings {
+	clear: both;
+	margin: 1rem 1.4286rem;
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--color-border, #E1E1E1);
+	border-radius: 0.35rem;
+	background-color: var(--color-surface-alt, #ECECEC);
+	color: var(--color-text, #4E4E4E);
+}
+
+.permission-route-warnings h4,
+.permission-route-warnings p {
+	margin: 0 0 0.5rem;
+}
+
+.permission-route-warnings ul {
+	margin: 0;
+	padding-left: 1.25rem;
 }
 
 .form_sel {
@@ -1283,8 +1303,8 @@ img {
 	border: none;
 	color: var(--color-menu-text, #FFFFFF);
 	cursor: pointer;
-	width: 1.43rem;
-	height: 1.43rem;
+	width: 1.716rem;
+	height: 1.716rem;
 	padding: 0;
 	display: inline-flex;
 	align-items: center;
@@ -1815,4 +1835,3 @@ input[type="text"].color-input-compact {
 	align-items: center;
 	justify-content: center;
 }
-

@@ -100,6 +100,7 @@ use Salas\Core\Validation\Validator;
                             <th> Categoria </th>
                             <th> Sala</th>
                             <th> Nome </th>
+                            <th> Reservado por </th>
                             <th> Data</th>
                             <th> Periodo </th>
                             <th> Status </th>
@@ -116,6 +117,7 @@ use Salas\Core\Validation\Validator;
                                 <td><?= htmlspecialchars((string) $reserva['categoria'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td width="300"><?= htmlspecialchars((string) $reserva['entidade_desc'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars((string) ($reserva['reservado_por'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><a href="<?= htmlspecialchars(app_url('?data=' . $dataLink), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($diaFormatado, ENT_QUOTES, 'UTF-8') ?></a></td>
                                 <td><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><?= htmlspecialchars((string) $reserva['status_nome'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -277,7 +279,7 @@ switch ($tipo) {
         var table = $('#print').DataTable({
             searching: true,
             ordering: true,
-            order: [[3, 'desc']],
+            order: [[4, 'desc']],
             paging: true,
             pageLength: 25,
             lengthMenu: [10, 25, 50, 100, 200],
@@ -288,9 +290,10 @@ switch ($tipo) {
                 { targets: 0, width: '80px' },
                 { targets: 1, width: '80px' },
                 { targets: 2, width: '100px' },
-                { targets: 3, type: 'date-uk', width: '80px' },
-                { targets: 4, width: '50px' },
-                { targets: 5, width: '50px' }
+                { targets: 3, width: '100px' },
+                { targets: 4, type: 'date-uk', width: '80px' },
+                { targets: 5, width: '50px' },
+                { targets: 6, width: '50px' }
             ],
             buttons: [
                 {

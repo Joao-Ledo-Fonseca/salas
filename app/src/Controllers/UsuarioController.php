@@ -47,30 +47,38 @@ class UsuarioController
 			if (isset($post['salvar'])) {
 				$telefone = Validator::string(isset($post['telefone']) ? $post['telefone'] : '');
 				$NIF = Validator::string(isset($post['NIF']) ? $post['NIF'] : null);
-				$nivel = Validator::string((isset($post['nivel']) ? $post['nivel'] : ''));
+				$nivelAtribuido = filter_var($post['nivel'] ?? null, FILTER_VALIDATE_INT);
+				$auth = new AuthContext();
+				if (
+					$nivelAtribuido === false
+					|| !$auth->isAuthenticated()
+					|| !AuthorizationService::canAssignLevel($auth->level(), (int) $nivelAtribuido)
+				) {
+					return false;
 				}
-			else {
+				$nivel = (string) $nivelAtribuido;
+			} else {
 				$telefone = '';
 				$NIF = '';
 				$nivel = 0;
-				}
+			}
 
 			if ($senha === '') {
 				$senha = null;
 				}
 
-			$usuario = new Usuario($this->db);
-
-			$resultado = $usuario->findByLoginIdentifier($email);
-			if (isset($resultado[0]['id']) && $resultado[0]['id'] != $id) {
-				return 0;  // não pode criar um usuário com email ou nome já existente
+				if ($nome === '') {
+					return 0;
 				}
 
-			// O nome é obrigatório
-			if (strlen($nome) > 0) {
+				$usuario = new Usuario($this->db);
+
+				if ($usuario->existsByEmailOrName($email, $nome, $id)) {
+					return 0;
+				}
+
 				$resultado = $usuario->salvar($id, $nome, $email, $senha, $telefone, $NIF, $nivel);
 				unset($_SESSION['dashboard_cache_' . (int) ($_SESSION['user_id'] ?? 0)]);
-				}
 
 			// Se a gravação foi feita do ecrã de login
 			// Ainda não está logado e não tem sessão -> nada a fazer
@@ -266,7 +274,9 @@ class UsuarioController
             $post['nivel'] = (string) $auth->level();
         }
         $saveResult = (!$isElimination && $post !== []) ? $controller->salvar($post) : null;
-        if ($saveResult === 0) {
+        if ($saveResult === false) {
+            $error = 'Nível de acesso inválido para o utilizador autenticado.';
+        } elseif ($saveResult === 0) {
             $error = 'Não é possível criar/editar: Nome ou E-mail já existentes no sistema!';
         } elseif ($saveResult !== null && isset($post['salvar'])) {
             header('Location: ' . app_url('?acao=usuario_list'));
@@ -295,7 +305,7 @@ class UsuarioController
         }
 
         $permissionController = new AuthorizationService($this->db);
-        $maxLevel = min(count($permissionController->niveis()) - 1, (new AuthContext())->level());
+        $maxLevel = $permissionController->maxLevel($auth->level());
         $levelOptions = [];
         for ($level = 0; $level <= $maxLevel; $level++) {
             $levelOptions[] = [

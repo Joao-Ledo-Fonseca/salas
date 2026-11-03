@@ -18,11 +18,14 @@ use Salas\Core\Validation\Validator;
 
  <?php $title = 'Permissões'; ?>
 
-<h3>Permissões</h3>
+ <?php
+ $titulo = 'Permissões';
+ include __DIR__ . '/components/cabecalho2.php';
+ ?>
 
-<form name="form1" method="post" action="<?= app_url('?acao=permissoes_form') ?>">
+ <form name="form1" method="post" action="<?= app_url('?acao=permissoes_form') ?>">
     <div class="container_top lista_comum">
-        <div class="form_sel flex gap-10">
+        <div class="form_sel lista_comum flex gap-10">
             <input type="submit" name="cancelar" value="Voltar" class="btn1" id="cancelar" onclick="cancelaInputsRequired()" />
             <div id="salvar" class="d-none">
                 <input type="submit" name="salvar" value="Salvar" class="btn1" />
@@ -91,3 +94,18 @@ use Salas\Core\Validation\Validator;
     </div>
 
 </form>
+
+<?php if (!empty($routeWarnings)): ?>
+    <section class="permission-route-warnings" aria-labelledby="permission-route-warnings-title">
+        <h4 id="permission-route-warnings-title">Avisos de configuração de rotas</h4>
+        <p>As rotas abaixo estão bloqueadas até terem uma permissão válida configurada:</p>
+        <ul>
+            <?php foreach ($routeWarnings as $route => $warning): ?>
+                <li>
+                    <code><?= htmlspecialchars((string) $route, ENT_QUOTES, 'UTF-8') ?></code>
+                    — <?= htmlspecialchars((string) $warning, ENT_QUOTES, 'UTF-8') ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+<?php endif; ?>

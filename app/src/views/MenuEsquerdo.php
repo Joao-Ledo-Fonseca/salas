@@ -35,7 +35,13 @@ foreach (($menuData['adminItems'] ?? []) as $item) {
    <span class="closebtn" onclick="closeNav()">&times;</span>
    <div class="menu-inner">
    <div class="user">
-      <img src="<?= app_url('/img/do-utilizador-branco.png') ?>" width="20" height="20" style="width:1.43rem;height:1.43rem;" alt="" />
+      <svg viewBox="-48 -48 608 608" width="1.716rem" height="1.716rem" fill="none" stroke="#fff" stroke-width="38" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+         <path d="M203 18c-56 0-101 45-101 101 0 51 15 83 45 104 17 13 37 25 56 25s39-12 56-25c30-21 45-53 45-104 0-56-45-101-101-101Z"/>
+         <path d="M147 223c-57 17-100 55-124 110C9 362 1 403 1 430c0 6 3 10 8 14 58 38 125 58 194 58 46 0 89-9 128-28"/>
+         <path d="M261 223c28 9 53 24 74 42"/>
+         <circle cx="391" cy="354" r="109"/>
+         <path d="m337 350 40 40 69-69"/>
+      </svg>
       <a class="dropdown-btn" href="#">
          <p><?= htmlspecialchars($menuData['userName'] . ' (' . $menuData['userLevel'] . ')', ENT_QUOTES, 'UTF-8') ?> ▼</p>
       </a>
@@ -86,7 +92,7 @@ foreach (($menuData['adminItems'] ?? []) as $item) {
       <?php endif; ?>
       <div class="theme-switcher">
          <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Tema" aria-expanded="false" aria-controls="theme-popover">
-            <svg viewBox="0 0 24 24" width="1.716rem" height="1.716rem" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="1.716rem" height="1.716rem" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-1 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-5.52-4.48-10-10-10z"></path>
                <circle cx="7.5" cy="11.5" r="1.5"></circle>
                <circle cx="10.5" cy="7.5" r="1.5"></circle>
@@ -241,4 +247,3 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 </script>
-

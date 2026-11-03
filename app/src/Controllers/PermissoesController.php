@@ -1,250 +1,104 @@
 <?php
 namespace Salas\Controllers;
 
-
+use Salas\Core\Auth\AuthorizationService;
 use Salas\Core\Persistence\Database;
+use Salas\Core\Router;
 use Salas\Models\Permissoes;
 
-/**
- * Classe PermissoesController.
- */
 class PermissoesController
-    {
-	private Database $db;
+{
+    private Database $db;
 
-    // conjunto de permissoes ativas carregadas da BD
-    private array $permissions = [];
-
-
-
-    //valores fixos para os níveis de utilizador
-    public $niveis = [
-        // [ nivel => Nome na BD, Abreviatura, Nome Extenso]
-        0 => array("uexterno", "u", "User"),
-        1 => array('uinterno', "g", "Gestor"),
-        2 => array("admin", "a", "Admin"),
-        // Este nivel não tem entradas na BD, programáticamente tem 
-        // ====    TODAS AS AUTORIZAÇõES activas ====        
-        3 => array("superadmin", "sa", "SuperAdmin")
-    ];
-
-
-    /**
-     * Método __construct.
-     * @param Database $db
-     * @return void
-     */
     public function __construct(Database $db)
     {
         $this->db = $db;
-        //carrega as Permissões salvas na BD    
-        $permissoes = new Permissoes($this->db);
-        $linhas = $permissoes->listar();
-
-        foreach ($linhas as $l) {
-            $this->permissions[$l["nome"]] = array($l[$this->niveis[0][0]], $l[$this->niveis[1][0]], $l[$this->niveis[2][0]]);
-        }
     }
 
-    /**
-     * Método validaPermissao.
-     * @param mixed $permissao
-     * @param mixed $nivel
-     * @return mixed
-     */
-    public function validaPermissao($permissao, $nivel)
-        {
-        $validade = ($this->niveis[$nivel][0] == "superadmin") || (array_key_exists($permissao, $this->permissions) && $this->permissions[$permissao][$nivel]);
-
-        return $validade;
-        }
-
-    /**
-     * Método nomeNivel.
-     * @param mixed $nivel
-     * @param mixed $tipoNome
-     * @return mixed
-     */
-    public function nomeNivel($nivel, $tipoNome = 0)
-        {
-        if (array_key_exists($nivel, $this->niveis)) {
-            if ($tipoNome == 0) {
-                return $this->niveis[$nivel][0]; // nome da coluna do nivel na BD 
-                }
-            else if ($tipoNome == 1) {
-                return $this->niveis[$nivel][1]; // abreviatura do nivel
-                }
-            else if ($tipoNome == 2) {
-                return $this->niveis[$nivel][2]; // nome do nivel
-                }
-            return $this->niveis[$nivel][3];
-            }
-        return "N/A";
-        }
-
-    /**
-     * Método requirePermission.
-     * @param mixed $permissao
-     * @return mixed
-     */
-    public function requirePermission($permissao)
-        {
-        if (!isset($_SESSION['user_nivel']) || !$this->validaPermissao($permissao, $_SESSION['user_nivel'])) {
+    public function cancelar(array $post): bool
+    {
+        if (isset($post['cancelar'])) {
             header('Location: ' . app_url());
             exit;
-            }
         }
 
-    //  NOVO MÉTODO: Retorna ao Dashboard Inicial
-    /**
-     * Método cancelar.
-     * @return mixed
-     */
-    public function cancelar()
-        {
-        if (isset($_POST['cancelar'])) {
-            header('Location: ' . app_url());
-            exit;
-            }
         return false;
+    }
+
+    public function salvar(array $post): bool
+    {
+        if (!isset($post['salvar'])) {
+            return false;
         }
 
-    /**
-     * Método salvar.
-     * @return mixed
-     */
-    public function salvar()
-        {
         $permissoes = new Permissoes($this->db);
-
-        if (isset($_POST['salvar'])) {
-
-            // Prepara um array $lista para recolher dados do $POST
-            foreach (Permissoes::DEFAULTS as $nome => $value) {
-
-                $tipo = $value[0];
-
-                if ($value[0] == 'n') {
-                    $lista[$nome] = array($tipo, false, false, false);
-                    }
-                else {
-                    $lista[$nome] = array($tipo, false, null, null);
-                    }
-                }
-
-            // Preenche o array $lista com os valores do $POST
-            $lista = [];
-            foreach ($_POST as $post_nome => $post_value) {
-
-                //  CORREÇÃO CRÍTICA: Se for o botão salvar ou a variável acao, ignora e salta para o próximo
-                if ($post_nome === 'salvar' || $post_nome === 'acao') {
-                    continue;
-                    }
-
-                // para serem distintos os names no post, o name tem um identificador adicional que é necessário retirar
-                $post_nome = substr($post_nome, 0, strlen($post_nome) - 1);
-
-                // Se o nome de permissão existe nos defaults
-                if (array_key_exists($post_nome, Permissoes::DEFAULTS)) {
-
-                    if (!isset($lista[$post_nome])) {
-                        $lista[$post_nome] = [false, false, false, false];
-                        }
-                    if ($post_value == 0) {        // 0 é o utilizador externo
-                        $lista[$post_nome][1] = true;
-                        }
-                    else if ($post_value == 1) { // 1 é o gestor
-                        $lista[$post_nome][2] = true;
-                        }
-                    else if ($post_value == 2) { // 2 é o admin
-                        $lista[$post_nome][3] = true;
-                        }
-                    }
-                }
-
-            foreach ($lista as $k => $l) {
-                $permissoes->update(null, $k, $l[0], $l[1], $l[2], $l[3], "Update");
-                }
-
-            unset($_SESSION['auth_permissions']);
-            header('Location: ' . app_url('?acao=permissoes_form'));
-            exit;
-            }
-        return false;
+        foreach (self::permissoesDoFormulario($post) as $nome => $valores) {
+            $permissoes->update(
+                null,
+                $nome,
+                null,
+                $valores[0],
+                $valores[1],
+                $valores[2],
+                'Update'
+            );
         }
-    // Preencher e verificar base de dados
-    /**
-     * Método validarTabelaPermissoes.
-     * @return mixed
-     */
-    public function validarTabelaPermissoes()
+
+        header('Location: ' . app_url('?acao=permissoes_form'));
+        exit;
+    }
+
+    public static function permissoesDoFormulario(array $post): array
+    {
+        $resultado = [];
+        foreach (Permissoes::DEFAULTS as $nome => $default) {
+            $resultado[$nome] = [
+                isset($post[$nome . '0']),
+                $default[0] === 'n' && isset($post[$nome . '1']),
+                $default[0] === 'n' && isset($post[$nome . '2']),
+            ];
+        }
+
+        return $resultado;
+    }
+
+    public function validarTabelaPermissoes(): void
     {
         (new Permissoes($this->db))->ensureDefaults();
     }
 
-    // listagem
-    /**
-     * Método listar.
-     * @param mixed $tipo
-     * @return mixed
-     */
-    public function listar($tipo)
-        {
-
-        $this->validarTabelaPermissoes();
-
-        $permissoes = new Permissoes($this->db);
-        $linhas = $permissoes->listar($tipo);
-
-        $tabela = [];
-
-
-        foreach ($linhas as $linha) {
-            $nome = $linha['nome']; // nome da permissão
-
-            if ($tipo == 'n') {
-
-                $linha['descricao'] = \Salas\Models\Permissoes::DEFAULTS[$linha['nome']][4];
-                $tabela[] = $linha;
-                }
-            else if ($tipo == 's') {
-                $linha['descricao'] = \Salas\Models\Permissoes::DEFAULTS[$linha['nome']][4];
-                $tabela[] = $linha;
-                }
-            }
-
-        return $tabela;
-
-        }
-
-
-    /**
-     * Método permissoesForm.
-     * @param array $post
-     * @return array
-     */
-    public function permissoesForm(array $post = []): array
+    public function listar(string $tipo): array
     {
-        $controller = $this;
-        if ($post !== []) {
-            $controller->cancelar();
-            $controller->salvar();
+        $this->validarTabelaPermissoes();
+        $linhas = (new Permissoes($this->db))->listar($tipo);
+
+        foreach ($linhas as &$linha) {
+            $linha['descricao'] = Permissoes::DEFAULTS[$linha['nome']][4];
         }
-        return [
-            'tabela_n' => $controller->listar('n'),
-            'tabela_s' => $controller->listar('s'),
-            'nivelLabels' => [
-                $controller->nomeNivel(0, 2),
-                $controller->nomeNivel(1, 2),
-                $controller->nomeNivel(2, 2),
-                $controller->nomeNivel(3, 2),
-            ],
-        ];
+        unset($linha);
+
+        return $linhas;
     }
 
+    public function permissoesForm(array $post = []): array
+    {
+        if ($post !== []) {
+            $this->cancelar($post);
+            $this->salvar($post);
+        }
 
+        $authorization = new AuthorizationService($this->db);
 
+        return [
+            'tabela_n' => $this->listar('n'),
+            'tabela_s' => $this->listar('s'),
+            'nivelLabels' => [
+                $authorization->nomeNivel(0, 2),
+                $authorization->nomeNivel(1, 2),
+                $authorization->nomeNivel(2, 2),
+                $authorization->nomeNivel(3, 2),
+            ],
+            'routeWarnings' => AuthorizationService::routeWarnings(Router::routeActions()),
+        ];
+    }
 }
-
-
-?>

@@ -55,6 +55,17 @@ class Router
         $this->db = $db;
     }
 
+    public static function routeActions(): array
+    {
+        $configuredRoutes = include __DIR__ . '/../Config/routes.php';
+
+        return array_values(array_unique(array_merge(
+            array_keys(self::ROUTES),
+            array_keys($configuredRoutes),
+            ['dashboard', 'imagens_list']
+        )));
+    }
+
     /**
      * Método dispatch.
      * @param string $action
@@ -161,17 +172,17 @@ class Router
         $auth = new AuthContext();
         $level = $auth->level();
         $items = [
-            ['permission' => 'M_Categorias', 'label' => 'Categorias', 'url' => '?acao=categoria_list'],
-            ['permission' => 'M_Usos', 'label' => 'Usos', 'url' => '?acao=uso_list'],
-            ['permission' => 'M_Salas', 'label' => 'Salas', 'url' => '?acao=sala_list'],
-            ['permission' => 'M_Periodos', 'label' => 'Períodos', 'url' => '?acao=periodo_list'],
-            ['permission' => 'M_Utilizadores', 'label' => 'Utilizadores', 'url' => '?acao=usuario_list'],
-            ['permission' => 'M_Permissoes', 'label' => 'Permissões', 'url' => '?acao=permissoes_form'],
-                        ['permission' => 'M_Temas', 'label' => 'Temas', 'url' => '?acao=temas'],
+            ['action' => 'categoria_list', 'label' => 'Categorias', 'url' => '?acao=categoria_list'],
+            ['action' => 'uso_list', 'label' => 'Usos', 'url' => '?acao=uso_list'],
+            ['action' => 'sala_list', 'label' => 'Salas', 'url' => '?acao=sala_list'],
+            ['action' => 'periodo_list', 'label' => 'Períodos', 'url' => '?acao=periodo_list'],
+            ['action' => 'usuario_list', 'label' => 'Utilizadores', 'url' => '?acao=usuario_list'],
+            ['action' => 'permissoes_form', 'label' => 'Permissões', 'url' => '?acao=permissoes_form'],
+            ['action' => 'temas', 'label' => 'Temas', 'url' => '?acao=temas'],
         ];
         $visibleItems = [];
         foreach ($items as $item) {
-            if ($permissions->validaPermissao($item['permission'], $level)) {
+            if ($permissions->validaRota($item['action'], $level, $auth->id())) {
                 $visibleItems[] = $item;
             }
         }
@@ -180,8 +191,8 @@ class Router
             'userName' => $auth->name(),
             'userLevel' => $permissions->nomeNivel($level, 1),
             'profileUrl' => app_url('?acao=usuario_form&id=' . $auth->id()),
-            'showStatistics' => $permissions->validaPermissao('M_Estatisticas', $level),
-            'showReports' => $permissions->validaPermissao('M_Relatorios', $level),
+            'showStatistics' => $permissions->validaRota('estatisticas', $level, $auth->id()),
+            'showReports' => $permissions->validaRota('relatorios', $level, $auth->id()),
             'adminItems' => $visibleItems,
         ];
     }
@@ -216,6 +227,11 @@ class Router
      */
     public function imagensList(\Salas\Core\Http\Request $request): void
     {
+        (new AuthorizationMiddleware($this->db))->authorize(
+            'imagens_list',
+            $request->allQuery(),
+            $request->allPost()
+        );
         $ctrl = new SalaController($this->db);
         header('Content-Type: application/json; charset=UTF-8');
         echo $ctrl->listarImagensJson($request->allQuery());
@@ -223,4 +239,3 @@ class Router
 
 
 }
-

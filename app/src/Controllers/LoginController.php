@@ -3,6 +3,7 @@ namespace Salas\Controllers;
 
 use Salas\Core\Auth\AuthContext;
 use Salas\Core\Auth\Authenticator;
+use Salas\Core\Auth\AuthorizationService;
 use Salas\Core\Persistence\Database;
 use Salas\Models\Usuario;
 use Salas\Core\Validation\Validator;
@@ -35,6 +36,8 @@ public function handle(array $query, array $post): array
 $errormsg = '';
 $result = null;
 $redirect = null;
+$authorization = new AuthorizationService($this->db);
+$registoPublico = $authorization->registoPublicoAtivo();
 
 if (isset($post['entrar'])) {
 $result = $this->authenticate($post);
@@ -44,18 +47,30 @@ $redirect = app_url();
 $errormsg = 'E-mail ou senha inválidos';
 }
 } elseif (isset($post['validar'])) {
-$UsuarioController = new UsuarioController($this->db);
-$result = $UsuarioController->salvar($post);
-$errormsg = is_numeric($result)
-? 'Utilizador criado com sucesso!'
-: 'Nome ou email inválidos ou já existentes!';
+if (!$registoPublico) {
+	$errormsg = 'O registo público de novos utilizadores está desativado.';
+} else {
+	$UsuarioController = new UsuarioController($this->db);
+	$result = $UsuarioController->salvar($post);
+	$registoCriado = is_int($result) && $result > 0;
+	$errormsg = $registoCriado
+		? 'Utilizador criado com sucesso!'
+		: 'Nome, e-mail ou senha inválidos ou já existentes!';
 }
+} elseif (!$registoPublico && isset($query['registar'])) {
+$errormsg = 'O registo público de novos utilizadores está desativado.';
+}
+
+$registoCriado = isset($post['validar']) && is_int($result) && $result > 0;
 
 return [
 'errormsg' => $errormsg,
-'validou' => isset($post['validar']) && is_numeric($result),
-'registar' => isset($query['registar'])
-|| (isset($post['validar']) && !is_numeric($result)),
+'validou' => $registoCriado,
+'registoPublico' => $registoPublico,
+'registar' => $registoPublico && (
+isset($query['registar'])
+|| (isset($post['validar']) && !$registoCriado)
+),
 'retornou' => isset($post['cancelar']) || isset($post['OK']),
 'redirect' => $redirect,
 ];

@@ -301,11 +301,12 @@ class Reserva
 			$parametros = [$dia->format('W') . $dia->format('o'), $inicio, $fim];
 		}
 
-		$sql = ' SELECT ' . $selecaoData . ' , categoria.nome AS categoria, sala.nome AS sala, entidade_desc, dia, periodo.nome AS periodo, status
+		$sql = ' SELECT ' . $selecaoData . ' , categoria.nome AS categoria, sala.nome AS sala, entidade_desc, usuario.nome AS reservado_por, dia, periodo.nome AS periodo, status
             FROM reserva
             LEFT JOIN sala ON sala_id = sala.id
             LEFT JOIN periodo ON periodo_id = periodo.id
             LEFT JOIN categoria ON sala.categoria_id = categoria.id
+			LEFT JOIN usuario ON reserva.usuario_id = usuario.id
             WHERE ' . $condicao . '
 			            ORDER BY dia, categoria, sala, periodo.seq';
 
@@ -337,11 +338,12 @@ class Reserva
 		$inicio_str = $inicio->format('Y-m-d');
 		$fim_str = $fim->format('Y-m-d');
 
-		$sql = ' SELECT dia, categoria.nome AS categoria, sala.nome AS sala, entidade_desc, dia, periodo.nome AS periodo, status
+		$sql = ' SELECT dia, categoria.nome AS categoria, sala.nome AS sala, entidade_desc, usuario.nome AS reservado_por, dia, periodo.nome AS periodo, status
 		    FROM reserva
 		    LEFT JOIN sala ON sala_id = sala.id
 		    LEFT JOIN periodo ON periodo_id = periodo.id
 		    LEFT JOIN categoria ON sala.categoria_id = categoria.id
+			LEFT JOIN usuario ON reserva.usuario_id = usuario.id
 		    WHERE dia BETWEEN ? AND ?
 		    ORDER BY dia, categoria, sala, periodo.seq';
 

@@ -107,11 +107,13 @@ use Salas\Core\Validation\Validator;
                         <br /><br /><br />
 
                         <div class="link">
+                            <?php if (!empty($loginView['registoPublico'])): ?>
                             <span class="tooltip">
                                 <a style="display:none" id="registar" name="registar" value="Registar" class="link" 
                                     href="<?= htmlspecialchars(app_url('?acao=login&registar=registar'), ENT_QUOTES, 'UTF-8') ?>">&#10132; Registar novo utilizador</a>
                                 <span class="tooltiptext">Crie a sua nova conta de utilizador</span>
                             </span>
+                            <?php endif; ?>
                         </div>
 
 

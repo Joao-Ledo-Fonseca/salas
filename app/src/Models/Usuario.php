@@ -2,6 +2,7 @@
 namespace Salas\Models;
 
 use Salas\Core\Persistence\Database;
+use PDOException;
 
 /**
  * Classe Usuario.
@@ -29,6 +30,19 @@ class Usuario implements \Salas\Core\Auth\UserCredentialRepository
 	{
 		$sql = 'select id, nome, nivel, email, senha from usuario where (email = ? or nome = ?)';
 		return $this->db->query($sql, array($identifier, $identifier));
+	}
+
+	public function existsByEmailOrName(string $email, string $name, int|string|null $excludeId = null): bool
+	{
+		$sql = 'select id from usuario where (email = ? or nome = ?)';
+		$params = [$email, $name];
+
+		if ($excludeId !== null && (int) $excludeId > 0) {
+			$sql .= ' and id <> ?';
+			$params[] = $excludeId;
+		}
+
+		return $this->db->query($sql, $params) !== [];
 	}
 
 	/**
@@ -129,18 +143,44 @@ class Usuario implements \Salas\Core\Auth\UserCredentialRepository
 
 			$senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 			$sql = 'insert into usuario (nome, email, senha, telefone, NIF, nivel) values (?, ?, ?, ?, ?, ?)';
-			return $this->db->query_insert($sql, array($nome, $email, $senhaHash, $telefone, $NIF, $nivel));
+			try {
+				return $this->db->query_insert($sql, array($nome, $email, $senhaHash, $telefone, $NIF, $nivel));
+			} catch (PDOException $e) {
+				if ($this->isDuplicateKey($e)) {
+					return 0;
+				}
+				throw $e;
+			}
 		}
 		// atualizar
 		else {
 			if (!is_null($senha) && $senha !== '') {
 				$senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 				$sql = 'update usuario set nome = ?, email = ?, senha = ?, telefone = ?, NIF = ?, nivel = ? where id = ?';
-				return $this->db->query_update($sql, array($nome, $email, $senhaHash, $telefone, $NIF, $nivel, $id));
+				try {
+					return $this->db->query_update($sql, array($nome, $email, $senhaHash, $telefone, $NIF, $nivel, $id));
+				} catch (PDOException $e) {
+					if ($this->isDuplicateKey($e)) {
+						return 0;
+					}
+					throw $e;
+				}
 			}
 			$sql = 'update usuario set nome = ?, email = ?, telefone = ?, NIF = ?, nivel = ? where id = ?';
-			return $this->db->query_update($sql, array($nome, $email, $telefone, $NIF, $nivel, $id));
+			try {
+				return $this->db->query_update($sql, array($nome, $email, $telefone, $NIF, $nivel, $id));
+			} catch (PDOException $e) {
+				if ($this->isDuplicateKey($e)) {
+					return 0;
+				}
+				throw $e;
+			}
 		}
+	}
+
+	private function isDuplicateKey(PDOException $exception): bool
+	{
+		return (int) ($exception->errorInfo[1] ?? 0) === 1062;
 	}
 
 	/**
