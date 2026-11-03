@@ -247,6 +247,23 @@ class Reserva
 		}
 
 	/**
+	 * Devolve os limites inclusivo e exclusivo da semana ISO de uma data.
+	 * @return array{0: string, 1: string}
+	 */
+	private static function intervaloSemanaIso(\DateTimeInterface $dia): array
+	{
+		$data = \DateTimeImmutable::createFromInterface($dia);
+		$inicio = $data
+			->setISODate((int) $data->format('o'), (int) $data->format('W'))
+			->setTime(0, 0);
+
+		return [
+			$inicio->format('Y-m-d'),
+			$inicio->modify('+7 days')->format('Y-m-d'),
+		];
+	}
+
+	/**
 	 * Método listarReservas.
 	 * @param mixed $dia
 	 * @param mixed $tipo
@@ -260,26 +277,29 @@ class Reserva
 			$dia = new \DateTime();
 
 
-		if ($tipo == 'm') {   // m - mês ; w - week
+		if ($tipo == 'm') {
 			// Verifica se o filtro é uma data válida		
 			$data_filtro = $dia->format('Ym');
 			$filtro = 'EXTRACT(YEAR_MONTH FROM dia)';
-			}
-		else {
-			$data_filtro = $dia->format('WY');
-			$filtro = 'CONCAT(EXTRACT(WEEK FROM dia),EXTRACT(YEAR FROM dia))';
-			}
+			$selecaoData = $filtro . ' as data';
+			$condicao = $filtro . ' = ?';
+			$parametros = [$data_filtro];
+		} else {
+			[$inicio, $fim] = self::intervaloSemanaIso($dia);
+			$selecaoData = '? as data';
+			$condicao = 'dia >= ? AND dia < ?';
+			$parametros = [$dia->format('W') . $dia->format('o'), $inicio, $fim];
+		}
 
-		// Consulta corrigida com a cláusula WHERE antes do ORDER BY e uso de parâmetros
-		$sql = ' SELECT ' . $filtro . ' as data, categoria.nome AS categoria, sala.nome AS sala, entidade_desc, dia, periodo.nome AS periodo, status
+		$sql = ' SELECT ' . $selecaoData . ' , categoria.nome AS categoria, sala.nome AS sala, entidade_desc, dia, periodo.nome AS periodo, status
             FROM reserva
             LEFT JOIN sala ON sala_id = sala.id
             LEFT JOIN periodo ON periodo_id = periodo.id
             LEFT JOIN categoria ON sala.categoria_id = categoria.id
-            WHERE    ' . $filtro . ' = ?
+            WHERE ' . $condicao . '
 			            ORDER BY dia, categoria, sala, periodo.seq';
 
-		$reservas = $this->db->query($sql, [$data_filtro]);
+		$reservas = $this->db->query($sql, $parametros);
 
 		$status_n = array('reservada', 'confirmada', 'cancelada');
 
@@ -344,10 +364,10 @@ class Reserva
 			}
 
 		if ($tipo === 'w') {
-			$data_base = $hoje->format('Y-m-d');
+			[$inicio, $fim] = self::intervaloSemanaIso($hoje);
 
-			$sql = "SELECT id FROM reserva WHERE YEARWEEK(dia, 1) = YEARWEEK(?, 1) AND status IN (1, 2)";
-			return $this->db->query($sql, [$data_base]);
+			$sql = "SELECT id FROM reserva WHERE dia >= ? AND dia < ? AND status IN (1, 2)";
+			return $this->db->query($sql, [$inicio, $fim]);
 			}
 
 		$mes = (int) $hoje->format('m');
@@ -382,16 +402,16 @@ class Reserva
 			}
 
 		if ($tipo === 'w') {
-			$data_base = $hoje->format('Y-m-d');
+			[$inicio, $fim] = self::intervaloSemanaIso($hoje);
 
 			$sql = "SELECT u.nome as uso, COUNT(*) as total
                 FROM reserva r
                 LEFT JOIN uso u ON r.uso_id = u.id
-                WHERE YEARWEEK(r.dia, 1) = YEARWEEK(?, 1) AND r.status IN (1, 2)
+                WHERE r.dia >= ? AND r.dia < ? AND r.status IN (1, 2)
                 GROUP BY u.nome
                 ORDER BY total DESC";
 
-			return $this->db->query($sql, [$data_base]);
+			return $this->db->query($sql, [$inicio, $fim]);
 			}
 		else {
 			$mes = (int) $hoje->format('m');
@@ -422,25 +442,45 @@ class Reserva
 			$inicio = $hoje->format('Y-m-d');
 			$fim_str = $fim->format('Y-m-d');
 
-			$sql = "SELECT DATE_FORMAT(MIN(r.dia), '%d/%m/%Y') as data, COUNT(*) as total
+			$sql = "SELECT r.dia as data, COUNT(*) as total
                 FROM reserva r
                 WHERE r.dia BETWEEN ? AND ? AND r.status IN (1, 2)
-                GROUP BY YEARWEEK(r.dia, 1)
-                ORDER BY MIN(r.dia) ASC";
-
-			return $this->db->query($sql, [$inicio, $fim_str]);
-		}
-
-		if ($tipo === 'w') {
-			$data_base = $hoje->format('Y-m-d');
-
-			$sql = "SELECT DATE_FORMAT(r.dia, '%d/%m/%Y') as data, COUNT(*) as total
-                FROM reserva r
-                WHERE YEARWEEK(r.dia, 1) = YEARWEEK(?, 1) AND r.status IN (1, 2)
                 GROUP BY r.dia
                 ORDER BY r.dia ASC";
 
-			return $this->db->query($sql, [$data_base]);
+			$rows = $this->db->query($sql, [$inicio, $fim_str]);
+			$semanas = [];
+			foreach ($rows as $row) {
+				$date = new \DateTimeImmutable((string) $row['data']);
+				$semana = $date->format('o-W');
+				if (!isset($semanas[$semana])) {
+					$semanas[$semana] = [
+						'data' => $date->format('d/m/Y'),
+						'total' => 0,
+					];
+				}
+				$semanas[$semana]['total'] += (int) $row['total'];
+			}
+
+			return array_values($semanas);
+		}
+
+		if ($tipo === 'w') {
+			[$inicio, $fim] = self::intervaloSemanaIso($hoje);
+
+			$sql = "SELECT r.dia as data, COUNT(*) as total
+                FROM reserva r
+                WHERE r.dia >= ? AND r.dia < ? AND r.status IN (1, 2)
+                GROUP BY r.dia
+                ORDER BY r.dia ASC";
+
+			$rows = $this->db->query($sql, [$inicio, $fim]);
+			foreach ($rows as $key => $row) {
+				$date = new \DateTimeImmutable((string) $row['data']);
+				$rows[$key]['data'] = $date->format('d/m/Y');
+			}
+
+			return $rows;
 		}
 
 		$mes = (int) $hoje->format('m');
@@ -479,16 +519,16 @@ class Reserva
 		}
 
 		if ($tipo === 'w') {
-			$data_base = $hoje->format('Y-m-d');
+			[$inicio, $fim] = self::intervaloSemanaIso($hoje);
 
 			$sql = "SELECT COALESCE(s.nome, 'Sem sala') as sala, COUNT(*) as total
                 FROM reserva r
                 LEFT JOIN sala s ON r.sala_id = s.id
-                WHERE YEARWEEK(r.dia, 1) = YEARWEEK(?, 1) AND r.status IN (1, 2)
+                WHERE r.dia >= ? AND r.dia < ? AND r.status IN (1, 2)
                 GROUP BY s.nome
                 ORDER BY total DESC";
 
-			return $this->db->query($sql, [$data_base]);
+			return $this->db->query($sql, [$inicio, $fim]);
 		}
 
 		$mes = (int) $hoje->format('m');
