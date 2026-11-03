@@ -106,6 +106,11 @@ class AuthorizationService
         return $this->validaPermissao('A_RegNovoUtilizador', 0);
     }
 
+    public function perfilProprioAtivo(): bool
+    {
+        return $this->validaPermissao('A_PerfilUtilizador', 0);
+    }
+
     public function validaRota(
         string $action,
         int $nivel,
@@ -123,7 +128,7 @@ class AuthorizationService
             && $userId > 0
             && (int) ($post['id'] ?? $query['id'] ?? 0) === $userId
         ) {
-            return true;
+            return $this->perfilProprioAtivo();
         }
 
         return $this->validaPermissao($permission, $nivel);

@@ -125,7 +125,7 @@ class Permissoes
         "M_EliminarReservasUtilizador" => ['n', false, true, true, "Autoriza eliminar todas as reservas de um utilizador"],
         "M_FiltroUtilizador" => ['n', false, true, true, "Autoriza o filtro por utilizador no dashboard"],
         "A_RegNovoUtilizador" => ['s', true, null, null, "Permite o registo público de novos utilizadores no ecrã de login"],
-        "A_PerfilUtilizador" => ['s', true, null, null, "Autoriza a edição do próprio Perfil, diretamente no Menu. (não implementado)"],
+        "A_PerfilUtilizador" => ['s', true, null, null, "Permite ao utilizador editar o próprio perfil através do menu."],
     ];
 
     /**

@@ -46,7 +46,9 @@ foreach (($menuData['adminItems'] ?? []) as $item) {
          <p><?= htmlspecialchars($menuData['userName'] . ' (' . $menuData['userLevel'] . ')', ENT_QUOTES, 'UTF-8') ?> ▼</p>
       </a>
       <ul class="dropdown-container">
-         <a href="<?= htmlspecialchars($menuData['profileUrl'], ENT_QUOTES, 'UTF-8') ?>"><li>Perfil</li></a>
+         <?php if (!empty($menuData['showProfile'])): ?>
+            <a href="<?= htmlspecialchars($menuData['profileUrl'], ENT_QUOTES, 'UTF-8') ?>"><li>Perfil</li></a>
+         <?php endif; ?>
          <a href="<?= app_url('?acao=logout') ?>"><li>Sair</li></a>
       </ul>
    </div>

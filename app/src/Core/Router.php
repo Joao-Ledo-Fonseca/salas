@@ -191,6 +191,7 @@ class Router
             'userName' => $auth->name(),
             'userLevel' => $permissions->nomeNivel($level, 1),
             'profileUrl' => app_url('?acao=usuario_form&id=' . $auth->id()),
+            'showProfile' => $permissions->perfilProprioAtivo(),
             'showStatistics' => $permissions->validaRota('estatisticas', $level, $auth->id()),
             'showReports' => $permissions->validaRota('relatorios', $level, $auth->id()),
             'adminItems' => $visibleItems,

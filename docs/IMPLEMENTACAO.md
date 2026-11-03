@@ -44,6 +44,7 @@ Variáveis esperadas: `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`
 - No formulário de permissões, uma checkbox ausente no pedido é tratada como desmarcada; guardar aplica a matriz completa, permitindo revogar permissões.
 - As permissões são lidas da base de dados, não da sessão; alterações e revogações aplicam-se no próximo pedido de cada utilizador.
 - `A_RegNovoUtilizador` controla o acesso público ao registo: oculta o link quando desativada e bloqueia pedidos diretos ao formulário ou à submissão.
+- `A_PerfilUtilizador` controla a opção **Perfil** no menu e a autorização do utilizador para abrir/alterar o próprio perfil. Desativá-la oculta a opção e bloqueia o acesso direto à rota; a permissão `M_Utilizadores` continua a controlar a edição de outros utilizadores.
 - Nomes de utilizador e e-mails são verificados contra registos existentes; os índices únicos da base de dados continuam a proteger contra duplicados concorrentes.
 - As ações de rota exigem uma associação explícita a uma permissão existente em `Permissoes::DEFAULTS`; ações sem associação válida são bloqueadas. A página de permissões lista essas rotas em avisos para facilitar a configuração.
 - O dashboard usa `M_Dashboard`; a lista de imagens usa `M_Salas`. Ambas as ações também passam pela autorização antes de responder.

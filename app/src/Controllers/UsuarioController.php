@@ -131,11 +131,11 @@ class UsuarioController
 	 * Método cancelar.
 	 * @return mixed
 	 */
-	public function cancelar()
+	public function cancelar(?bool $isSelf = null)
 		{
 		if (isset($_POST['cancelar'])) {
 
-			header('Location: ' . app_url('?acao=usuario_list'));
+			header('Location: ' . app_url($isSelf ? '' : '?acao=usuario_list'));
 			exit();
 			}
 		return false;
@@ -231,14 +231,14 @@ class UsuarioController
     public function usuarioForm(array $query, array $post): array
     {
         $controller = $this;
-        if ($post !== []) {
-            $controller->cancelar();
-        }
         $auth = new AuthContext();
+        $isSelf = (int) ($post['id'] ?? $query['id'] ?? 0) === $auth->id();
+        if ($post !== []) {
+            $controller->cancelar($isSelf);
+        }
         $reservasUsuario = [];
         $podeEliminarReservas = (new AuthorizationService($this->db))->validaPermissao('M_EliminarReservasUtilizador', $auth->level());
         $error = '';
-        $isSelf = (int) ($post['id'] ?? $query['id'] ?? 0) === $auth->id();
         if (isset($post['eliminar_reservas']) && !$isSelf && $podeEliminarReservas) {
             $targetId = (int) ($post['id'] ?? $query['id'] ?? 0);
             $controller->excluirReservasPorUsuario($targetId);
@@ -279,7 +279,7 @@ class UsuarioController
         } elseif ($saveResult === 0) {
             $error = 'Não é possível criar/editar: Nome ou E-mail já existentes no sistema!';
         } elseif ($saveResult !== null && isset($post['salvar'])) {
-            header('Location: ' . app_url('?acao=usuario_list'));
+            header('Location: ' . app_url($isSelf ? '' : '?acao=usuario_list'));
             exit;
         }
 
@@ -322,6 +322,7 @@ class UsuarioController
             'telefone' => '',
             'NIF' => '',
             'nivel' => 0,
+            'isSelf' => $isSelf,
             'errormsg' => $error,
             'reservasUsuario' => $reservasUsuario,
             'podeEliminarReservas' => $podeEliminarReservas,

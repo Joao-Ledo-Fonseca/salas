@@ -81,6 +81,7 @@ class PermissoesIntegrationTest extends DatabaseTestCase
         $permissions->update(null, 'M_Categorias', null, false, true, false, 'Update');
         $permissions->update(null, 'M_Permissoes', null, false, false, true, 'Update');
         $permissions->update(null, 'M_Utilizadores', null, false, false, false, 'Update');
+        $permissions->update(null, 'A_PerfilUtilizador', null, true, null, null, 'Update');
 
         $middleware = new AuthorizationMiddleware($this->db);
         $this->assertTrue($middleware->isAllowed('categoria_list', 10, 1));
@@ -90,6 +91,23 @@ class PermissoesIntegrationTest extends DatabaseTestCase
         $this->assertFalse($middleware->isAllowed('imagens_list', 10, 0));
         $this->assertTrue($middleware->isAllowed('usuario_form', 10, 0, ['id' => 10]));
         $this->assertFalse($middleware->isAllowed('usuario_form', 10, 0, ['id' => 11]));
+    }
+
+    public function testOwnProfilePermissionControlsSelfEditingRoute(): void
+    {
+        $permissions = new Permissoes($this->db);
+        $permissions->ensureDefaults();
+        $permissions->update(null, 'M_Utilizadores', null, true, true, true, 'Update');
+        $permissions->update(null, 'A_PerfilUtilizador', null, true, null, null, 'Update');
+
+        $middleware = new AuthorizationMiddleware($this->db);
+        $this->assertTrue($middleware->isAllowed('usuario_form', 10, 0, ['id' => 10]));
+
+        $permissions->update(null, 'A_PerfilUtilizador', null, false, null, null, 'Update');
+
+        $this->assertFalse($middleware->isAllowed('usuario_form', 10, 0, ['id' => 10]));
+        $this->assertFalse($middleware->isAllowed('usuario_form', 10, 3, ['id' => 10]));
+        $this->assertTrue($middleware->isAllowed('usuario_form', 11, 1, ['id' => 10]));
     }
 
     public function testUnknownPermissionAndInvalidLevelAreDenied(): void

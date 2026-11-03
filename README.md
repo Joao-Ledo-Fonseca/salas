@@ -208,6 +208,7 @@ Permissões relevantes:
 - Dashboard com filtro por categoria (salas) e, para utilizadores autorizados, filtro por utilizador (dropdown à direita do filtro de categorias), com tooltips identificativos.
 - Tabela do dashboard compacta, com scroll interno, para melhor aproveitamento do ecrã.
 - Formulários de sala e utilizador mostram as reservas associadas numa tabela compacta partilhada, com status por extenso e ações de eliminação sujeitas às permissões; o utilizador pode eliminar as próprias reservas.
+- A permissão simples `A_PerfilUtilizador` controla a opção **Perfil** no menu do utilizador e o acesso à edição do próprio perfil; utilizadores com `M_Utilizadores` continuam a poder editar outros utilizadores.
 - Relatórios semanais usam semanas ISO (segunda-feira a domingo), incluindo corretamente semanas que atravessam a mudança do ano; gráficos de períodos personalizados também agregam por semana ISO.
 - Entidade "Uso" (tabela, form, lista, permissão `M_Usos`) e dropdown de usos no formulário de reservas.
 - Lista de salas com filtro por categoria e estado (activas/inactivas/todas).

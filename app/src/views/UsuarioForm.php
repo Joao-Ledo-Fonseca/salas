@@ -85,7 +85,7 @@ use Salas\Core\Validation\Validator;
         </table>
 
         <input type="submit" name="salvar" value="Salvar" class="btn1" />
-        <input type="button" value="Cancelar" class="btn1" onclick="window.location.href='<?= htmlspecialchars(app_url('?acao=usuario_list'), ENT_QUOTES, 'UTF-8') ?>'" />
+        <input type="button" value="Cancelar" class="btn1" onclick="window.location.href='<?= htmlspecialchars(app_url(!empty($isSelf) ? '' : '?acao=usuario_list'), ENT_QUOTES, 'UTF-8') ?>'" />
         <input type="submit" name="excluir" value="Excluir" class="btn1 inline-form" id="excluir" />
     </form></div>
 </div>
