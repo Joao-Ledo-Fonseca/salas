@@ -24,11 +24,10 @@ C:\wamp64\dev\salas\
     sgreserva.sql          # dump para instalação inicial
     .htaccess            # impede acesso web direto a app/
     src\                  # código privado da aplicação; não publicar como DocumentRoot
-      config\             # configuração, arranque e rotas
-      application\        # serviços, páginas e roteamento
-      core\      # auth, HTTP, validação, persistência e suporte
-      controllers\        # controladores MVC
-      models\             # modelos e acesso à base de dados
+      Config\             # configuração, arranque e rotas
+      Controllers\        # controladores MVC
+      Core\               # autenticação, HTTP, validação, persistência e suporte
+      Models\             # modelos e acesso à base de dados
       views\              # páginas e componentes de apresentação
     public\                # único diretório que deve ser servido pelo Apache
       index.php            # front controller
@@ -46,11 +45,10 @@ C:\wamp64\dev\salas\
 
 ## Descrição das pastas em `app/src/`
 
-- `config/` — configuração da aplicação (`AppConfig`), arranque (`bootstrap.php`) e rotas (`routes.php`).
-- `core/` — auth, HTTP, validação, persistência (Database, Repositories) e suporte.
-- `controllers/` — controladores HTTP/MVC que coordenam pedidos, autorização e preparação de dados.
-- `application/` — serviços, páginas e roteamento.
-- `models/` — modelos de domínio e acesso a dados (compatibilidade e consultas).
+- `Config/` — configuração da aplicação (`AppConfig`), arranque (`bootstrap.php`) e rotas (`routes.php`).
+- `Core/` — autenticação, HTTP, validação, persistência (`Database`) e suporte.
+- `Controllers/` — controladores HTTP/MVC que coordenam pedidos, autorização e preparação de dados.
+- `Models/` — modelos de domínio e acesso a dados.
 - `views/` — vistas PHP responsáveis apenas pela apresentação.
 
 
@@ -79,7 +77,7 @@ Os redirecionamentos da lista de salas preservam os filtros na query string. A g
 As vistas não leem parâmetros do pedido nem chamam controllers: recebem dados já preparados, apresentam formulários e geram HTML. O `Router` encaminha os pedidos, o `AuthorizationMiddleware` valida acessos e o `ApplicationPageController` coordena as operações. Os controllers de domínio usam serviços e repositórios; os modelos e repositórios concentram o acesso à base de dados. A validação de entrada é feita por `Validator`, a autenticação e autorização são resolvidas antes de incluir qualquer vista, e a renderização é centralizada em `ViewRenderer`.
 
 ### Cabeçalho de relatórios/estatísticas (`cabecalho.php`)
-As views de relatórios (`Relatorios.php`, `Estatisticas.php`) incluem o componente `app/src/views/cabecalho.php` para apresentar o título, navegação (semanal/mensal/período), filtros de data e botões de tipo. Este componente requer as variáveis `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`, `$titulo`, `$hoje`, `$inicio`, `$fim`, `$dia_anterior` e `$dia_posterior`. A view define `$acaoPagina` antes do `include`, garantindo que o formulário do cabeçalho envia a ação correta (`acao=relatorios` ou `acao=estatisticas`).
+As views de relatórios (`Relatorios.php`, `Estatisticas.php`) incluem o componente `app/src/views/components/cabecalho.php` para apresentar o título, navegação (semanal/mensal/período), filtros de data e botões de tipo. Este componente requer as variáveis `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`, `$titulo`, `$hoje`, `$inicio`, `$fim`, `$dia_anterior` e `$dia_posterior`. A view define `$acaoPagina` antes do `include`, garantindo que o formulário do cabeçalho envia a ação correta (`acao=relatorios` ou `acao=estatisticas`).
 
 ## Deployment de uma atualização
 
@@ -209,7 +207,8 @@ Permissões relevantes:
 
 - Dashboard com filtro por categoria (salas) e, para utilizadores autorizados, filtro por utilizador (dropdown à direita do filtro de categorias), com tooltips identificativos.
 - Tabela do dashboard compacta, com scroll interno, para melhor aproveitamento do ecrã.
-- Formulário de utilizador com lista de reservas do utilizador (compacta, com scroll próprio, status por extenso e botão de eliminação por linha, além de eliminação de todas as reservas).
+- Formulários de sala e utilizador mostram as reservas associadas numa tabela compacta partilhada, com status por extenso e ações de eliminação sujeitas às permissões; o utilizador pode eliminar as próprias reservas.
+- Relatórios semanais usam semanas ISO (segunda-feira a domingo), incluindo corretamente semanas que atravessam a mudança do ano; gráficos de períodos personalizados também agregam por semana ISO.
 - Entidade "Uso" (tabela, form, lista, permissão `M_Usos`) e dropdown de usos no formulário de reservas.
 - Lista de salas com filtro por categoria e estado (activas/inactivas/todas).
 - Formulário de salas com overlay de seleção de imagem (miniaturas existentes, carregar nova, remover). Imagens gravadas sem `addslashes` (prepared statements).
