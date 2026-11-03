@@ -33,6 +33,10 @@ As views `Relatorios.php` e `Estatisticas.php` incluem `components/cabecalho.php
 ```
 Variáveis esperadas: `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`, `$titulo`, `$hoje`, `$inicio`, `$fim`, `$dia_anterior`, `$dia_posterior`.
 
+### Ações partilhadas das vistas
+- `components/AcoesLista.php` centraliza o botão de criação, formulário e token CSRF nas listas de categorias, períodos, usos e utilizadores.
+- `components/AcoesFormulario.php` centraliza Guardar/Excluir/Cancelar nos formulários CRUD, suportando cancelamento por submissão ou redirecionamento para preservar os fluxos existentes.
+
 ### Autenticação
 - `Authenticator` valida credenciais (`CredentialRepository`)
 - `SessionManager` gere a identidade (chaves legadas: `user_id`, `user_nome`, `user_nivel`)
@@ -81,6 +85,7 @@ Variáveis esperadas: `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`
 - `Unit/ThemeLoaderTest.php`: valida temas, variáveis CSS e o objeto `Theme`
 - `Unit/ReservaWeeklyReportsTest.php`: valida intervalos ISO e agregações semanais, incluindo a mudança do ano
 - `Unit/ReservasAssociadasTest.php`: valida a apresentação das reservas associadas e a eliminação de reserva do próprio utilizador
+- `Unit/ViewComponentsTest.php`: valida componentes de vista, incluindo ações comuns de listas e formulários CRUD
 - `Unit/PermissionPhaseOneTest.php`: valida limites de atribuição de nível e gravação completa do formulário de permissões
 - `Integration/PermissoesIntegrationTest.php`: valida atualizações/revogações com sessão ativa, defaults sem efeitos laterais, rotas permitidas/bloqueadas e inventário de políticas
 - `Integration/PublicRegistrationIntegrationTest.php`: valida controlo do registo público, retorno de sucesso e unicidade de nome/e-mail

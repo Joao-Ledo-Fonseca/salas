@@ -63,14 +63,17 @@ use Salas\Core\Validation\Validator;
                     <td><input type="checkbox" name='activa' value=activa <?= ($activa ? "checked" : "") ?> ></td>
                 </tr>
             </table>
-            <input type="submit" name="salvar" value="Salvar" class="btn1" />
-            <input type="submit" name="excluir" value="Excluir" class="btn1" />
 <?php
 $cancelUrl = (($return_to ?? '') !== '')
     ? app_url('?acao=' . ($return_to ?? '') . '&id=' . (int) ($return_id ?? 0))
     : app_url('?acao=sala_list&categoria_id=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro));
+$acoesFormulario = [
+    'salvar' => true,
+    'excluir' => true,
+    'cancelar' => ['mode' => 'redirect', 'url' => $cancelUrl],
+];
+include __DIR__ . '/components/AcoesFormulario.php';
 ?>
-            <input type="button" value="Cancelar" class="btn1" onclick="window.location.href='<?= htmlspecialchars($cancelUrl, ENT_QUOTES, 'UTF-8') ?>'" />
         </form>
 
     </div>

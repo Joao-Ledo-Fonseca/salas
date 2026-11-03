@@ -43,9 +43,19 @@ use Salas\Core\Validation\Validator;
 
         <br>
         <div class="form_sel lista_comum">
-            <input type="submit" name="salvar" value="Salvar" class="btn1" />
-            <input type="submit" name="excluir" value="Excluir" class="btn1" />
-            <input type="submit" name="cancelar" value="Cancelar" class="btn1 inline-form" id="cancelar" onclick="cancelaInputsRequired()" />
+            <?php
+            $acoesFormulario = [
+                'salvar' => true,
+                'excluir' => true,
+                'cancelar' => [
+                    'mode' => 'submit',
+                    'class' => 'btn1 inline-form',
+                    'id' => 'cancelar',
+                    'clearRequired' => true,
+                ],
+            ];
+            include __DIR__ . '/components/AcoesFormulario.php';
+            ?>
         </div>
     </form>
 </div>

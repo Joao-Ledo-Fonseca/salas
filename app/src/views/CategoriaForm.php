@@ -48,9 +48,14 @@ use Salas\Core\Validation\Validator;
 
         <br>
         <div class="form_sel lista_comum">
-            <input type="submit" name="salvar" value="Salvar" class="btn1" />
-            <input type="submit" name="excluir" value="Excluir" class="btn1" />
-            <input type="button" value="Cancelar" class="btn1" onclick="window.location.href='<?= htmlspecialchars(app_url('?acao=categoria_list'), ENT_QUOTES, 'UTF-8') ?>'" />
+            <?php
+            $acoesFormulario = [
+                'salvar' => true,
+                'excluir' => true,
+                'cancelar' => ['mode' => 'redirect', 'url' => app_url('?acao=categoria_list')],
+            ];
+            include __DIR__ . '/components/AcoesFormulario.php';
+            ?>
         </div>
     </form>
 </div>
@@ -82,5 +87,4 @@ use Salas\Core\Validation\Validator;
         </div>
     <?php endif; ?>
 </div>
-
 

@@ -47,6 +47,56 @@ class ViewComponentsTest extends TestCase
         $this->assertStringContainsString('<td></td>', $html);
     }
 
+    public function testListActionsRenderCreateButtonAndCsrfField(): void
+    {
+        $html = $this->render('AcoesLista.php', [
+            'acoesLista' => [
+                'createUrl' => 'categoria_form.php',
+                'containerClass' => 'container_top lista_comum',
+            ],
+        ]);
+
+        $this->assertStringContainsString('class="container_top lista_comum"', $html);
+        $this->assertStringContainsString('method="post" target="_self"', $html);
+        $this->assertStringContainsString('name="novo" value="Novo"', $html);
+        $this->assertStringContainsString('abre(&quot;categoria_form.php&quot;)', $html);
+        $this->assertMatchesRegularExpression('/name="csrf_token" value="[a-f0-9]{64}"/', $html);
+    }
+
+    public function testCrudFormActionsSupportRedirectAndSubmitCancel(): void
+    {
+        $redirectHtml = $this->render('AcoesFormulario.php', [
+            'acoesFormulario' => [
+                'salvar' => true,
+                'excluir' => true,
+                'cancelar' => [
+                    'mode' => 'redirect',
+                    'url' => '/?acao=sala_list&categoria_id=2',
+                ],
+            ],
+        ]);
+        $submitHtml = $this->render('AcoesFormulario.php', [
+            'acoesFormulario' => [
+                'salvar' => true,
+                'excluir' => true,
+                'cancelar' => [
+                    'mode' => 'submit',
+                    'class' => 'btn1 inline-form',
+                    'id' => 'cancelar',
+                    'clearRequired' => true,
+                ],
+            ],
+        ]);
+
+        $this->assertStringContainsString('type="submit" name="salvar" value="Salvar"', $redirectHtml);
+        $this->assertStringContainsString('type="submit" name="excluir" value="Excluir"', $redirectHtml);
+        $this->assertStringContainsString('window.location.href=', $redirectHtml);
+        $this->assertStringContainsString('categoria_id=2', $redirectHtml);
+        $this->assertStringContainsString('type="submit" name="cancelar"', $submitHtml);
+        $this->assertStringContainsString('class="btn1 inline-form" id="cancelar"', $submitHtml);
+        $this->assertStringContainsString('onclick="cancelaInputsRequired()"', $submitHtml);
+    }
+
     public function testRoomImageSelectorRendersFormConfigurationAndPreview(): void
     {
         $html = $this->render('SeletorImagemSala.php', [

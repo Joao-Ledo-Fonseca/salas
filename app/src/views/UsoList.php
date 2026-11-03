@@ -8,14 +8,10 @@ $titulo = 'Cadastro de Usos';
 include __DIR__ . "/components/cabecalho2.php";
 ?>
 
-<div class="container_top lista_comum" style="max-height:60vh; overflow-y:auto;">
-    <form class="form_sel" name="form1" method="post" target="_self">
-        <span style="float:left;">
-            <input type="button" name="novo" value="Novo" class="btn1" onclick="abre('uso_form.php')" />
-        </span>
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\Salas\Core\Support\Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
-    </form>
-</div>
+<?php
+$acoesLista = ['createUrl' => 'uso_form.php'];
+include __DIR__ . '/components/AcoesLista.php';
+?>
 <div class="container_conteudo lista_comum" style="max-height:60vh; overflow-y:auto;">
     <?php
     $colunas = [

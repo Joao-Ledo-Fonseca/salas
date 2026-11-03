@@ -23,11 +23,10 @@ use Salas\Core\Validation\Validator;
 
 
 
-<div class="container_top lista_comum" style="max-height:60vh; overflow-y:auto;">
-    <div class="form_sel">
-        <input type="button" name="novo" value="Novo" class="btn1" onclick='abre("periodo_form.php")' />
-    </div>
-</div>
+<?php
+$acoesLista = ['createUrl' => 'periodo_form.php'];
+include __DIR__ . '/components/AcoesLista.php';
+?>
 
 <div class="container_conteudo lista_comum" style="max-height:60vh; overflow-y:auto;">
     <?php

@@ -1,5 +1,4 @@
 <?php
-use Salas\Core\Support\Csrf;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
 use Salas\Models\Categoria;
@@ -23,12 +22,10 @@ use Salas\Core\Validation\Validator;
 
 
 
-<div class="lista_comum container_top" style="max-height:60vh; overflow-y:auto;">
-    <form class="form_sel" name="form1" method="post" target="_self">
-        <input type="button" name="novo" value="Novo" class="btn1" onclick="abre('usuario_form.php')" />
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
-    </form>
-</div>
+<?php
+$acoesLista = ['createUrl' => 'usuario_form.php'];
+include __DIR__ . '/components/AcoesLista.php';
+?>
 
 <div class="container_conteudo" style="max-height:60vh; overflow-y:auto;">
     <?php
