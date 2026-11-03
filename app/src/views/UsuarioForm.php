@@ -102,46 +102,13 @@ use Salas\Core\Validation\Validator;
             </form>
         <?php endif; ?>
     </div>
-    <?php if (empty($reservasUsuario)): ?>
-        <p>Nenhuma reserva encontrada.</p>
-    <?php else: ?>
-        <?php $statusNomes = [1 => 'Reservado', 2 => 'Confirmado', 3 => 'Cancelado']; ?>
-        <div class="scroll-xy">
-            <table class="tabela_comum table-compact" cellpadding="0" cellspacing="0">
-                <tr class="border-bottom-999">
-                    <th class="p-0-3">ID</th>
-                    <th class="p-0-3">Sala</th>
-                    <th class="p-0-3">Período</th>
-                    <th class="p-0-3">Dia</th>
-                    <th class="p-0-3">Uso</th>
-                    <th class="p-0-3">Status</th>
-                    <th class="p-0-3">Eliminar</th>
-                </tr>
-                <?php foreach ($reservasUsuario as $reserva): ?>
-                    <tr class="lh-1">
-                        <td class="p-0-3"><?= (int) $reserva['id'] ?></td>
-                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['sala'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['periodo'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['dia'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td class="p-0-3"><?= htmlspecialchars((string) $reserva['uso'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td class="p-0-3"><?= htmlspecialchars($statusNomes[(int)$reserva['status']] ?? (string)$reserva['status'], ENT_QUOTES, 'UTF-8') ?></td>
-                        <td class="p-0-3">
-                            <?php if ($podeEliminarReservas): ?>
-                                <form method="post" action="<?= app_url('?acao=usuario_form') ?>" class="inline-form">
-                                    <input type="hidden" name="id" value="<?= (int) $id ?>" />
-                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8') ?>" />
-                                    <input type="hidden" name="eliminar_reserva" value="1" />
-                                    <input type="hidden" name="reserva_id" value="<?= (int) $reserva['id'] ?>" />
-                                    <button type="submit" class="btn1 btn-small">Eliminar</button>
-                                </form>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-            <hr class="hr-compact" />
-        </div>
-    <?php endif; ?>
+    <?php
+    $reservasAssociadas = $reservasUsuario;
+    $mostrarUtilizador = false;
+    $urlEliminarReserva = app_url('?acao=usuario_form&id=' . (int) $id);
+    $camposEliminarReserva = ['id' => (int) $id];
+    include __DIR__ . '/components/ReservasAssociadas.php';
+    ?>
 </div>
 
 <script>

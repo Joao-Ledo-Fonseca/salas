@@ -297,7 +297,7 @@ class SalaController
         if ($post !== []) {
             $controller->cancelar($categoryFilter, $activeFilter, $returnTo, $returnId);
             $deleteResult = $controller->excluir($categoryFilter, $activeFilter, $returnTo, $returnId);
-            if ($deleteResult === false) {
+            if (isset($post['excluir']) && $deleteResult === false) {
                 $error = 'Sala não pode ser excluída. Existem reservas associadas.';
             }
             $controller->salvar($categoryFilter, $activeFilter, $returnTo, $returnId);

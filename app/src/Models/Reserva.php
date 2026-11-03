@@ -139,6 +139,16 @@ class Reserva
 		}
 
 	/**
+	 * Elimina uma reserva apenas se pertencer ao utilizador indicado.
+	 * @return int
+	 */
+	public function excluirPorIdEUsuario(int $reservaId, int $usuarioId): int
+	{
+		$sql = 'delete from reserva where id = ? and usuario_id = ?';
+		return $this->db->query_update($sql, [$reservaId, $usuarioId]);
+	}
+
+	/**
 	 * Método salvar.
 	 * @param mixed $id
 	 * @param mixed $dia

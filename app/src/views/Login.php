@@ -70,7 +70,7 @@ use Salas\Core\Validation\Validator;
                         title="Sistema de Reservas de Salas de Aula" width="220" height="72" />
                     <br />
                     <br />
-                    versão <strong>1.3</strong>&nbsp;<br />
+                    versão <strong>2.0</strong>&nbsp;<br />
                 </div>
                 <!-- <span class="text-error"><?php echo $loginView['errormsg'] ?? ''; ?></span><br /> -->
 

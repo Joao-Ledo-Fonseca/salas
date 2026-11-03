@@ -238,9 +238,14 @@ class UsuarioController
         }
         if (isset($post['eliminar_reserva'])) {
             $reservaId = (int) ($post['reserva_id'] ?? 0);
-            if ($reservaId > 0 && ($podeEliminarReservas || $isSelf)) {
+            if ($reservaId > 0 && $podeEliminarReservas) {
                 (new Reserva($this->db))->excluir($reservaId);
                 $error = 'Reserva eliminada com sucesso.';
+            } elseif ($reservaId > 0 && $isSelf) {
+                $deleted = (new Reserva($this->db))->excluirPorIdEUsuario($reservaId, $auth->id());
+                $error = $deleted > 0
+                    ? 'Reserva eliminada com sucesso.'
+                    : 'A reserva não existe ou não pertence a este utilizador.';
             }
         }
 
@@ -310,6 +315,7 @@ class UsuarioController
             'errormsg' => $error,
             'reservasUsuario' => $reservasUsuario,
             'podeEliminarReservas' => $podeEliminarReservas,
+            'podeEliminarReserva' => $podeEliminarReservas || $isSelf,
             'levelOptions' => $levelOptions,
             'sessionUserName' => (new AuthContext())->name(),
             'sessionUserLevel' => (new AuthContext())->level(),
