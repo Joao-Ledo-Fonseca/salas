@@ -2,7 +2,7 @@
      Documentação: usado pelas views de relatório (ex: Relatorios.php) e estatística (ex: Estatisticas.php).
      Variáveis esperadas: $acaoPagina (string), $tipo, $mostrarNavEsq (bool|false), $mostrarNavDir (bool|false),
      $titulo, $hoje, $inicio, $fim, $dia_anterior, $dia_posterior, $acaoPagina.
-     Uso: <?php include __DIR__ . "/cabecalho.php"; ?>
+     Uso: incluir este componente a partir das views de relatório ou estatísticas.
 -->
 <div class="container">
     <div class="titulo_inicial">

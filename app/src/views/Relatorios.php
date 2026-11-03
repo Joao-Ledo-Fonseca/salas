@@ -84,7 +84,7 @@ use Salas\Core\Validation\Validator;
             <?php
             // Esta view usa o cabeçalho padrão A para relatórios (cabecalho.php)
             $acaoPagina = 'relatorios';
-            include __DIR__ . "/cabecalho.php";
+            include __DIR__ . "/components/cabecalho.php";
             ?>
 
             <div id="mensagem"> </div>

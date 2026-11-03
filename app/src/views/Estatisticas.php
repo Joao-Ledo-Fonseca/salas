@@ -1,19 +1,7 @@
 <?php
-use Salas\Core\Support\Csrf;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
-use Salas\Models\Categoria;
-use Salas\Models\Usuario;
-use Salas\Models\Periodo;
 use Salas\Models\Uso;
-use Salas\Controllers\SalaController;
-use Salas\Controllers\CategoriaController;
-use Salas\Controllers\UsuarioController;
-use Salas\Controllers\ReservaController;
-use Salas\Controllers\PeriodoController;
-use Salas\Controllers\UsoController;
-use Salas\Controllers\PermissoesController;
-use Salas\Core\Validation\Validator;
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +48,7 @@ use Salas\Core\Validation\Validator;
   <?php
   // Esta view usa o cabeçalho padrão A para estatísticas (cabecalho.php)
   $acaoPagina = 'estatisticas';
-  include __DIR__ . "/cabecalho.php";
+  include __DIR__ . "/components/cabecalho.php";
   ?>
 
     <div id="mensagem"> </div>

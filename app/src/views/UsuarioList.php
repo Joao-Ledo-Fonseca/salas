@@ -18,7 +18,7 @@ use Salas\Core\Validation\Validator;
 
  <?php
   $titulo = 'Lista de Utilizadores';
-  include __DIR__ . "/cabecalho2.php";
+  include __DIR__ . "/components/cabecalho2.php";
   ?>
 
 
