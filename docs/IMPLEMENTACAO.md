@@ -66,6 +66,7 @@ Variáveis esperadas: `$acaoPagina`, `$tipo`, `$mostrarNavEsq`, `$mostrarNavDir`
 - `light.json` / `dark.json`: cores (`colors`), dashboard (`dashboard`), fonte (`fontFamily`, `fontSizeBase`)
 - `ThemeLoader` expõe `$cfg->theme`, `$cfg->availableThemes`
 - Troca: `APP_THEME`, `?theme=dark` ou `window.SalasTheme.set()`
+- A navegação de datas e as setas do datepicker usam as cores do tema; no editor, o preview recalcula o contraste dos ícones quando a cor base muda.
 
 ### Deployment
 - `DocumentRoot` deve apontar para `app/public/`

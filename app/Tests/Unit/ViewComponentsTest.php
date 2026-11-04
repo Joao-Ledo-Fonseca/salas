@@ -97,6 +97,19 @@ class ViewComponentsTest extends TestCase
         $this->assertStringContainsString('onclick="cancelaInputsRequired()"', $submitHtml);
     }
 
+    public function testReportDateNavigationUsesThemeAwareSvgButtons(): void
+    {
+        $html = $this->render('cabecalho.php', [
+            'acaoPagina' => 'relatorios',
+            'tipo' => 'd',
+            'hoje' => new \DateTimeImmutable('2025-01-01'),
+            'hoje_pt' => '01/01/2025',
+        ]);
+
+        $this->assertSame(2, substr_count($html, '<svg viewBox="0 0 24 24" aria-hidden="true">'));
+        $this->assertSame(2, substr_count($html, 'aria-label='));
+    }
+
     public function testRoomImageSelectorRendersFormConfigurationAndPreview(): void
     {
         $html = $this->render('SeletorImagemSala.php', [

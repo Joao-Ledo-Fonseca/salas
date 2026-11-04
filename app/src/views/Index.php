@@ -36,8 +36,8 @@ use Salas\Core\Validation\Validator;
 	<script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
 	<script src="<?= app_url('/js/theme.js') ?>"></script>
 
-	<link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
 	<link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
+	<link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
 	<?php require __DIR__ . '/ThemeFontLinks.php'; ?>
 
 	<?php if (!empty($cfg) && isset($cfg->theme)): ?>
@@ -191,11 +191,15 @@ use Salas\Core\Validation\Validator;
 		<div class="titulo_inicial">
 
 			<div class="toolbar-row">
-				<img src="<?= app_url('/img/double_arrow_left.png') ?>" width="26" height="26" alt="Reserva Anterior"
-					Title="Reserva Anterior" class="nav-button<?= ($dashboardView['previousReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>"
-					onclick="alteraData(dia_prev)" />
-				<img src="<?= app_url('/img/chevron_left.png') ?>" class="nav-button" width="26" height="26" alt="Dia anterior"
-					Title="Dia anterior" onclick="alteraData(dia_anterior)" />
+				<button type="button" class="nav-button<?= ($dashboardView['previousReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>"
+					<?= ($dashboardView['previousReservation'] == $dashboardView['dateLabel'] ? 'disabled' : '') ?>
+					aria-label="Reserva Anterior" title="Reserva Anterior" onclick="alteraData(dia_prev)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 18-6-6 6-6M19 18l-6-6 6-6" /></svg>
+				</button>
+				<button type="button" class="nav-button" aria-label="Dia anterior" title="Dia anterior"
+					onclick="alteraData(dia_anterior)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+				</button>
 
 				<div class="date-center">
 					<form method="get" action="index.php" target="_self" name="form1">
@@ -205,11 +209,15 @@ use Salas\Core\Validation\Validator;
 					</form>
 				</div>
 
-				<img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" width="26" height="26" alt="Dia posterior"
-					Title="Dia Seguinte" onclick="alteraData(dia_posterior)" />
-				<img src="<?= app_url('/img/double_arrow_right.png') ?>" width="26" height="26" alt="Reserva Seguinte"
-					Title="Reserva Seguinte" class="nav-button<?= ($dashboardView['nextReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>"
-					onclick="alteraData(dia_next)" />
+				<button type="button" class="nav-button" aria-label="Dia posterior" title="Dia Seguinte"
+					onclick="alteraData(dia_posterior)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+				</button>
+				<button type="button" class="nav-button<?= ($dashboardView['nextReservation'] == $dashboardView['dateLabel'] ? ' disabled' : '') ?>"
+					<?= ($dashboardView['nextReservation'] == $dashboardView['dateLabel'] ? 'disabled' : '') ?>
+					aria-label="Reserva Seguinte" title="Reserva Seguinte" onclick="alteraData(dia_next)">
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 18 6-6-6-6M13 18l6-6-6-6" /></svg>
+				</button>
 			</div>
 
 			<div class="dashboard-legend">

@@ -10,8 +10,10 @@
 
             <!-- Chevron Esquerdo: Oculto no Modo Período -->
             <?php if (($tipo ?? '') != 'p'): ?>
-                <img src="<?= app_url('/img/chevron_left.png') ?>" alt="Anterior" class="nav-button"
-                    onclick="alteraData(dia_anterior)" />
+                <button type="button" aria-label="Anterior" title="Anterior" class="nav-button"
+                    onclick="alteraData(dia_anterior)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+                </button>
             <?php endif; ?>
 
             <div class="date-center" style="<?= (($tipo ?? '') == 'p') ? 'margin-left: 0; padding-left: 0;' : '' ?>">
@@ -51,8 +53,10 @@
 
             <!-- Chevron Direito: Oculto no Modo Período -->
             <?php if (($tipo ?? '') != 'p'): ?>
-                <img src="<?= app_url('/img/chevron_right.png') ?>" class="nav-button" alt="Próximo"
-                    onclick="alteraData(dia_posterior)" />
+                <button type="button" aria-label="Próximo" title="Próximo" class="nav-button"
+                    onclick="alteraData(dia_posterior)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                </button>
             <?php endif; ?>
 
         </div>
