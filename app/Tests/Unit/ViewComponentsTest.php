@@ -122,13 +122,14 @@ class ViewComponentsTest extends TestCase
 
         $this->assertStringContainsString('data-sala-id="4"', $html);
         $this->assertStringContainsString('data-category-filter="2&amp;x"', $html);
+        $this->assertStringContainsString('data-upload-url=', $html);
         $this->assertStringContainsString('name="imagem_id" id="imagem_id" value="8" form="sala-form"', $html);
         $this->assertStringContainsString('name="imagem" id="newimagem" type="file"', $html);
         $this->assertStringContainsString('src="data:image/jpeg;base64,' . base64_encode('room-image') . '"', $html);
         $this->assertStringContainsString('id="overlayImagens"', $html);
     }
 
-    public function testRoomFormLoadsImageSelectorScriptAndAssociatesUploadWithForm(): void
+    public function testRoomFormLoadsImageSelectorScriptAndImmediateUpload(): void
     {
         $html = $this->renderView('SalaForm.php', [
             'id' => 4,
@@ -149,12 +150,11 @@ class ViewComponentsTest extends TestCase
             'podeEliminarReservas' => false,
         ]);
         $dom = new \DOMDocument();
-        $dom->loadHTML($html);
+        @$dom->loadHTML($html);
         $xpath = new \DOMXPath($dom);
 
-        $this->assertSame(
-            'sala-form',
-            $xpath->query('//*[@id="newimagem"]')->item(0)?->attributes?->getNamedItem('form')?->nodeValue
+        $this->assertNull(
+            $xpath->query('//*[@id="newimagem"]')->item(0)?->attributes?->getNamedItem('form')
         );
         $this->assertSame(
             'sala-form',

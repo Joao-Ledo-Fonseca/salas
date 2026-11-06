@@ -62,7 +62,7 @@ class Router
         return array_values(array_unique(array_merge(
             array_keys(self::ROUTES),
             array_keys($configuredRoutes),
-            ['dashboard', 'imagens_list']
+            ['dashboard', 'imagens_list', 'imagens_upload']
         )));
     }
 
@@ -236,6 +236,28 @@ class Router
         $ctrl = new SalaController($this->db);
         header('Content-Type: application/json; charset=UTF-8');
         echo $ctrl->listarImagensJson($request->allQuery());
+    }
+
+    /**
+     * Método imagensUpload.
+     * @param \Salas\Core\Http\Request $request
+     * @return void
+     */
+    public function imagensUpload(\Salas\Core\Http\Request $request): void
+    {
+        if (!Csrf::validate($request->post('csrf_token'))) {
+            http_response_code(403);
+            echo json_encode(['error' => 'CSRF token inválido.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        (new AuthorizationMiddleware($this->db))->authorize(
+            'imagens_upload',
+            $request->allQuery(),
+            $request->allPost()
+        );
+        $ctrl = new SalaController($this->db);
+        header('Content-Type: application/json; charset=UTF-8');
+        echo $ctrl->uploadImagemJson($_FILES, $request->allPost());
     }
 
 

@@ -73,23 +73,19 @@
         thumb.className = 'img-thumb';
         thumb.dataset.id = image.id;
         thumb.dataset.base64 = image.base64;
-        thumb.style.cssText = 'position:relative; cursor:pointer; border:1px solid #ccc; border-radius:4px; overflow:hidden; text-align:center;';
 
         var imageElement = document.createElement('img');
         imageElement.src = 'data:image/jpeg;base64,' + image.base64;
         imageElement.alt = image.nome;
-        imageElement.style.cssText = 'width:100%; height:60px; object-fit:cover;';
         thumb.appendChild(imageElement);
 
         var label = document.createElement('div');
-        label.style.cssText = 'font-size:9px; padding:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
         label.textContent = image.nome;
         thumb.appendChild(label);
 
         var deleteButton = document.createElement('button');
         deleteButton.type = 'button';
         deleteButton.className = 'eliminar-imagem';
-        deleteButton.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(128,128,128,0.7); color:#fff; border:none; border-radius:50%; width:1.14rem; height:1.14rem; font-size:0.71rem; line-height:1rem; padding:0; cursor:pointer; z-index:10;';
         deleteButton.title = 'Eliminar imagem';
         deleteButton.setAttribute('aria-label', 'Eliminar imagem ' + image.nome);
         deleteButton.textContent = '×';
@@ -150,14 +146,28 @@
     imageInput.addEventListener('change', function () {
         if (!imageInput.files || !imageInput.files[0]) return;
 
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            setPreview(event.target.result);
-            imageIdInput.value = '';
-        };
-        reader.onerror = function () {
-            showError('Não foi possível pré-visualizar a imagem selecionada.');
-        };
-        reader.readAsDataURL(imageInput.files[0]);
+        var formData = new FormData();
+        formData.append('imagem', imageInput.files[0]);
+        formData.append('csrf_token', selector.dataset.csrfToken);
+
+        clearError();
+
+        fetch(selector.dataset.uploadUrl, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(function (response) {
+            if (!response.ok) throw new Error('Não foi possível carregar e gravar a imagem.');
+            return response.json();
+        }).then(function (data) {
+            if (data && data.image) {
+                var img = data.image;
+                imageIdInput.value = img.id;
+                setPreview('data:image/jpeg;base64,' + img.base64);
+                appendImage(img);
+            }
+        }).catch(function () {
+            showError('Não foi possível gravar a imagem na base de dados. Tente novamente.');
+        });
     });
 })();

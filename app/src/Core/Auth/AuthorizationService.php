@@ -26,6 +26,7 @@ class AuthorizationService
         'sala_list' => 'M_Salas',
         'sala_form' => 'M_Salas',
         'imagens_list' => 'M_Salas',
+        'imagens_upload' => 'M_Salas',
         'periodo_list' => 'M_Periodos',
         'periodo_form' => 'M_Periodos',
         'usuario_list' => 'M_Utilizadores',

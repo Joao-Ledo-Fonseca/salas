@@ -238,6 +238,49 @@ class SalaController
         $hasMore = ($offset + count($rows)) < $total;
         return json_encode(['images' => $images, 'hasMore' => $hasMore], JSON_UNESCAPED_UNICODE);
     }
+
+    /**
+     * Método uploadImagemJson.
+     * @param array $files
+     * @param array $post
+     * @return string
+     */
+    public function uploadImagemJson(array $files, array $post): string
+    {
+        $file = $files['imagem'] ?? [];
+        if (empty($file['tmp_name'])) {
+            http_response_code(400);
+            return json_encode(['error' => 'Nenhuma imagem enviada.'], JSON_UNESCAPED_UNICODE);
+        }
+
+        $uploadedImage = ImageUtil::imagemUpload($file['tmp_name']);
+        if (!is_array($uploadedImage)) {
+            http_response_code(400);
+            return json_encode(['error' => 'Formato de imagem inválido.'], JSON_UNESCAPED_UNICODE);
+        }
+
+        $imageModel = new Imagem($this->db);
+        $imageId = $imageModel->salvar(
+            0,
+            $uploadedImage['nome_img'],
+            $uploadedImage['tamanho_img'],
+            $uploadedImage['tipo_img'],
+            $uploadedImage['conteudo']
+        );
+
+        if (!$imageId) {
+            http_response_code(500);
+            return json_encode(['error' => 'Erro ao gravar imagem na base de dados.'], JSON_UNESCAPED_UNICODE);
+        }
+
+        return json_encode([
+            'image' => [
+                'id' => (int) $imageId,
+                'nome' => (string) $uploadedImage['nome_img'],
+                'base64' => base64_encode($uploadedImage['conteudo']),
+            ]
+        ], JSON_UNESCAPED_UNICODE);
+    }
     /**
      * Método salaList.
      * @param array $query

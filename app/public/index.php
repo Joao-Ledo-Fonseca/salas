@@ -68,6 +68,11 @@ if ($request->action() === 'imagens_list') {
     exit;
 }
 
+if ($request->action() === 'imagens_upload') {
+    (new Router($database))->imagensUpload($request);
+    exit;
+}
+
 // 2. Sistema de distribuição de páginas baseado no Menu
 if ($request->action() !== null) {
     $pagina = $request->query('acao');
