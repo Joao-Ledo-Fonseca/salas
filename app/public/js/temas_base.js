@@ -9,70 +9,77 @@
       });
     }
 
-    if (typeof Pickr === 'undefined') {
-      return;
+    // Tooltip logic
+    var tooltipEl = null;
+    var tooltipTimeout = null;
+
+    function hideTooltip() {
+      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+      if (tooltipEl) {
+        tooltipEl.remove();
+        tooltipEl = null;
+      }
     }
+
+    document.querySelectorAll('.theme-color-label').forEach(function (label) {
+      label.addEventListener('mouseenter', function (e) {
+        var text = label.getAttribute('data-tooltip');
+        if (!text) return;
+
+        tooltipTimeout = setTimeout(function () {
+          hideTooltip();
+          tooltipEl = document.createElement('div');
+          tooltipEl.className = 'theme-color-tooltip';
+          tooltipEl.textContent = text;
+          document.body.appendChild(tooltipEl);
+
+          var rect = label.getBoundingClientRect();
+          tooltipEl.style.top = (rect.bottom + 5) + 'px';
+          tooltipEl.style.left = rect.left + 'px';
+        }, 1000);
+      });
+
+      label.addEventListener('mouseleave', hideTooltip);
+    });
+
     document.querySelectorAll('.color-input').forEach(function (input) {
       try {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'color-picker-btn';
-        btn.style.width = '1.25rem';
-        btn.style.height = '1.25rem';
-        btn.style.border = '1px solid #ccc';
-        btn.style.cursor = 'pointer';
-        btn.style.verticalAlign = 'middle';
-        btn.style.display = 'inline-block';
-        btn.style.marginLeft = '6px';
-        var originalColor = input.value || '#000000';
-        btn.style.background = originalColor;
-        var cell = input.closest('tr').querySelector('.col-btn'); if (cell) { cell.appendChild(btn); } else { input.parentNode.insertBefore(btn, input.nextSibling); }
+        var cell = input.closest('td').querySelector('.col-btn');
+        if (!cell) return;
 
-        var pickr = Pickr.create({
-          el: btn,
-          useAsButton: true,
-          theme: 'classic',
-          default: originalColor,
-          components: {
-            preview: true,
-            opacity: false,
-            hue: true,
-            interaction: { hex: true, input: true, save: true, cancel: true, clear: false }
+        // Criar um quadrado de cor simples (div) em vez do Pickr
+        var box = document.createElement('div');
+        box.className = 'color-preview-box';
+        box.style.width = '1.25rem';
+        box.style.height = '1.25rem';
+        box.style.border = '1px solid #ccc';
+        box.style.display = 'inline-block';
+        box.style.verticalAlign = 'middle';
+        box.style.marginLeft = '6px';
+        box.style.background = input.value || '#000000';
+
+        cell.innerHTML = '';
+        cell.appendChild(box);
+
+        // Atualizar o quadrado quando o input muda
+        input.addEventListener('input', function () {
+          var val = input.value;
+          if (/^#[0-9a-f]{6}$/i.test(val)) {
+            box.style.background = val;
+            if (input.name === 'baseColor') {
+              updatePaletteFromBase(val);
+            }
           }
         });
-        try { pickr.setColor(originalColor, true); } catch (e) { }
-        pickr.on('cancel', function () {
-          try { pickr.setColor(originalColor, true); } catch (e) { }
-          input.value = originalColor;
-          btn.style.background = originalColor;
-          try { pickr.hide(); } catch (e) { }
-        });
-        pickr.on('save', function (color) {
-          var hex = (color && typeof color.toHEXA === 'function') ? color.toHEXA().toString() : (input.value || originalColor);
-          input.value = hex;
-          btn.style.background = hex;
-          originalColor = hex;
-          try { pickr.hide(); } catch (e) { }
-        });
-        pickr.on('change', function (color) {
-          var hex = color.toHEXA().toString();
-          btn.style.background = hex;
-          input.value = hex;
-          if (input.name === 'baseColor') {
-            updatePaletteFromBase(hex);
-          }
-        });
+
         input._themePickerUpdate = function (hex) {
-          originalColor = hex;
           input.value = hex;
-          btn.style.background = hex;
-          pickr.setColor(hex, true);
+          box.style.background = hex;
         };
       } catch (e) {
         // ignore
       }
     });
-
   }
 
   function parseHexColor(value) {
@@ -201,11 +208,6 @@
       return hslToHex(hue, 0.42, lightness);
     };
     var semanticLightness = isLight ? 0.90 : 0.24;
-    var dashboardAvailable = hslToHex(
-      hsl.h,
-      hsl.s,
-      Math.min(1, hsl.l + 0.08)
-    );
 
     var colors = {
       bg: base,
@@ -233,23 +235,14 @@
       menuText: contrastingText(menuBg),
       overlay: overlay
     };
-    var dashboard = {
-      reservado: semantic(45, semanticLightness),
-      confirmado: semantic(135, semanticLightness),
-      cancelado: semantic(355, semanticLightness),
-      disponivel: dashboardAvailable,
-      disponivelHover: surfaceAlt,
-      selected: semantic(135, semanticLightness),
-      cellBorder: border,
-      cellText: text
-    };
 
     baseInput.value = base;
     if (typeof baseInput._themePickerUpdate === 'function') {
       baseInput._themePickerUpdate(base);
     }
     document.querySelectorAll('[data-palette-type][data-palette-key]').forEach(function (input) {
-      var palette = input.getAttribute('data-palette-type') === 'dashboard' ? dashboard : colors;
+      var palette = input.getAttribute('data-palette-type') === 'dashboard' ? null : colors;
+      if (!palette) return;
       var key = input.getAttribute('data-palette-key');
       if (!Object.prototype.hasOwnProperty.call(palette, key)) return;
       var value = palette[key];
@@ -268,9 +261,20 @@
     var root = document.documentElement;
     var form = document.forms['form_tema'];
     if (!form) return;
-    if (typeof window.aplicarPreviewFontes === 'function') {
-      window.aplicarPreviewFontes(form);
+
+    var fontSelect = form.querySelector('select[name="fontFamily"]');
+    if (fontSelect && fontSelect.options[fontSelect.selectedIndex]) {
+      var stack = fontSelect.options[fontSelect.selectedIndex].getAttribute('data-stack');
+      if (stack) {
+        root.style.setProperty('--font-family-base', stack);
+      }
     }
+
+    var fontSizeInput = form.querySelector('input[name="fontSizeBase"]');
+    if (fontSizeInput && fontSizeInput.value) {
+      root.style.setProperty('--font-size-base', fontSizeInput.value + 'px');
+    }
+
     document.querySelectorAll('.color-input').forEach(function (input) {
       var v = input.getAttribute('data-var');
       if (v && input.value) {

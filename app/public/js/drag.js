@@ -10,7 +10,7 @@ $(document).on('mousedown', '.tabelarow td.disponivel', function (e) {
     isDragging = true;
     dragMoved = false;
     dragCells = [this];
-    $(this).css('background-color', '#BFF9B9').css('color', 'black');
+    $(this).addClass('selected');
 });
 
 $(document).on('mousemove', '.tabelarow td', function (e) {
@@ -25,7 +25,7 @@ $(document).on('mousemove', '.tabelarow td', function (e) {
     var hi = Math.max(startIdx, curIdx);
     // reset previous selection in this row
     cells.each(function () {
-        $(this).css('background-color', '').css('color', '');
+        $(this).removeClass('selected');
     });
     dragCells = [];
     for (var i = lo; i <= hi; i++) {
@@ -38,7 +38,7 @@ $(document).on('mousemove', '.tabelarow td', function (e) {
     }
     // color all selected cells
     dragCells.forEach(function (c) {
-        $(c).css('background-color', '#BFF9B9').css('color', 'black');
+        $(c).addClass('selected');
     });
     if (dragCells.length > 1) dragMoved = true;
 });
@@ -57,13 +57,13 @@ $(document).on('mouseup', function (e) {
 });
 
 function abrirFormMulti(o, periodos, selected) {
-    $('.corpo td').css('background-color', '').css('color', 'black');
+    $('.corpo td').removeClass('selected');
     if (selected && selected.length) {
         selected.forEach(function (c) {
-            $(c).css('background-color', '#BFF9B9').css('color', 'black');
+            $(c).addClass('selected');
         });
     } else {
-        $(o).css('background-color', '#BFF9B9').css('color', 'black');
+        $(o).addClass('selected');
     }
 
     $.ajax({
@@ -89,7 +89,7 @@ function abrirFormMulti(o, periodos, selected) {
             // manter colorido após abrir o form
             if (selected && selected.length) {
                 selected.forEach(function (c) {
-                    $(c).css('background-color', '#BFF9B9').css('color', 'black');
+                    $(c).addClass('selected');
                 });
             }
         }

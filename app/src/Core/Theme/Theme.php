@@ -69,13 +69,11 @@ final class Theme
     {
         $vars = [];
         $vars[] = '--font-family-base: ' . $this->fontFamily . ';';
-        $vars[] = '--font-size-base: ' . $this->fontSizeBase . ';';
+        $vars[] = '--font-size-base: ' . $this->fontSizeBase . 'px;';
         $vars[] = '--color-base: ' . $this->baseColor . ';';
-        foreach ($this->colors as $k => $v) {
-            $vars[] = '--color-' . $this->kebab($k) . ': ' . $v . ';';
-        }
-        foreach ($this->dashboard as $k => $v) {
-            $vars[] = '--dashboard-' . $this->kebab($k) . ': ' . $v . ';';
+        $colorVars = ThemeColorManager::toCssVariablesComplete($this->colors, $this->dashboard);
+        if ($colorVars !== '') {
+            $vars[] = $colorVars;
         }
         return implode("\n    ", $vars);
     }
@@ -83,15 +81,5 @@ final class Theme
     public function googleFontsUrl(): ?string
     {
         return ThemeFontFamily::googleFontsUrlForStack($this->fontFamily);
-    }
-
-    /**
-     * Método kebab.
-     * @param string $key
-     * @return string
-     */
-    private function kebab(string $key): string
-    {
-        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $key));
     }
 }

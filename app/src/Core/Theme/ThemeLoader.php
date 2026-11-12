@@ -1,98 +1,81 @@
 <?php
 namespace Salas\Core\Theme;
 
-/**
- * Classe ThemeLoader.
- */
+use Salas\Core\Theme\Theme;
+
 final class ThemeLoader
 {
-    /**
-     * Método load.
-     * @param string $themesDir
-     * @param ?string $requested
-     * @return Theme
-     */
-    public static function load(string $themesDir, ?string $requested = null): Theme
+    public static function load(string $themesDir, ?string $requestedTheme = null): Theme
     {
-        $manifestPath = $themesDir . DIRECTORY_SEPARATOR . 'themes.json';
-        if (!is_file($manifestPath)) {
-            throw new \RuntimeException('Manifesto de temas não encontrado.');
-        }
-        $manifestRaw = file_get_contents($manifestPath);
-        if ($manifestRaw === false) {
-            throw new \RuntimeException('Não foi possível ler o manifesto de temas.');
-        }
-        try {
-            $manifest = json_decode($manifestRaw, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            throw new \RuntimeException('Manifesto de temas inválido.', 0, $e);
-        }
-        if (!is_array($manifest) || !isset($manifest['default'], $manifest['available']) || !is_array($manifest['available'])) {
-            throw new \RuntimeException('Manifesto de temas inválido.');
+        $themesJson = file_get_contents($themesDir . '/themes.json');
+        if ($themesJson === false) {
+            throw new \RuntimeException("Could not read themes.json");
         }
 
-        $key = $requested;
-        if ($key === null || $key === '') {
-            $env = getenv('APP_THEME');
-            if (is_string($env) && $env !== '') {
-                $key = $env;
+        $themesData = json_decode($themesJson, true);
+        if ($themesData === null) {
+            throw new \RuntimeException("Could not decode themes.json");
+        }
+
+        $themeName = $requestedTheme ?? getenv('APP_THEME') ?? $_ENV['APP_THEME'] ?? $themesData['default'] ?? null;
+        if ($themeName === null) {
+            throw new \RuntimeException("Theme name not found");
+        }
+
+        $themeFile = $themesDir . '/' . $themeName . '.json';
+        if (!is_file($themeFile)) {
+            // Se o tema solicitado não existir, tenta carregar o padrão
+            $defaultTheme = $themesData['default'] ?? null;
+            $themeFile = $themesDir . '/' . $defaultTheme . '.json';
+            
+            if ($defaultTheme === null || !is_file($themeFile)) {
+                throw new \RuntimeException("Theme file not found: " . $themeFile);
             }
-        }
-        if ($key === null || $key === '') {
-            $key = (string)$manifest['default'];
-        }
-        if (!in_array($key, $manifest['available'], true)) {
-            $key = (string)$manifest['default'];
+            $themeName = $defaultTheme;
         }
 
-        $file = $themesDir . DIRECTORY_SEPARATOR . $key . '.json';
-        if (!is_file($file)) {
-            throw new \RuntimeException('Tema não encontrado: ' . $key);
+        $themeContent = file_get_contents($themeFile);
+        if ($themeContent === false) {
+            throw new \RuntimeException("Could not read theme file: " . $themeFile);
         }
-        $raw = file_get_contents($file);
-        if ($raw === false) {
-            throw new \RuntimeException('Não foi possível ler o tema: ' . $key);
+
+        $themeData = json_decode($themeContent, true);
+        if ($themeData === null) {
+            throw new \RuntimeException("Could not decode theme file: " . $themeFile);
         }
-        try {
-            $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            throw new \RuntimeException('Tema inválido: ' . $key, 0, $e);
+
+        // Apenas cores declaradas no mapa autoritário são aceites.
+        // Chaves não declaradas são descartadas.
+        if (!isset($themeData['colors'])) {
+            throw new \RuntimeException("Theme missing colors field");
         }
-        if (!is_array($data)) {
-            throw new \RuntimeException('Tema inválido: ' . $key);
-        }
-        return Theme::fromArray($key, $data);
+        
+        $colors = ThemeColorManager::validateColors($themeData['colors'] ?? []);
+        $dashboard = ThemeColorManager::validateDashboard($themeData['dashboard'] ?? []);
+
+        return new Theme(
+            key: $themeName,
+            name: $themeData['name'] ?? '',
+            fontFamily: $themeData['fontFamily'] ?? '',
+            fontSizeBase: $themeData['fontSizeBase'] ?? '',
+            baseColor: $themeData['baseColor'] ?? '',
+            colors: $colors,
+            dashboard: $dashboard
+        );
     }
-	/**
-	 * Método availableThemes.
-	 * @param string $themesDir
-	 * @return array
-	 */
-	public static function availableThemes(string $themesDir): array
-	{
-		$manifestPath = $themesDir . DIRECTORY_SEPARATOR . 'themes.json';
-		if (!is_file($manifestPath)) {
-			throw new \RuntimeException('Manifesto de temas não encontrado.');
-		}
-		$manifestRaw = file_get_contents($manifestPath);
-		if ($manifestRaw === false) {
-			throw new \RuntimeException('Não foi possível ler o manifesto de temas.');
-		}
-		try {
-			$manifest = json_decode($manifestRaw, true, 512, JSON_THROW_ON_ERROR);
-		} catch (\JsonException $e) {
-			throw new \RuntimeException('Manifesto de temas inválido.', 0, $e);
-		}
-		if (!is_array($manifest) || !isset($manifest['default'], $manifest['available']) || !is_array($manifest['available'])) {
-			throw new \RuntimeException('Manifesto de temas inválido.');
-		}
-		$available = [];
-		foreach ($manifest['available'] as $key) {
-			if (is_string($key) && $key !== '') {
-				$available[] = $key;
-			}
-		}
-		return array_values(array_unique($available));
-	}
 
+    public static function availableThemes(string $themesDir): array
+    {
+        $themesJson = file_get_contents($themesDir . '/themes.json');
+        if ($themesJson === false) {
+            return [];
+        }
+
+        $themesData = json_decode($themesJson, true);
+        if ($themesData === null) {
+            return [];
+        }
+
+        return $themesData['available'] ?? [];
+    }
 }

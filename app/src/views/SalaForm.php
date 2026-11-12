@@ -1,4 +1,5 @@
 <?php
+use Salas\Core\Theme\ThemeColorManager;
 use Salas\Core\Support\Csrf;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
@@ -23,7 +24,7 @@ use Salas\Core\Validation\Validator;
 
 <div class="container">
     <div class="a_par">
-        <div class=aviso style="color:red"><?= htmlspecialchars((string)$errormsg, ENT_QUOTES, 'UTF-8') ?></div>
+        <div class="aviso" style="color: var(<?= ThemeColorManager::cssVar('dangerDark') ?>)"><?= htmlspecialchars((string)$errormsg, ENT_QUOTES, 'UTF-8') ?></div>
 
         <form enctype="multipart/form-data" name="form1" id="sala-form" method="post" action="<?= htmlspecialchars(app_url('?acao=sala_form&categoria_filtro=' . rawurlencode((string) $categoria_filtro) . '&activas=' . rawurlencode((string) $activas_filtro)), ENT_QUOTES, 'UTF-8') ?>">
 

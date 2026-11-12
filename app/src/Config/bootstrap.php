@@ -32,7 +32,7 @@ namespace Salas\Config {
 	global $cfg;
 	$cfg = new \stdClass();
 	$cfg->theme = \Salas\Core\Theme\ThemeLoader::load($themesDir, $requestedTheme);
-	$cfg->dashboard_colors = (object) $cfg->theme->dashboard;
+    $cfg->dashboard_colors = (object) $cfg->theme->dashboard;
 	$cfg->availableThemes = \Salas\Core\Theme\ThemeLoader::availableThemes($themesDir);
 
 	setlocale(LC_TIME, 'portuguese');

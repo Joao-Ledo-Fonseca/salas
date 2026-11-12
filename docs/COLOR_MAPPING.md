@@ -38,13 +38,13 @@ Exemplo em [`app/themes/light.json`](app/themes/light.json:1):
 
 ---
 
-## 2. Conversão de `camelCase` para Variáveis CSS `kebab-case`
+## 2. Fonte Autoritária de Nomes de Cores (`ThemeColorManager`)
 
-A classe [`Salas\Core\Theme\Theme`](app/src/Core/Theme/Theme.php:7) é responsável por carregar a estrutura do tema a partir de um array e convertê-la em variáveis CSS nativas através do método [`toCssVariables()`](app/src/Core/Theme/Theme.php:68).
+A classe [`Salas\Core\Theme\ThemeColorManager`](app/src/Core/Theme/ThemeColorManager.php) é responsável por carregar a estrutura do tema a partir de um array e convertê-la em variáveis CSS nativas através do método [`toCssVariables()`](app/src/Core/Theme/Theme.php:68).
 
-O método privado [`kebab()`](app/src/Core/Theme/Theme.php:93) utiliza uma expressão regular (`preg_replace('/([a-z])([A-Z])/', '$1-$2', $key)`) para transformar propriedades em `camelCase` (como `textStrong` ou `disponivelHover`) em notação `kebab-case` (`text-strong`, `disponivel-hover`).
+O método privado [`kebab()`](app/src/Core/Theme/ThemeColorManager.php) utiliza uma expressão regular (`preg_replace('/([a-z])([A-Z])/', '$1-$2', $key)`) para transformar propriedades em `camelCase` (como `textStrong` ou `disponivelHover`) em notação `kebab-case` (`text-strong`, `disponivel-hover`).
 
-Regras de prefixação geradas pelo [`toCssVariables()`](app/src/Core/Theme/Theme.php:68):
+Regras de prefixação geradas pelo [`Theme::toCssVariables()`](app/src/Core/Theme/Theme.php:68):
 - Propriedades de base (`fontFamily`, `fontSizeBase`, `baseColor`) geram respetivamente `--font-family-base`, `--font-size-base`, `--color-base`.
 - Cada chave do objeto `colors` gera `--color-[kebab-case]` (ex: `primaryDark` $\rightarrow$ `--color-primary-dark`).
 - Cada chave do objeto `dashboard` gera `--dashboard-[kebab-case]` (ex: `disponivelHover` $\rightarrow$ `--dashboard-disponivel-hover`).

@@ -4,25 +4,25 @@
 var appBasePath = new URL(document.currentScript.src).pathname.replace(/\/js\/lib\.js$/, '');
 
 function appUrl(path) {
-    return appBasePath + '/' + String(path || '').replace(/^\/+/, '');
+	return appBasePath + '/' + String(path || '').replace(/^\/+/, '');
 }
 
 
 // 1. CONFIGURAÇÃO GLOBAL AJAX: Força o browser a consultar SEMPRE o servidor
 $.ajaxSetup({
-    cache: false, // 🏆 CORREÇÃO CRÍTICA: Impede o navegador de usar o HTML antigo em cache
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest' // Garante que o PHP reconhece sempre como AJAX
-    }
+	cache: false, // 🏆 CORREÇÃO CRÍTICA: Impede o navegador de usar o HTML antigo em cache
+	headers: {
+		'X-Requested-With': 'XMLHttpRequest' // Garante que o PHP reconhece sempre como AJAX
+	}
 });
 
 // INTERCETOR GLOBAL AJAX: Escuta todas as requisições do sistema
-$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
-    // Se o servidor PHP responder com o status 401 (Sessão Expirada)
-    if (jqXHR.status === 401) {
-        // Limpa a página inteira e redireciona para a raiz pública de login
-        window.location.href = appUrl('');
-    }
+$(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
+	// Se o servidor PHP responder com o status 401 (Sessão Expirada)
+	if (jqXHR.status === 401) {
+		// Limpa a página inteira e redireciona para a raiz pública de login
+		window.location.href = appUrl('');
+	}
 });
 
 //Soluções para problemas de cache do navegador e sessão expirada (Ajax - Jquery) - *** INICIO ***
@@ -36,26 +36,24 @@ function getVisible() {
 
 
 function abreReserva(o) {
-	
+
 	// limpa o CSS das outras células
-	$(".corpo td").css("background-color", "");
-	$(".corpo td").css("color", "#CCC");
-	
+	$(".corpo td").removeClass("selected");
+
 	// o item selecionado fica com o mesmo cinza do hover de um slot disponível.
-	$(o).css("background-color", "#DFDFDF"); 
-	$(o).css("color", "black");
+	$(o).addClass("selected");
 
 	//abre o formulario por AJAX preenchido
-	let abre = true;  
+	let abre = true;
 
-	if (abre) {  
+	if (abre) {
 
 		$.ajax({
 			type: "GET",
 			// 🎯 CORREÇÃO CRÍTICA: Aponta para a raiz pública e passa a ação do MVC
 			url: appUrl('?acao=reserva_form'),
 			method: "GET",
-			
+
 			data: {
 				id: $(o).attr("id"),
 				data: data,
@@ -96,8 +94,7 @@ function fecharForm() {
 	$('.form').hide("fast", "", function () {
 		// a tabela de reservas já não estica e encolhe para comodar o form
 		// $(".corpo").css("max-width", "calc(100% - 180px)");
-		$(".corpo td").css("background-color", "");	
-		$(".corpo td").css("color", "black");	
+		$(".corpo td").removeClass("selected");
 	});
 }
 
@@ -178,26 +175,26 @@ function excluirFormularioReserva(id) {
 }
 
 function abre(url) {
-    // 🎯 MELHORIA: Verifica se o texto CONTÉM '.php' em vez de apenas terminar com ele
-    if (url.includes('.php') && !url.includes('?acao=')) {
-        
-        // Separa os parâmetros caso existam (ex: categoria_form.php?id=5)
-        var partes = url.split('.php');
-        var nomeFicheiro = partes[0]; // 'categoria_form'
-        var parametrosExtra = partes[1]; // '?id=5' ou vazio ''
-        
-        // Monta a nova rota limpa
-        var novaUrl = appUrl('?acao=' + nomeFicheiro);
-        
-        // Se houver parâmetros extra, junta-os usando '&' em vez de '?'
-        if (parametrosExtra) {
-            novaUrl += parametrosExtra.replace('?', '&');
-        }
-        
-        window.location.href = novaUrl;
-    } else {
-        window.location.href = url;
-    }
+	// 🎯 MELHORIA: Verifica se o texto CONTÉM '.php' em vez de apenas terminar com ele
+	if (url.includes('.php') && !url.includes('?acao=')) {
+
+		// Separa os parâmetros caso existam (ex: categoria_form.php?id=5)
+		var partes = url.split('.php');
+		var nomeFicheiro = partes[0]; // 'categoria_form'
+		var parametrosExtra = partes[1]; // '?id=5' ou vazio ''
+
+		// Monta a nova rota limpa
+		var novaUrl = appUrl('?acao=' + nomeFicheiro);
+
+		// Se houver parâmetros extra, junta-os usando '&' em vez de '?'
+		if (parametrosExtra) {
+			novaUrl += parametrosExtra.replace('?', '&');
+		}
+
+		window.location.href = novaUrl;
+	} else {
+		window.location.href = url;
+	}
 }
 
 
@@ -206,9 +203,9 @@ function show_salvar() {
 	document.getElementById("salvar").style.display = "inline-block";
 }
 
-function cancelaInputsRequired() {        
-	$('input').not('[name="csrf_token"]').prop('value','');
-	$('input').prop('required', false);		
+function cancelaInputsRequired() {
+	$('input').not('[name="csrf_token"]').prop('value', '');
+	$('input').prop('required', false);
 }
 
 function printDiv() {
@@ -217,13 +214,28 @@ function printDiv() {
 	anotherWindow.document.open();
 	anotherWindow.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
 	anotherWindow.document.close();
-	setTimeout(function() {
-	   anotherWindow.close();
+	setTimeout(function () {
+		anotherWindow.close();
 	}, 10);
- }
- 
- function plainPrint() {
-	$(".menu").hide(); 
+}
+
+function plainPrint() {
+	$(".menu").hide();
 	window.print();
 	$(".menu").show();
-  }
+}
+
+function showTab(tabName) {
+	document.querySelectorAll('.tema-tab').forEach(function (tab) {
+		tab.classList.remove('active');
+	});
+	document.querySelectorAll('.tema-tab-content').forEach(function (content) {
+		content.classList.remove('active');
+	});
+
+	var clickedTab = document.querySelector('.tema-tab[onclick="showTab(\'' + tabName + '\')"]');
+	if (clickedTab) clickedTab.classList.add('active');
+
+	var content = document.getElementById('tab-' + tabName);
+	if (content) content.classList.add('active');
+}

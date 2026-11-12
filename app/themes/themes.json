@@ -1,4 +1,8 @@
 {
-  "default": "light",
-  "available": ["light", "dark"]
+    "default": "light",
+    "available": [
+        "light",
+        "dark",
+        "claro"
+    ]
 }

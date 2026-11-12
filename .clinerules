@@ -1,10 +1,12 @@
 # Regras do Projeto - Salas (PHP MVC)
 
 ## Ambiente do Sistema
-- Estás a operar num ambiente Windows com PowerShell moderno.
-- É ESTRITAMENTE PROIBIDO usar comandos Linux como 'head', 'cat', 'sed', 'grep' ou redirecionamentos '<<'.
-- Para ler ficheiros, usa SEMPRE o comando nativo do PowerShell: 'Get-Content <caminho>'.
-- Nunca envies arrays JSON ou parênteses retos [] para o terminal. Envia apenas comandos de texto limpo.
+### CRITICAL RULES - READ CAREFULLY:
+1. NEVER use Python, PowerShell, or Bash scripts (sed, awk) to modify or read files.
+2. ALWAYS use your built-in tools: `read_file`, `replace_in_file`, or `write_to_file`.
+3. NEVER execute terminal commands wrapped in `[" ... "]`. This is invalid syntax.
+4. The environment is Git Bash. If you MUST use the terminal, use standard bash commands like `cat` or `grep`. 
+5. Do not try to use Python3. It may not be installed or configured in this environment.
 
 ## Arquitetura de UI (PHP Puro e MVC Regularizado)
 - O projeto usa estritamente PHP Puro (Vanilla PHP), HTML e CSS tradicional, sem frameworks (sem Laravel, sem Tailwind, sem HTMX).
@@ -12,3 +14,5 @@
 - É PROIBIDO espalhar tags <script> particulares ou funções JavaScript ad-hoc pelos ficheiros de View (.php).
 - Qualquer necessidade de interatividade ou alteração deve respeitar a separação do MVC: a lógica fica no Controller/Model, e a View apenas exibe os dados finais.
 - Mantém as views focadas apenas em loops (foreach), condicionais simples (if) e exibição de variáveis escapadas.
+- A aplicação sua temas para cores e tipos, e a unica autoridade para nomes de cores (variáveis, labels, tags JSON, etc.) é a classe ThemeColorManager.
+- Nenhuma cor que não verifique a classe autoritária pode ser usada na aplicação ou no CSS.

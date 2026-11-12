@@ -1,0 +1,42 @@
+{
+    "name": "Claro",
+    "fontFamily": "Tahoma, Geneva, sans-serif",
+    "fontSizeBase": "12",
+    "baseColor": "#70869E",
+    "colors": {
+        "bg": "#70869E",
+        "surface": "#F4F5F5",
+        "text": "#171A1F",
+        "textStrong": "#171A1F",
+        "textMuted": "#1B1C1E",
+        "border": "#C5C7C9",
+        "primary": "#2A5584",
+        "primaryDark": "#204165",
+        "primaryLight": "#B9C6D5",
+        "primaryLink": "#0D1D2E",
+        "overlay": "#171A1F",
+        "surfaceAlt": "#E4E5E7",
+        "borderStrong": "#9A9EA2",
+        "success": "#DBF0E0",
+        "warning": "#F0EBDB",
+        "danger": "#F0DBDD",
+        "dangerDark": "#C5202E",
+        "dangerLight": "#F6EFEF",
+        "dangerBorder": "#D39298",
+        "menuBg": "#222425",
+        "menuItem": "#383B3D",
+        "menuHoverBg": "#C5C7C9",
+        "menuHoverText": "#171A1F",
+        "menuText": "#F4F6F8"
+    },
+    "dashboard": {
+        "reservado": "#F0EBDB",
+        "confirmado": "#DBF0E0",
+        "cancelado": "#F0DBDD",
+        "disponivel": "#889BAE",
+        "disponivelHover": "#E4E5E7",
+        "selected": "#DBF0E0",
+        "cellBorder": "#C5C7C9",
+        "cellText": "#171A1F"
+    }
+}

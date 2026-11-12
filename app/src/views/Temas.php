@@ -1,6 +1,3 @@
-<?php
-use Salas\Core\Support\Csrf;
-?>
 <?php $title = 'Temas'; ?>
 
 <h3>Temas</h3>
@@ -9,34 +6,31 @@ use Salas\Core\Support\Csrf;
 <?php endif; ?>
 
 <div class="container_conteudo">
-
   <div class="lista_comum mb-4">
     <h4>Tema ativo</h4>
     <form method="post" action="<?= app_url('?acao=temas') ?>" class="flex gap-10 items-center flex-wrap">
       <select name="active_theme" id="active_theme" class="w-40ch" onchange="this.form.submit()">
         <?php foreach ($availableThemes as $t): ?>
           <option value="<?= htmlspecialchars($t, ENT_QUOTES, 'UTF-8') ?>" <?= $t === $activeTheme ? 'selected' : '' ?>>
-            <?= htmlspecialchars($t, ENT_QUOTES, 'UTF-8') ?>
+            <?= htmlspecialchars(Salas\Core\Theme\ThemeColorManager::label($t) ?? $t, ENT_QUOTES, 'UTF-8') ?>
           </option>
         <?php endforeach; ?>
       </select>
       <input type="hidden" name="ativar_tema" value="1" />
-      <input type="hidden" name="edit_theme" value="<?= htmlspecialchars($editTheme, ENT_QUOTES, 'UTF-8') ?>" />
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>" />
       <input type="submit" class="btn1" value="Ativar" />
     </form>
-    <p class="text-sm text-muted">O tema ativo é aplicado imediatamente e guardado como padrão.</p>
   </div>
 
   <div class="lista_comum mb-4">
-    <h4>Tema para edição</h4>
+    <h4>Tema para editar</h4>
     <form method="get" action="<?= app_url('?acao=temas') ?>" class="flex gap-10 items-center flex-wrap">
       <input type="hidden" name="acao" value="temas" />
       <input type="hidden" name="theme" value="<?= htmlspecialchars($activeTheme, ENT_QUOTES, 'UTF-8') ?>" />
-      <select name="edit_theme" onchange="this.form.submit()" class="w-40ch">
+      <select name="edit_theme" id="edit_theme" class="w-40ch" onchange="this.form.submit()">
         <?php foreach ($availableThemes as $t): ?>
           <option value="<?= htmlspecialchars($t, ENT_QUOTES, 'UTF-8') ?>" <?= $t === $editTheme ? 'selected' : '' ?>>
-            <?= htmlspecialchars($t, ENT_QUOTES, 'UTF-8') ?>
+            <?= htmlspecialchars(Salas\Core\Theme\ThemeColorManager::label($t) ?? $t, ENT_QUOTES, 'UTF-8') ?>
           </option>
         <?php endforeach; ?>
       </select>
@@ -49,234 +43,128 @@ use Salas\Core\Support\Csrf;
     <input type="hidden" name="edit_theme" value="<?= htmlspecialchars($editTheme, ENT_QUOTES, 'UTF-8') ?>" />
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>" />
 
-
-    <div class="lista_comum flex gap-10">
-      <input type="button" class="btn1" value="Testar" onclick="aplicarPreview()" />
-      <input type="button" class="btn1" value="Repor" onclick="reporTema()" />
-      <input type="submit" name="gravar" class="btn1" value="Gravar" />
-    </div>
-    <div class="tema-tables-scroll">
-    <div class="tema-tabs">
-      <button type="button" class="tema-tab active" onclick="showTab('base')">Tema para edição</button>
+    <div class="tema-tabs mt-4">
+      <button type="button" class="tema-tab active" onclick="showTab('base')">Base</button>
       <button type="button" class="tema-tab" onclick="showTab('gerais-app')">Gerais (app)</button>
-      <button type="button" class="tema-tab" onclick="showTab('gerais-avisos')">Gerais (avisos/erros)</button>
+      <button type="button" class="tema-tab" onclick="showTab('gerais-avisos')">Avisos</button>
       <button type="button" class="tema-tab" onclick="showTab('menu')">Menu</button>
       <button type="button" class="tema-tab" onclick="showTab('dashboard')">Dashboard</button>
     </div>
 
+    <script>
+      function showTab(tabName) {
+        document.querySelectorAll('.tema-tab-content').forEach(function(el) {
+          el.classList.remove('active');
+        });
+        document.querySelectorAll('.tema-tab').forEach(function(el) {
+          el.classList.remove('active');
+        });
+        var content = document.getElementById('tab-' + tabName);
+        if (content) content.classList.add('active');
+        document.querySelectorAll('.tema-tab').forEach(function(btn) {
+          if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf(tabName) !== -1) {
+            btn.classList.add('active');
+          }
+        });
+      }
+    </script>
+
     <div class="tema-tab-content active" id="tab-base">
       <div class="lista_comum">
-        <table class="tema-table">
-          <tr>
-            <td><label>Nome</label></td>
-            <td><input type="text" name="name" value="<?= htmlspecialchars((string)($themeData['name'] ?? $editTheme), ENT_QUOTES, 'UTF-8') ?>" /></td>
-          </tr>
-          <tr>
-            <td><label>Família de fonte</label></td>
-            <td>
-              <select name="fontFamily" class="theme-font-select">
-                <optgroup label="Fontes seguras (instaladas no dispositivo)">
-                  <?php foreach ($safeFontFamilies as $fontName => $fontStack): ?>
-                    <option value="<?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>" data-font-stack="<?= htmlspecialchars($fontStack, ENT_QUOTES, 'UTF-8') ?>" <?= $fontName === $fontFamilySelection ? 'selected' : '' ?>>
-                      <?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>
-                    </option>
-                  <?php endforeach; ?>
-                </optgroup>
-                <optgroup label="Google Fonts (CDN)">
-                  <?php foreach ($googleFontFamilies as $fontName => $fontStack): ?>
-                    <option value="<?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>" data-font-stack="<?= htmlspecialchars($fontStack, ENT_QUOTES, 'UTF-8') ?>" data-font-url="<?= htmlspecialchars(\Salas\Core\Theme\ThemeFontFamily::googleFontsUrlForSelection($fontName) ?? '', ENT_QUOTES, 'UTF-8') ?>" <?= $fontName === $fontFamilySelection ? 'selected' : '' ?>>
-                      <?= htmlspecialchars($fontName, ENT_QUOTES, 'UTF-8') ?>
-                    </option>
-                  <?php endforeach; ?>
-                </optgroup>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Tamanho base</label></td>
-            <td><input type="number" name="fontSizeBase" min="8" max="16" step="1" value="<?= htmlspecialchars((string)preg_replace('/[^0-9]/', '', (string)($themeData['fontSizeBase'] ?? '14px')), ENT_QUOTES, 'UTF-8') ?>" /> px</td>
-        </tr>
-        <tr>
-            <td><label>Cor base</label></td>
-            <td>
-              <input type="text" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)($themeData['baseColor'] ?? '#FFFFFF'), ENT_QUOTES, 'UTF-8') ?>" data-var="--color-base" />
-              <p class="theme-base-color-notice">Ao alterar a cor base, as cores de fundo, texto, destaques, menu e dashboard são recalculadas automaticamente para manter a legibilidade. Pode rever e ajustar as cores geradas antes de gravar.</p>
-            </td>
-          </tr>
+        <table class="tema-table tabela_comum">
+          <tr><td><label for="theme_name">Nome</label></td><td><input type="text" id="theme_name" name="name" autocomplete="off" value="<?= htmlspecialchars((string)($themeData['name'] ?? $editTheme), ENT_QUOTES, 'UTF-8') ?>" /></td><td class="w-full"></td></tr>
+          <tr><td><label for="font_size_base">Tamanho base</label></td><td><input type="number" id="font_size_base" name="fontSizeBase" min="8" max="24" autocomplete="off" value="<?= htmlspecialchars((string)preg_replace('/[^0-9]/', '', (string)$themeData['fontSizeBase'] ?? '14'), ENT_QUOTES, 'UTF-8') ?>" /> px</td><td class="w-full"></td></tr>
+          <tr><td><label for="font_family">Fonte</label></td><td>
+            <select name="fontFamily" id="font_family">
+                <?php foreach (Salas\Core\Theme\ThemeFontFamily::options() as $name => $stack): ?>
+                    <option value="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>" data-stack="<?= htmlspecialchars($stack, ENT_QUOTES, 'UTF-8') ?>" style="font-family: <?= htmlspecialchars($stack, ENT_QUOTES, 'UTF-8') ?>;" <?= $name === $fontFamilySelection ? 'selected' : '' ?>><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></option>
+                <?php endforeach; ?>
+            </select>
+          </td><td class="w-full"></td></tr>
+          <tr><td><label for="base_color">Cor base</label></td><td class="col-input flex items-center"><input type="text" id="base_color" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)$themeData['baseColor'] ?? '#FFFFFF', ENT_QUOTES, 'UTF-8') ?>" autocomplete="off" data-var="--color-base" /><span class="col-btn"></span></td><td class="w-full"></td></tr>
         </table>
+        <div class="flex gap-10 mt-4">
+            <input type="button" class="btn1" value="Testar" onclick="aplicarPreview()" />
+            <input type="button" class="btn1" value="Repor" onclick="reporTema()" />
+            <input type="submit" name="gravar" id="btn_gravar" class="btn1" value="Gravar" />
+            <div class="ml-100 flex gap-10">
+                <input type="submit" name="criar_tema" class="btn1" value="Criar" />
+                <input type="submit" name="apagar_tema" class="btn1 btn-danger" value="Eliminar" onclick="return confirm('Tem certeza que deseja eliminar este tema?');" />
+            </div>
+        </div>
       </div>
     </div>
 
     <div class="tema-tab-content" id="tab-gerais-app">
       <div class="lista_comum">
-        <h4>Cores gerais (app)</h4>
-      <?php
-        $colorTips = [
-          'bg' => 'Fundo da página',
-          'surface' => 'Fundo de superfícies/cartões',
-          'surfaceAlt' => 'Fundo alternativo',
-          'text' => 'Texto base',
-          'textStrong' => 'Texto forte/títulos',
-          'textMuted' => 'Texto secundário',
-          'border' => 'Bordas',
-          'borderStrong' => 'Bordas fortes',
-          'primary' => 'Cor primária (links/botões)',
-          'primaryDark' => 'Primária escura (hover)',
-          'primaryLight' => 'Primária clara',
-          'success' => 'Sucesso',
-          'warning' => 'Aviso',
-          'danger' => 'Erro/perigo',
-          'dangerDark' => 'Erro escuro',
-          'dangerLight' => 'Erro claro',
-          'dangerBorder' => 'Borda de erro',
-          'overlay' => 'Overlay/modal',
-        ];
-        $menuTips = [
-          'menuBg' => 'Fundo do menu',
-          'menuItem' => 'Item do menu',
-          'menuHoverBg' => 'Fundo hover do menu',
-          'menuHoverText' => 'Texto hover do menu',
-          'menuText' => 'Texto do menu',
-        ];
-        $generalAppKeys = [];
-        $generalAvisosKeys = [];
-        $menuColorKeys = [];
-        $avisosKeys = ['surfaceAlt', 'borderStrong', 'success', 'warning', 'danger', 'dangerDark', 'dangerLight', 'dangerBorder'];
-        foreach ($colorKeys as $k) {
-          if (strpos($k, 'menu') === 0) {
-            $menuColorKeys[] = $k;
-          } elseif (in_array($k, $avisosKeys, true)) {
-            $generalAvisosKeys[] = $k;
-          } else {
-            $generalAppKeys[] = $k;
-          }
-        }
-      ?>
-      <div class="tema-tables-scroll">
-      <table class="tema-table">
-        <?php foreach ($generalAppKeys as $k): ?>
-          <?php $val = (string)($themeData['colors'][$k] ?? '#000000'); ?>
-          <tr>
-            <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($colorTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
-            <td class="whitespace-nowrap col-input">
-              <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="colors" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </table>
+        <?php 
+          $keys = Salas\Core\Theme\ThemeColorManager::getAppKeys();
+          $paletteType = 'colors';
+          $inputNamePrefix = 'colors';
+          include 'components/ThemeColorTable.php'; 
+        ?>
       </div>
     </div>
-
-    </div>
-
+    
     <div class="tema-tab-content" id="tab-gerais-avisos">
       <div class="lista_comum">
-        <h4>Cores gerais (avisos/erros)</h4>
-        <div class="tema-tables-scroll">
-          <table class="tema-table">
-            <?php foreach ($generalAvisosKeys as $k): ?>
-              <?php $val = (string)($themeData['colors'][$k] ?? '#000000'); ?>
-              <tr>
-                <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($colorTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
-                <td class="whitespace-nowrap col-input">
-                  <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="colors" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          </table>
-        </div>
+        <?php 
+          $keys = Salas\Core\Theme\ThemeColorManager::getAvisosKeys();
+          $paletteType = 'colors';
+          $inputNamePrefix = 'colors';
+          include 'components/ThemeColorTable.php'; 
+        ?>
       </div>
     </div>
 
     <div class="tema-tab-content" id="tab-menu">
       <div class="lista_comum">
-        <h4>Cores do menu</h4>
-      <table class="tema-table">
-        <?php foreach ($menuColorKeys as $k): ?>
-          <?php $val = (string)($themeData['colors'][$k] ?? '#000000'); ?>
-          <tr>
-            <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($menuTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
-            <td class="whitespace-nowrap col-input">
-              <input type="text" class="color-input color-input-compact" name="colors[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="colors" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--color-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </table>
-    </div>
-
+        <?php 
+          $keys = Salas\Core\Theme\ThemeColorManager::getMenuKeys();
+          $paletteType = 'colors';
+          $inputNamePrefix = 'colors';
+          include 'components/ThemeColorTable.php'; 
+        ?>
+      </div>
     </div>
 
     <div class="tema-tab-content" id="tab-dashboard">
       <div class="lista_comum">
-        <h4>Cores do dashboard</h4>
-      <?php
-        $dashTips = [
-          'reservado' => 'Célula reservada',
-          'confirmado' => 'Célula confirmada',
-          'cancelado' => 'Célula cancelada',
-          'disponivel' => 'Célula disponível',
-          'disponivelHover' => 'Hover célula disponível',
-          'selected' => 'Célula selecionada',
-          'cellBorder' => 'Borda da célula',
-          'cellText' => 'Texto da célula',
-        ];
-      ?>
-      <table class="tema-table">
-        <?php foreach ($dashboardKeys as $k): ?>
-          <?php $val = (string)($themeData['dashboard'][$k] ?? '#ffffff'); ?>
-          <tr>
-            <td class="w-160 whitespace-nowrap" title="<?= htmlspecialchars($dashTips[$k] ?? $k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?></td>
-            <td class="whitespace-nowrap col-input">
-              <input type="text" class="color-input color-input-compact" name="dashboard[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]" value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>" data-palette-type="dashboard" data-palette-key="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>" data-var="--dashboard-<?= htmlspecialchars(strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $k)), ENT_QUOTES, 'UTF-8') ?>" />
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </table>
+        <?php 
+          $keys = Salas\Core\Theme\ThemeColorManager::allDashboardKeys();
+          $paletteType = 'dashboard';
+          $inputNamePrefix = 'dashboard';
+          include 'components/ThemeColorTable.php'; 
+        ?>
+      </div>
     </div>
-  </div>
-
+    <script src="<?= app_url('/js/temas_base.js') ?>"></script>
+    <script src="<?= app_url('/Tests/ThemeSmokeTest.js') ?>"></script>
+    <script>
+      (function() {
+        var init = function() {
+          if (typeof window.initPickers === 'function') {
+            window.initPickers();
+          }
+          
+          var form = document.forms['form_tema'];
+          var btnGravar = document.getElementById('btn_gravar');
+          
+          form.addEventListener('input', function() {
+            btnGravar.disabled = false;
+          });
+          btnGravar.disabled = true;
+          
+          document.getElementById('edit_theme').addEventListener('change', function() {
+            this.form.submit();
+          });
+        };
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
   </form>
 </div>
-
-<link rel="stylesheet" type="text/css" href="<?= app_url('/css/pickr.min.css') ?>">
-<script src="<?= app_url('/js/pickr.min.js') ?>"></script>
-<script src="<?= app_url('/js/temas_fonts.js') ?>"></script>
-<script src="<?= app_url('/js/temas_base.js') ?>"></script>
-<script>
-  function showTab(tabName) {
-    document.querySelectorAll('.tema-tab').forEach(function(btn) {
-      btn.classList.remove('active');
-    });
-    document.querySelectorAll('.tema-tab-content').forEach(function(div) {
-      div.classList.remove('active');
-    });
-    var btn = document.querySelector('.tema-tab[onclick*="' + tabName + '"]');
-    if (btn) btn.classList.add('active');
-    var div = document.getElementById('tab-' + tabName);
-    if (div) div.classList.add('active');
-  }
-  function restoreTab() {
-    var saved = null;
-    try { saved = localStorage.getItem('tema-tab'); } catch(e) {}
-    if (saved && document.getElementById('tab-' + saved)) {
-      showTab(saved);
-    } else {
-      showTab('gerais-app');
-    }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      initPickers();
-      restoreTab();
-    });
-  } else {
-    initPickers();
-    restoreTab();
-  }
-  document.querySelectorAll('.tema-tab').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var m = this.getAttribute('onclick').match(/showTab\('([^']+)'\)/);
-      if (m) try { localStorage.setItem('tema-tab', m[1]); } catch(e) {}
-    });
-  });
-</script>
