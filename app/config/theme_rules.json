@@ -1,0 +1,11 @@
+{
+    "surfaceSaturationFactor": "0.31",
+    "surfaceSaturationMax": "0.12",
+    "primaryLuminance": "0.34",
+    "primarySaturationMin": "0.63",
+    "primaryDarkOffset": "0.08",
+    "primaryLightLuminance": "0.78",
+    "primaryLinkSaturationMin": "0.55",
+    "menuSaturationMin": "0.04",
+    "semanticSaturation": "0.42"
+}
