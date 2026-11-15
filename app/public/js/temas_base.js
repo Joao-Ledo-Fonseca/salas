@@ -4,9 +4,6 @@
   function initPickers() {
     var baseColorInput = document.querySelector('input[name="baseColor"]');
     if (baseColorInput) {
-      baseColorInput.addEventListener('change', function () {
-        updatePaletteFromBase(baseColorInput.value);
-      });
     }
 
     // Tooltip logic
@@ -14,7 +11,10 @@
     var tooltipTimeout = null;
 
     function hideTooltip() {
-      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+      if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = null;
+      }
       if (tooltipEl) {
         tooltipEl.remove();
         tooltipEl = null;
@@ -22,21 +22,21 @@
     }
 
     document.querySelectorAll('.theme-color-label').forEach(function (label) {
-      label.addEventListener('mouseenter', function (e) {
+      label.addEventListener('mouseenter', function () {
         var text = label.getAttribute('data-tooltip');
         if (!text) return;
 
+        hideTooltip();
         tooltipTimeout = setTimeout(function () {
-          hideTooltip();
           tooltipEl = document.createElement('div');
-          tooltipEl.className = 'theme-color-tooltip';
+          tooltipEl.className = 'theme-color-tooltip visible';
           tooltipEl.textContent = text;
           document.body.appendChild(tooltipEl);
 
           var rect = label.getBoundingClientRect();
           tooltipEl.style.top = (rect.bottom + 5) + 'px';
           tooltipEl.style.left = rect.left + 'px';
-        }, 1000);
+        }, 300);
       });
 
       label.addEventListener('mouseleave', hideTooltip);
@@ -254,7 +254,6 @@
         }
       }
     });
-    window.aplicarPreview();
   }
 
   window.aplicarPreview = function () {

@@ -1,4 +1,24 @@
-<?php $title = 'Temas'; ?>
+<?php
+
+/**
+ * @var string $activeTheme
+ * @var string $editTheme
+ * @var array<string> $availableThemes
+ * @var array $themeData
+ * @var string $fontFamilySelection
+ * @var string $csrfToken
+ * @var string $errormsg
+ */
+$activeTheme = isset($activeTheme) ? (string)$activeTheme : 'light';
+$editTheme = isset($editTheme) ? (string)$editTheme : $activeTheme;
+$availableThemes = isset($availableThemes) && is_array($availableThemes) ? $availableThemes : [];
+$themeData = isset($themeData) && is_array($themeData) ? $themeData : [];
+$fontFamilySelection = isset($fontFamilySelection) ? (string)$fontFamilySelection : '';
+$csrfToken = isset($csrfToken) ? (string)$csrfToken : '';
+$errormsg = isset($errormsg) ? (string)$errormsg : '';
+
+$title = 'Temas';
+?>
 
 <h3>Temas</h3>
 <?php if (!empty($errormsg)): ?>
@@ -72,69 +92,92 @@
     <div class="tema-tab-content active" id="tab-base">
       <div class="lista_comum">
         <table class="tema-table tabela_comum">
-          <tr><td><label for="theme_name">Nome</label></td><td><input type="text" id="theme_name" name="name" autocomplete="off" value="<?= htmlspecialchars((string)($themeData['name'] ?? $editTheme), ENT_QUOTES, 'UTF-8') ?>" /></td><td class="w-full"></td></tr>
-          <tr><td><label for="font_size_base">Tamanho base</label></td><td><input type="number" id="font_size_base" name="fontSizeBase" min="8" max="24" autocomplete="off" value="<?= htmlspecialchars((string)preg_replace('/[^0-9]/', '', (string)$themeData['fontSizeBase'] ?? '14'), ENT_QUOTES, 'UTF-8') ?>" /> px</td><td class="w-full"></td></tr>
-          <tr><td><label for="font_family">Fonte</label></td><td>
-            <select name="fontFamily" id="font_family">
+          <tr>
+            <td><label for="theme_name">Nome</label></td>
+            <td><input type="text" id="theme_name" name="name" autocomplete="off" value="<?= htmlspecialchars((string)($themeData['name'] ?? $editTheme), ENT_QUOTES, 'UTF-8') ?>" data-tooltip="Chave: name | Variável: --color-name | Uso: Nome do tema" /></td>
+            <td class="w-full"></td>
+          </tr>
+          <tr>
+            <td><label for="font_size_base">Tamanho base</label></td>
+            <td><input type="number" id="font_size_base" name="fontSizeBase" min="8" max="24" autocomplete="off" value="<?= htmlspecialchars((string)preg_replace('/[^0-9]/', '', (string)$themeData['fontSizeBase'] ?? '14'), ENT_QUOTES, 'UTF-8') ?>" data-tooltip="Chave: fontSizeBase | Variável: --font-size-base | Uso: Tamanho base da fonte" /> px</td>
+            <td class="w-full"></td>
+          </tr>
+          <tr>
+            <td><label for="font_family">Fonte</label></td>
+            <td>
+              <select name="fontFamily" id="font_family" data-tooltip="Chave: fontFamily | Variável: --font-family | Uso: Família de fonte">
                 <?php foreach (Salas\Core\Theme\ThemeFontFamily::options() as $name => $stack): ?>
-                    <option value="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>" data-stack="<?= htmlspecialchars($stack, ENT_QUOTES, 'UTF-8') ?>" style="font-family: <?= htmlspecialchars($stack, ENT_QUOTES, 'UTF-8') ?>;" <?= $name === $fontFamilySelection ? 'selected' : '' ?>><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></option>
+                  <option value="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>" data-stack="<?= htmlspecialchars($stack, ENT_QUOTES, 'UTF-8') ?>" style="font-family: <?= htmlspecialchars($stack, ENT_QUOTES, 'UTF-8') ?>;" <?= $name === $fontFamilySelection ? 'selected' : '' ?>><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></option>
                 <?php endforeach; ?>
-            </select>
-          </td><td class="w-full"></td></tr>
-          <tr><td><label for="base_color">Cor base</label></td><td class="col-input flex items-center"><input type="text" id="base_color" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)$themeData['baseColor'] ?? '#FFFFFF', ENT_QUOTES, 'UTF-8') ?>" autocomplete="off" data-var="--color-base" /><span class="col-btn"></span></td><td class="w-full"></td></tr>
+              </select>
+            </td>
+            <td class="w-full"></td>
+          </tr>
+          <tr>
+            <td><label for="base_color" class="theme-color-label"
+                data-tooltip="<?= htmlspecialchars(
+                                'Chave: baseColor' . "\nVariável: " . (Salas\Core\Theme\ThemeColorManager::cssVar('baseColor') ?? '--color-base') . "\nUso: " . (Salas\Core\Theme\ThemeColorManager::usage('baseColor') ?? ''),
+                                ENT_QUOTES,
+                                'UTF-8'
+                              ) ?>">
+                Cor base
+              </label></td>
+            <td class="col-input flex items-center"><input type="text" id="base_color" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)$themeData['baseColor'] ?? '#FFFFFF', ENT_QUOTES, 'UTF-8') ?>" autocomplete="off" data-var="--color-base" /><span class="col-btn"></span></td>
+            <td class="w-full"></td>
+          </tr>
         </table>
         <div class="flex gap-10 mt-4">
-            <input type="button" class="btn1" value="Testar" onclick="aplicarPreview()" />
-            <input type="button" class="btn1" value="Repor" onclick="reporTema()" />
-            <input type="submit" name="gravar" id="btn_gravar" class="btn1" value="Gravar" />
-            <div class="ml-100 flex gap-10">
-                <input type="submit" name="criar_tema" class="btn1" value="Criar" />
-                <input type="submit" name="apagar_tema" class="btn1 btn-danger" value="Eliminar" onclick="return confirm('Tem certeza que deseja eliminar este tema?');" />
-            </div>
+          <input type="button" class="btn1" value="Testar" onclick="aplicarPreview()" />
+          <input type="button" class="btn1" value="Repor" onclick="reporTema()" />
+          <input type="submit" name="gravar" id="btn_gravar" class="btn1" value="Gravar" />
+          <div class="ml-100 flex gap-10">
+            <input type="submit" name="criar_tema" class="btn1" value="Criar" />
+            <input type="submit" name="apagar_tema" class="btn1 btn-danger" value="Eliminar" onclick="return confirm('Tem certeza que deseja eliminar este tema?');" />
+          </div>
         </div>
       </div>
     </div>
 
     <div class="tema-tab-content" id="tab-gerais-app">
       <div class="lista_comum">
-        <?php 
-          $keys = Salas\Core\Theme\ThemeColorManager::getAppKeys();
-          $paletteType = 'colors';
-          $inputNamePrefix = 'colors';
-          include 'components/ThemeColorTable.php'; 
+        <?php
+        $keys = Salas\Core\Theme\ThemeColorManager::getAppKeys();
+        $paletteType = 'colors';
+        $inputNamePrefix = 'colors';
+        include 'components/ThemeColorTable.php';
         ?>
       </div>
     </div>
-    
+
     <div class="tema-tab-content" id="tab-gerais-avisos">
       <div class="lista_comum">
-        <?php 
-          $keys = Salas\Core\Theme\ThemeColorManager::getAvisosKeys();
-          $paletteType = 'colors';
-          $inputNamePrefix = 'colors';
-          include 'components/ThemeColorTable.php'; 
+        <?php
+        $keys = Salas\Core\Theme\ThemeColorManager::getAvisosKeys();
+        $paletteType = 'colors';
+        $inputNamePrefix = 'colors';
+        include 'components/ThemeColorTable.php';
         ?>
       </div>
     </div>
 
     <div class="tema-tab-content" id="tab-menu">
       <div class="lista_comum">
-        <?php 
-          $keys = Salas\Core\Theme\ThemeColorManager::getMenuKeys();
-          $paletteType = 'colors';
-          $inputNamePrefix = 'colors';
-          include 'components/ThemeColorTable.php'; 
+        <?php
+        $keys = Salas\Core\Theme\ThemeColorManager::getMenuKeys();
+        $paletteType = 'colors';
+        $inputNamePrefix = 'colors';
+        include 'components/ThemeColorTable.php';
         ?>
       </div>
     </div>
 
     <div class="tema-tab-content" id="tab-dashboard">
       <div class="lista_comum">
-        <?php 
-          $keys = Salas\Core\Theme\ThemeColorManager::allDashboardKeys();
-          $paletteType = 'dashboard';
-          $inputNamePrefix = 'dashboard';
-          include 'components/ThemeColorTable.php'; 
+        <?php
+        $keys = Salas\Core\Theme\ThemeColorManager::allDashboardKeys();
+        $paletteType = 'dashboard';
+        $inputNamePrefix = 'dashboard';
+        include 'components/ThemeColorTable.php';
         ?>
       </div>
     </div>
@@ -146,15 +189,15 @@
           if (typeof window.initPickers === 'function') {
             window.initPickers();
           }
-          
+
           var form = document.forms['form_tema'];
           var btnGravar = document.getElementById('btn_gravar');
-          
+
           form.addEventListener('input', function() {
             btnGravar.disabled = false;
           });
           btnGravar.disabled = true;
-          
+
           document.getElementById('edit_theme').addEventListener('change', function() {
             this.form.submit();
           });

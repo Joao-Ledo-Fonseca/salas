@@ -21,6 +21,7 @@ namespace Salas\Core\Theme;
 final class ThemeColorManager
 {
     public const COLOR_MAP = [
+        'baseColor'     => ['--color-base',          'baseColor',     'Cor base',                     'Cor de ref. para geração da paleta'],
         'bg'            => ['--color-bg',            'bg',            'Fundo da página',              'body background'],
         'surface'       => ['--color-surface',       'surface',       'Fundo de superfícies/cartões', '.info-box, inputs, selects'],
         'surfaceAlt'    => ['--color-surface-alt',   'surfaceAlt',    'Fundo alternativo',            'tabelas secundárias'],
@@ -43,7 +44,7 @@ final class ThemeColorManager
         'menuBg'        => ['--color-menu-bg',       'menuBg',        'Fundo do menu',                '.menu background'],
         'menuItem'      => ['--color-menu-item',     'menuItem',      'Fundo de Item do menu',        '.menu li, .menu a'],
         'menuHoverBg'   => ['--color-menu-hover-bg', 'menuHoverBg',   'Fundo hover menu',             '.menu li:hover'],
-        'menuHoverText' => ['--color-menu-hover-text','menuHoverText','Texto hover menu',             '.menu li:hover'],
+        'menuHoverText' => ['--color-menu-hover-text', 'menuHoverText', 'Texto hover menu',             '.menu li:hover'],
         'menuText'      => ['--color-menu-text',     'menuText',      'Texto do menu',                '.menu, .menu a'],
     ];
 
@@ -52,7 +53,7 @@ final class ThemeColorManager
         'confirmado'    => ['--dashboard-confirmado',    'confirmado',    'Célula confirmada',              '.confirmado cell'],
         'cancelado'     => ['--dashboard-cancelado',     'cancelado',     'Célula cancelada',               '.cancelado cell'],
         'disponivel'    => ['--dashboard-disponivel',    'disponivel',    'Célula disponível',              '.disponivel cell'],
-        'disponivelHover'=> ['--dashboard-disponivel-hover','disponivelHover','Hover célula disponível',    '.disponivel:hover'],
+        'disponivelHover' => ['--dashboard-disponivel-hover', 'disponivelHover', 'Hover célula disponível',    '.disponivel:hover'],
         'selected'      => ['--dashboard-selected',      'selected',      'Célula selecionada',             '.selected cell'],
         'cellBorder'    => ['--dashboard-cell-border',   'cellBorder',    'Borda da célula',                'table th/td, hr'],
         'cellText'      => ['--dashboard-cell-text',     'cellText',      'Texto da célula',                'table td'],
@@ -146,7 +147,9 @@ final class ThemeColorManager
     {
         $menu = self::getMenuKeys();
         $avisos = self::getAvisosKeys();
-        return array_filter(self::allColorKeys(), fn($k) => !in_array($k, $menu, true) && !in_array($k, $avisos, true));
+        // 'baseColor' é apresentada na aba Base de Temas.php, não na aba Gerais (app).
+        $excluidas = array_merge($menu, $avisos, ['baseColor']);
+        return array_filter(self::allColorKeys(), fn($k) => !in_array($k, $excluidas, true));
     }
 
     public static function allDashboardKeys(): array
