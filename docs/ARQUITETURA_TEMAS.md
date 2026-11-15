@@ -132,7 +132,7 @@ O ecrã de temas é o único ponto de edição, estruturado da seguinte forma:
         3. **Exceção 1 – Clique**: Um `click` na box (ou no wrapper) apenas aciona a abertura do `Pickr`.
         4. **Exceção 2 – Picker → Input**: O `Pickr`, ao guardar uma cor, altera **exclusivamente** o valor do campo de input de texto associado.
         5. **Exceção 3 – Input → Box**: O campo de input tem um evento `input` que, ao detetar uma alteração de valor válido (hexa), altera **exclusivamente** a cor interna (`background`) da box de preview.
-        6. **Exceção 4 – Recalculo da cor base**: O recalculo das restantes cores (via `updatePaletteFromBase`) altera o valor do input da cor base e dispara um evento `input`, que por sua vez atualiza exclusivamente a cor interna da box de preview da cor base.
+        6. **Exceção 4 – Recalculo da cor base**: O recalculo das restantes cores (via `updatePaletteFromBase`) altera o valor do input de cada cor e dispara um evento `input`, que por sua vez atualiza exclusivamente a cor interna da box de preview correspondente a essa cor, com excepção da própria cor base.
 
 ### 6.2. Funcionalidades
 
