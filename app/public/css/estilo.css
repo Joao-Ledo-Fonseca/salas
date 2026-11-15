@@ -856,6 +856,16 @@ body.pagina-login {
 	font-size: 0.8571rem;
 }
 
+.pagina-login #rodape a {
+	color: var(--color-primary-link, var(--color-primary, #2C73A8));
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.pagina-login #rodape a:hover {
+	text-decoration: underline;
+}
+
 .pagina-login .link {
 	text-decoration: none;
 	color: var(--color-primary-link, var(--color-primary, #2C73A8));
@@ -1535,21 +1545,6 @@ img {
 	position: relative;
 }
 
-.theme-color-tooltip {
-	position: fixed;
-	z-index: 10000;
-	background: #333;
-	color: #fff;
-	padding: 0.5rem 0.75rem;
-	border-radius: 0.2857rem;
-	font-size: 0.7857rem;
-	line-height: 1.4;
-	white-space: pre-line;
-	pointer-events: none;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-	max-width: 20rem;
-}
-
 .col-input {
 	width: 9rem;
 }
@@ -2061,4 +2056,30 @@ input[type="text"].color-input-compact {
 .eliminar-imagem:hover {
 	background: var(--color-danger-dark);
 	color: var(--color-bg);
+}
+
+/* Tooltip for color labels in Temas.php */
+.theme-color-tooltip {
+	visibility: hidden;
+	opacity: 0;
+	position: fixed;
+	z-index: 10000;
+	background: var(--color-surface-alt, #F0F0F0);
+	color: var(--color-text, #171A1F);
+	font-size: 0.7857rem;
+	line-height: 1.4;
+	padding: 0.3571rem 0.5rem;
+	border-radius: 0.5714rem;
+	border: solid 0.0714rem var(--color-border, #CCC);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	max-width: 20rem;
+	pointer-events: none;
+	transition: opacity 0.2s;
+	white-space: pre-line;
+}
+
+.theme-color-label:hover .theme-color-tooltip,
+.theme-color-tooltip.visible {
+	visibility: visible !important;
+	opacity: 1 !important;
 }
