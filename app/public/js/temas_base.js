@@ -2,9 +2,33 @@
   'use strict';
 
   function initPickers() {
-    var baseColorInput = document.querySelector('input[name="baseColor"]');
-    if (baseColorInput) {
-    }
+    // Initialize Coloris picker
+    Coloris({
+      el: '.js-color-token',
+      theme: 'default',
+      themeMode: 'light',
+      alpha: false,
+      format: 'hex',
+      swatches: [
+        '#264653','#2a9d8f','#e9c46a','#f4a261','#e76f51',
+        '#003049','#d62828','#f77f00','#fcbf49','#eae2b7',
+        '#555b6e','#89b0ae','#bee3db','#faf9f9','#ffd6ba',
+        '#0b132b','#1c2541','#3a506b','#5bc0be','#6fffe9'
+      ],
+      onChange: function(color) {
+        var input = this;
+        if (input.name === 'baseColor') {
+          updatePaletteFromBase(color);
+        }
+        // Update preview box if exists
+        var cell = input.closest('td');
+        if (cell) {
+          var box = cell.querySelector('.color-preview-box');
+          if (box) box.style.background = color;
+        }
+        aplicarPreview();
+      }
+    });
 
     // Tooltip logic
     var tooltipEl = null;
@@ -42,12 +66,12 @@
       label.addEventListener('mouseleave', hideTooltip);
     });
 
-    document.querySelectorAll('.color-input').forEach(function (input) {
+    // Initialize color preview boxes
+    document.querySelectorAll('.js-color-token').forEach(function(input) {
       try {
-        var cell = input.closest('td').querySelector('.col-btn');
+        var cell = input.closest('td');
         if (!cell) return;
 
-        // Criar um quadrado de cor simples (div) em vez do Pickr
         var box = document.createElement('div');
         box.className = 'color-preview-box';
         box.style.width = '1.25rem';
@@ -57,27 +81,15 @@
         box.style.verticalAlign = 'middle';
         box.style.marginLeft = '6px';
         box.style.background = input.value || '#000000';
+        box.style.borderRadius = '2px';
 
-        cell.innerHTML = '';
-        cell.appendChild(box);
-
-        // Atualizar o quadrado quando o input muda
-        input.addEventListener('input', function () {
-          var val = input.value;
-          if (/^#[0-9a-f]{6}$/i.test(val)) {
-            box.style.background = val;
-            if (input.name === 'baseColor') {
-              updatePaletteFromBase(val);
-            }
-          }
-        });
-
-        input._themePickerUpdate = function (hex) {
-          input.value = hex;
-          box.style.background = hex;
-        };
+        var colBtn = cell.querySelector('.col-btn');
+        if (colBtn) {
+          colBtn.innerHTML = '';
+          colBtn.appendChild(box);
+        }
       } catch (e) {
-        // ignore
+        console.error('Error initializing color preview:', e);
       }
     });
   }
@@ -286,5 +298,10 @@
     window.location.reload();
   };
 
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', function() {
+    initPickers();
+  });
+  
   window.initPickers = initPickers;
 })();
