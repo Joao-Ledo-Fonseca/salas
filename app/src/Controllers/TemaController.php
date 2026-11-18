@@ -62,7 +62,7 @@ class TemaController
                 'name' => $post['name'],
                 'fontFamily' => ThemeFontFamily::stackForSelection((string)($post['fontFamily'] ?? '')),
                 'fontSizeBase' => (string)($post['fontSizeBase'] ?? '14'),
-                'baseColor' => (string)($post['baseColor'] ?? '#FFFFFF'),
+                'baseColor' => (string)($post['baseColor'] ?? '#FFFFFF'), // Atributo preservado (não alterar nome)
                 'colors' => $colors,
                 'dashboard' => $dashboard,
             ];
