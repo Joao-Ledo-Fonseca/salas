@@ -2,7 +2,7 @@
     "name": "Claro",
     "fontFamily": "'Inter', sans-serif",
     "fontSizeBase": "12",
-    "baseColor": "#90A6AA",
+    "baseColor": "#264653",
     "colors": {
         "bg": "#90A6AA",
         "surface": "#F5F5F5",

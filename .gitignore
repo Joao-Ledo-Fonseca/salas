@@ -8,3 +8,4 @@ testes.php
 /project/
 
 /.phpunit.result.cache
+.aider*

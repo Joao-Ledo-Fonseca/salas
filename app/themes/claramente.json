@@ -1,0 +1,42 @@
+{
+    "name": "Claramente",
+    "fontFamily": "'Inter', sans-serif",
+    "fontSizeBase": "13",
+    "baseColor": "#000001",
+    "colors": {
+        "bg": "#D0D0D1",
+        "surface": "#F5F5F5",
+        "text": "#171A1F",
+        "textStrong": "#171A1F",
+        "textMuted": "#585861",
+        "border": "#C5C5C9",
+        "primary": "#2A2A84",
+        "primaryDark": "#202065",
+        "primaryLight": "#B9B9D5",
+        "primaryLink": "#4646C9",
+        "overlay": "#171A1F",
+        "surfaceAlt": "#E5E5E6",
+        "borderStrong": "#9A9AA2",
+        "success": "#DBF0E0",
+        "warning": "#F0EBDB",
+        "danger": "#F0DBDD",
+        "dangerDark": "#C5202E",
+        "dangerLight": "#F6EFEF",
+        "dangerBorder": "#D39298",
+        "menuBg": "#222225",
+        "menuItem": "#38383D",
+        "menuHoverBg": "#C5C5C9",
+        "menuHoverText": "#171A1F",
+        "menuText": "#F4F6F8"
+    },
+    "dashboard": {
+        "reservado": "#F0EBDB",
+        "confirmado": "#DBF0E0",
+        "cancelado": "#F0DBDD",
+        "disponivel": "#889BAE",
+        "disponivelHover": "#E4E5E7",
+        "selected": "#DBF0E0",
+        "cellBorder": "#C5C7C9",
+        "cellText": "#171A1F"
+    }
+}

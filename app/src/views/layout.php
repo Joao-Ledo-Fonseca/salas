@@ -1,4 +1,5 @@
 <?php
+
 use Salas\Core\Support\Csrf;
 use Salas\Models\Reserva;
 use Salas\Models\Sala;
@@ -18,14 +19,13 @@ use Salas\Core\Validation\Validator;
 
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <!-- Coloris CSS via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@melloware/coloris@0.21.0/dist/coloris.min.css">
-    
+
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
     <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
@@ -46,16 +46,20 @@ use Salas\Core\Validation\Validator;
     <script src="<?= app_url('/js/dateformat.js') ?>"></script>
     <script src="<?= app_url('/js/lib.js') ?>"></script>
 
-    <script>window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
-    <script>window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+    <script>
+        window.__APP_THEME__ = <?= json_encode((isset($cfg) && isset($cfg->theme) ? $cfg->theme->key : 'light'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+    </script>
+    <script>
+        window.__APP_THEMES__ = <?= json_encode((isset($cfg) && isset($cfg->availableThemes) ? $cfg->availableThemes : ['light', 'dark']), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+    </script>
     <script src="<?= app_url('/js/theme.js') ?>"></script>
 
     <?php if (!empty($cfg) && isset($cfg->theme)): ?>
-    <style>
-        :root {
-            <?= $cfg->theme->toCssVariables() ?>
-        }
-    </style>
+        <style>
+            :root {
+                <?= $cfg->theme->toCssVariables() ?>
+            }
+        </style>
     <?php endif; ?>
 
     <!-- menu esquerdo -->
@@ -67,9 +71,10 @@ use Salas\Core\Validation\Validator;
     ?>
 
     <!-- conteudo -->
-    <div class="corpo"<?= !empty($contentStyle) ? ' style="' . htmlspecialchars($contentStyle, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
+    <div class="corpo" <?= !empty($contentStyle) ? ' style="' . htmlspecialchars($contentStyle, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
         <?= $content ?? '' ?>
     </div>
 
-</body>
+    </body>
+
 </html>

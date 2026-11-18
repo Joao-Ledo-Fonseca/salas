@@ -20,6 +20,8 @@ $errormsg = isset($errormsg) ? (string)$errormsg : '';
 $title = 'Temas';
 ?>
 
+<link rel="stylesheet" type="text/css" href="<?= app_url('/js/lib/Coloris-0.25.2/coloris.min.css') ?>">
+
 <h3>Temas</h3>
 <?php if (!empty($errormsg)): ?>
   <div class="form_sel lista_comum text-error"><?= htmlspecialchars($errormsg, ENT_QUOTES, 'UTF-8') ?></div>
@@ -122,7 +124,9 @@ $title = 'Temas';
                               ) ?>">
                 Cor base
               </label></td>
-            <td class="col-input flex items-center"><input type="text" id="base_color" class="color-input color-input-compact" name="baseColor" value="<?= htmlspecialchars((string)$themeData['baseColor'] ?? '#FFFFFF', ENT_QUOTES, 'UTF-8') ?>" autocomplete="off" data-var="--color-base" /><span class="col-btn"></span></td>
+            <td class="col-input flex items-center">
+              <input type="text" id="base_color" class="color-input color-input-compact js-color-token" name="baseColor" value="<?= htmlspecialchars((string)($themeData['baseColor'] ?? '#FFFFFF'), ENT_QUOTES, 'UTF-8') ?>" autocomplete="off" data-var="--color-base" />
+            </td>
             <td class="w-full"></td>
           </tr>
         </table>
@@ -181,8 +185,11 @@ $title = 'Temas';
         ?>
       </div>
     </div>
+
+
+    <script src="<?= app_url('/js/lib/Coloris-0.25.2/coloris.min.js') ?>"></script>
     <script src="<?= app_url('/js/temas_base.js') ?>"></script>
-    <script src="<?= app_url('/Tests/ThemeSmokeTest.js') ?>"></script>
+
     <script>
       (function() {
         var init = function() {

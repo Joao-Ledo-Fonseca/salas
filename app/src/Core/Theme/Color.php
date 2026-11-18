@@ -2,6 +2,9 @@
 
 namespace Salas\Core\Theme;
 
+/**
+ * Classe Color.
+ */
 final class Color
 {
     private float $r, $g, $b;

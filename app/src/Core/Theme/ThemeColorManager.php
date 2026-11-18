@@ -59,16 +59,35 @@ final class ThemeColorManager
         'cellText'      => ['--dashboard-cell-text',     'cellText',      'Texto da célula',                'table td'],
     ];
 
+    
+    /**
+     * Verifica se a chave JSON é válida para cores.
+     *
+     * @param string $jsonKey A chave JSON a ser verificada.
+     * @return bool Retorna true se a chave for válida, caso contrário false.
+     */
     public static function isValidColor(string $jsonKey): bool
     {
         return array_key_exists($jsonKey, self::COLOR_MAP);
     }
 
+    /**
+     * Verifica se a chave JSON é válida para dashboard.
+     *
+     * @param string $jsonKey A chave JSON a ser verificada.
+     * @return bool Retorna true se a chave for válida, caso contrário false.
+     */
     public static function isValidDashboard(string $jsonKey): bool
     {
         return array_key_exists($jsonKey, self::DASHBOARD_MAP);
     }
-
+    
+    /**
+     * Retorna a variável CSS correspondente à chave JSON.
+     *
+     * @param string $jsonKey A chave JSON.
+     * @return string|null Retorna a variável CSS correspondente ou null se não for válida.
+     */
     public static function cssVar(string $jsonKey): ?string
     {
         if (self::isValidColor($jsonKey)) {
@@ -80,6 +99,7 @@ final class ThemeColorManager
         return null;
     }
 
+   /*
     public static function jsonKey(string $cssVar): ?string
     {
         foreach (self::COLOR_MAP as $key => $entry) {
@@ -95,6 +115,12 @@ final class ThemeColorManager
         return null;
     }
 
+    /**
+     * Retorna o nome interno (camelCase) correspondente à chave JSON.
+     *
+     * @param string $jsonKey A chave JSON.
+     * @return string|null Retorna o nome interno correspondente ou null se não for válida.
+     */
     public static function varName(string $jsonKey): ?string
     {
         if (self::isValidColor($jsonKey)) {
@@ -106,6 +132,12 @@ final class ThemeColorManager
         return null;
     }
 
+    /**
+     * Retorna o label (descritivo) correspondente à chave JSON.
+     *
+     * @param string $jsonKey A chave JSON.
+     * @return string|null Retorna o label correspondente ou null se não for válida.
+     */
     public static function label(string $jsonKey): ?string
     {
         if (self::isValidColor($jsonKey)) {
@@ -117,6 +149,12 @@ final class ThemeColorManager
         return null;
     }
 
+    /**
+     * Retorna o uso (comentário) correspondente à chave JSON.
+     *
+     * @param string $jsonKey A chave JSON.
+     * @return string|null Retorna o uso correspondente ou null se não for válida.
+     */
     public static function usage(string $jsonKey): ?string
     {
         if (self::isValidColor($jsonKey)) {
@@ -128,21 +166,41 @@ final class ThemeColorManager
         return null;
     }
 
+    /**
+     * Retorna todas as chaves JSON válidas para cores.
+     *
+     * @return array Retorna um array com todas as chaves JSON válidas para cores.
+     */
     public static function allColorKeys(): array
     {
         return array_keys(self::COLOR_MAP);
     }
 
+    /**
+     * Retorna todas as chaves JSON válidas para dashboard.
+     *
+     * @return array Retorna um array com todas as chaves JSON válidas para dashboard.
+     */
     public static function getMenuKeys(): array
     {
         return array_filter(self::allColorKeys(), fn($k) => strpos($k, 'menu') === 0);
     }
 
+    /**
+     * Retorna todas as chaves JSON válidas para avisos.
+     *
+     * @return array Retorna um array com todas as chaves JSON válidas para avisos.
+     */
     public static function getAvisosKeys(): array
     {
         return ['surfaceAlt', 'borderStrong', 'success', 'warning', 'danger', 'dangerDark', 'dangerLight', 'dangerBorder'];
     }
 
+    /**
+     * Retorna todas as chaves JSON válidas para a aplicação (excluindo menu e avisos).
+     *
+     * @return array Retorna um array com todas as chaves JSON válidas para a aplicação.
+     */
     public static function getAppKeys(): array
     {
         $menu = self::getMenuKeys();
@@ -152,11 +210,22 @@ final class ThemeColorManager
         return array_filter(self::allColorKeys(), fn($k) => !in_array($k, $excluidas, true));
     }
 
+    /**
+     * Retorna todas as chaves JSON válidas para a dashboard.
+     *
+     * @return array Retorna um array com todas as chaves JSON válidas para a dashboard.
+     */
     public static function allDashboardKeys(): array
     {
         return array_keys(self::DASHBOARD_MAP);
     }
 
+    /**
+     * Valida um array de cores, removendo chaves inválidas.
+     *
+     * @param array $colors O array de cores a ser validado.
+     * @return array Retorna um array contendo apenas as cores válidas.
+     */
     public static function validateColors(array $colors): array
     {
         $result = [];
@@ -168,6 +237,12 @@ final class ThemeColorManager
         return $result;
     }
 
+    /**
+     * Valida um array de dashboard, removendo chaves inválidas.
+     *
+     * @param array $dashboard O array de dashboard a ser validado.
+     * @return array Retorna um array contendo apenas as chaves válidas para dashboard.
+     */
     public static function validateDashboard(array $dashboard): array
     {
         $result = [];
@@ -179,6 +254,12 @@ final class ThemeColorManager
         return $result;
     }
 
+    /*
+     * Gera variáveis CSS a partir de um array de cores.
+     *
+     * @param array $colors O array de cores.
+     * @return string Retorna uma string contendo as variáveis CSS geradas.
+     */
     public static function toCssVariables(array $colors): string
     {
         $vars = [];
@@ -192,6 +273,13 @@ final class ThemeColorManager
         return implode("\n    ", $vars);
     }
 
+
+    /**
+     * Gera variáveis CSS para o dashboard a partir de um array de cores.
+     *
+     * @param array $dashboard O array de cores do dashboard.
+     * @return string Retorna uma string contendo as variáveis CSS geradas.
+     */
     public static function toDashboardCssVariables(array $dashboard): string
     {
         $vars = [];
@@ -205,6 +293,13 @@ final class ThemeColorManager
         return implode("\n    ", $vars);
     }
 
+    /**
+     * Gera variáveis CSS completas (cores e dashboard) a partir de arrays de cores.
+     *
+     * @param array $colors O array de cores.
+     * @param array $dashboard O array de cores do dashboard.
+     * @return string Retorna uma string contendo todas as variáveis CSS geradas.
+     */
     public static function toCssVariablesComplete(array $colors, array $dashboard): string
     {
         $parts = [];
@@ -219,6 +314,12 @@ final class ThemeColorManager
         return implode("\n    ", $parts);
     }
 
+    /**
+     * Converte uma chave camelCase para kebab-case.
+     *
+     * @param string $key A chave em camelCase.
+     * @return string Retorna a chave convertida para kebab-case.
+     */
     public static function kebab(string $key): string
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $key));

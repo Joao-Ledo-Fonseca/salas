@@ -2,6 +2,9 @@
 
 namespace Salas\Core\Theme;
 
+/**
+ * Classe ColorCalculator.
+ */
 class ColorCalculator
 {
     public static function calculatePalette(string $baseHex, array $rules = []): array

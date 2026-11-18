@@ -1,4 +1,5 @@
 <?php
+
 namespace Salas\Controllers;
 
 use Salas\Core\Theme\ThemeLoader;
@@ -8,6 +9,8 @@ use Salas\Core\Theme\ThemeEditorService;
 use Salas\Core\Persistence\Database;
 use Salas\Core\Support\Csrf;
 use Salas\Core\Validation\Validator;
+use Salas\Core\Theme\ColorCalculator;
+use Salas\Core\Theme\ThemeRulesService;
 
 /**
  * Classe TemaController.
@@ -39,6 +42,23 @@ class TemaController
             $activeKey = isset($cfg->theme) ? (string)$cfg->theme->key : ($available[0] ?? 'light');
         }
 
+
+        if (isset($query['ajax']) && $query['ajax'] === 'calculate_palette') {
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            header('Content-Type: application/json; charset=utf-8');
+            $baseColor = Validator::string($query['baseColor'] ?? '#FFFFFF');
+
+            $rulesPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'theme_rules.json';
+            $rules = is_file($rulesPath) ? (json_decode((string)file_get_contents($rulesPath), true) ?? []) : [];
+
+            $palette = ColorCalculator::calculatePalette($baseColor, $rules);
+
+            echo json_encode($palette);
+            exit();
+        }
+
         if (isset($post['ativar_tema']) && isset($post['active_theme'])) {
             $newActive = (string)$post['active_theme'];
             if (in_array($newActive, $available, true)) {
@@ -54,10 +74,10 @@ class TemaController
                 header('Location: ' . app_url('?acao=temas&theme=' . urlencode($activeKey) . '&errormsg=' . urlencode('Nome inválido ou já existente.')));
                 exit();
             }
-            
+
             $colors = ThemeColorManager::validateColors($post['colors'] ?? []);
             $dashboard = ThemeColorManager::validateDashboard($post['dashboard'] ?? []);
-            
+
             $data = [
                 'name' => $post['name'],
                 'fontFamily' => ThemeFontFamily::stackForSelection((string)($post['fontFamily'] ?? '')),
@@ -66,7 +86,7 @@ class TemaController
                 'colors' => $colors,
                 'dashboard' => $dashboard,
             ];
-            
+
             if ($this->editor->saveTheme($novoNome, $data)) {
                 $this->editor->updateManifest($novoNome, true);
                 header('Location: ' . app_url('?acao=temas&theme=' . urlencode($activeKey) . '&edit_theme=' . urlencode($novoNome)));
@@ -94,10 +114,10 @@ class TemaController
                 $original = $this->editor->getThemeData($editKey);
                 $name = Validator::string($post['name'] ?? ($original['name'] ?? $editKey));
                 $fontFamily = ThemeFontFamily::stackForSelection((string)($post['fontFamily'] ?? ''));
-                
+
                 $baseColor = Validator::string($post['baseColor'] ?? ($original['baseColor'] ?? '#FFFFFF'));
                 $fontSizeBase = Validator::string($post['fontSizeBase'] ?? ($original['fontSizeBase'] ?? '14'));
-                
+
                 $colors = ThemeColorManager::validateColors($post['colors'] ?? []);
                 $dashboard = ThemeColorManager::validateDashboard($post['dashboard'] ?? []);
 
