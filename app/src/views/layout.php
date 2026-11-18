@@ -23,6 +23,24 @@ use Salas\Core\Validation\Validator;
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <!-- Coloris CSS via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@melloware/coloris@0.21.0/dist/coloris.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
+    <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
+
+    <?php if (!empty($extraHead)): ?>
+        <?= $extraHead ?>
+    <?php endif; ?>
+
+    <title><?= htmlspecialchars($title ?? 'Reserva de Salas', ENT_QUOTES, 'UTF-8') ?></title>
+</head>
+<body<?= !empty($bodyStyle) ? ' style="' . htmlspecialchars($bodyStyle, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
+
+    <!-- Coloris JS via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@melloware/coloris@0.21.0/dist/coloris.min.js"></script>
+
     <script src="<?= app_url('/js/jquery.js') ?>"></script>
     <script src="<?= app_url('/js/jquery.datetimepicker.full.js') ?>"></script>
     <script src="<?= app_url('/js/dateformat.js') ?>"></script>
@@ -39,18 +57,6 @@ use Salas\Core\Validation\Validator;
         }
     </style>
     <?php endif; ?>
-
-    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/estilo.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?= app_url('/css/jquery.datetimepicker.css') ?>">
-    <?php require __DIR__ . '/ThemeFontLinks.php'; ?>
-
-    <?php if (!empty($extraHead)): ?>
-        <?= $extraHead ?>
-    <?php endif; ?>
-
-    <title><?= htmlspecialchars($title ?? 'Reserva de Salas', ENT_QUOTES, 'UTF-8') ?></title>
-</head>
-<body<?= !empty($bodyStyle) ? ' style="' . htmlspecialchars($bodyStyle, ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
 
     <!-- menu esquerdo -->
     <?php
