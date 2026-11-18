@@ -1,7 +1,7 @@
 {
     "name": "Escuro",
     "fontFamily": "'Inter', sans-serif",
-    "fontSizeBase": "12",
+    "fontSizeBase": "13",
     "baseColor": "#305051",
     "colors": {
         "bg": "#305051",

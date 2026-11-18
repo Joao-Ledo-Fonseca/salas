@@ -26,6 +26,10 @@ $title = 'Temas';
 <?php if (!empty($errormsg)): ?>
   <div class="form_sel lista_comum text-error"><?= htmlspecialchars($errormsg, ENT_QUOTES, 'UTF-8') ?></div>
 <?php endif; ?>
+<?php
+// Obtém o algoritmo guardado no tema atual (padrão: okhcl)
+$colorModel = $temaAtual['colorModel'] ?? 'okhcl';
+?>
 
 <div class="container_conteudo">
   <div class="lista_comum mb-4">
@@ -114,7 +118,39 @@ $title = 'Temas';
               </select>
             </td>
             <td class="w-full"></td>
+          <tr>
+            <td><label for="theme_name">Nome</label></td>
+            <td> </td>
+            <td class="w-full"></td>
           </tr>
+          <tr>
+            <td><label>Algoritmo</label></td>
+            <td>
+              <div class="color-model-options">
+                <label class="color-model-option">
+                  <input
+                    type="radio"
+                    name="colorModel"
+                    value="okhcl"
+                    class="js-color-model"
+                    <?= $colorModel === 'okhcl' ? 'checked' : '' ?>>
+                  <span>OKHCL</span>
+                </label>
+
+                <label class="color-model-option">
+                  <input
+                    type="radio"
+                    name="colorModel"
+                    value="hsk"
+                    class="js-color-model"
+                    <?= $colorModel === 'hsk' ? 'checked' : '' ?>>
+                  <span>HSK</span>
+                </label>
+              </div>
+            </td>
+            <td class="w-full"></td>
+          </tr>
+          <tr>
           <tr>
             <td><label for="base_color" class="theme-color-label"
                 data-tooltip="<?= htmlspecialchars(

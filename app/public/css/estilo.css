@@ -2083,3 +2083,65 @@ input[type="text"].color-input-compact {
 	visibility: visible !important;
 	opacity: 1 !important;
 }
+
+/* 1. Wrapper do campo de cor (aplica-se à tabela e ao #base_color) */
+.clr-field {
+	display: inline-flex !important;
+	align-items: center !important;
+	position: relative !important;
+	width: 100% !important;
+}
+
+/* 2. Isola o quadrado de cor das regras globais de <button> */
+.clr-field button {
+	all: unset;
+	/* Limpa estilos globais de botão (width, min-width, padding, etc.) */
+	box-sizing: border-box !important;
+	position: absolute !important;
+	left: 6px !important;
+	top: 50% !important;
+	transform: translateY(-50%) !important;
+	width: 22px !important;
+	height: 22px !important;
+	border-radius: 4px !important;
+	border: 1px solid rgba(0, 0, 0, 0.25) !important;
+	cursor: pointer !important;
+	/* O Coloris define a cor dinamicamente via 'color' e 'background-color' inline */
+}
+
+/* 3. Espaço no input para o texto HEX não ficar por baixo do quadrado */
+.clr-field input.js-color-token {
+	padding-left: 36px !important;
+	width: 100% !important;
+	box-sizing: border-box !important;
+}
+
+/* 4. Protege os botões internos do popup do Coloris contra regras globais */
+#clr-picker button {
+	min-width: unset !important;
+	width: auto !important;
+	height: auto !important;
+	padding: revert !important;
+}
+
+.color-model-options {
+	display: inline-flex;
+	align-items: center;
+	gap: 16px;
+	white-space: nowrap;
+}
+
+.color-model-option {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0;
+	cursor: pointer;
+}
+
+.color-model-option input[type="radio"] {
+	width: auto !important;
+	height: auto !important;
+	margin: 0 !important;
+	cursor: pointer;
+}
