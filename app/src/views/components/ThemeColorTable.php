@@ -31,7 +31,7 @@ $inputNamePrefix = isset($inputNamePrefix) ? (string)$inputNamePrefix : 'colors'
                 </label>
             </td>
             <td class="whitespace-nowrap col-input flex items-center">
-                <input type="text" id="color_<?= htmlspecialchars($inputNamePrefix . '_' . $k, ENT_QUOTES, 'UTF-8') ?>" class="color-input color-input-compact"
+                <input type="text" id="color_<?= htmlspecialchars($inputNamePrefix . '_' . $k, ENT_QUOTES, 'UTF-8') ?>" class="js-color-token color-input-compact"
                     name="<?= $inputNamePrefix ?>[<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>]"
                     value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>"
                     autocomplete="off"
